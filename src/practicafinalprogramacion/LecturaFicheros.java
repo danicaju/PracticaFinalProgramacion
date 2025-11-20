@@ -22,11 +22,13 @@ public class LecturaFicheros {
         br = new BufferedReader(new FileReader(fichero));
     }
     
-    public void leerFichero(String fichero) throws IOException {
+    public char[] leerFichero(String fichero) throws IOException {
         String texto;
+        char res[] = null;
         while((texto = br.readLine()) != null) {
-            char res[] = texto.toCharArray();
+            res = texto.toCharArray();
         }
+        return res;
     }
 
     public String getFichero() {

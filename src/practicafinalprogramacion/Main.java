@@ -4,6 +4,9 @@
  */
 package practicafinalprogramacion;
 
+import java.io.IOException;
+import java.util.Random;
+
 /*
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
@@ -11,11 +14,13 @@ GRUPO: 2
 public class Main {
 
     LT lector = new LT();
-    DatosJugadores datosJugador1 = new DatosJugadores();
-    DatosJugadores datosJugador2 = new DatosJugadores();
     Registro registroPartida = new Registro();
     int opcion;
     char entradaPorTeclado[];
+    char arrayFichero[];
+    char caracteresAleatorios[];
+    Random random = new Random();
+    int numeroRandom;
 
     public static void main(String[] args) {
         Main m = new Main();
@@ -59,17 +64,37 @@ public class Main {
 
                         System.out.print("\nIntroduce el nombre del jugador: ");
                         entradaPorTeclado = lector.llegirLinia();
-                        datosJugador1.setNombreDelJugador1(entradaPorTeclado);
+                        registroPartida.setNombreDelJugador1(entradaPorTeclado);
                         System.out.println("Nombre del jugador 2: CPU.");
                         System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
                         opcion = lector.llegirEnter();
-                        if (opcion % 2 != 0) {
+                        while (opcion % 2 != 0) {
                             System.err.println("Escribe un numero par de rondas");
                             System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
                             opcion = lector.llegirEnter();
                         }
                         registroPartida.setNumeroRondas(opcion);
-                        
+                        int rondaActual = 1;
+                        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
+                        try {
+                            LecturaFicheros lecturaFichero = new LecturaFicheros("letras_es.txt");
+                            arrayFichero = lecturaFichero.leerFichero("letras_es.txt");
+                            for (int i = 0; i < 10; i++) {
+                                int indiceAleatorio = random.nextInt(arrayFichero.length);
+                                arrayFichero[indiceAleatorio] = caracteresAleatorios[i];
+                            }
+                            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                                System.out.println("Letras disponibles: " + caracteresAleatorios[i]);
+                            }
+                            
+                            System.out.print("Introduce tu palabra: ");
+                            entradaPorTeclado = lector.llegirLinia();
+                            
+                            //Queda por hacer la validacion de la palabra
+
+                        } catch (IOException e) {
+                            System.err.println("ERROR. Archivo no encontrado");
+                        }
 
                     }
                     case 2 -> {

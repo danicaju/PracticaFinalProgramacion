@@ -12,17 +12,14 @@ GRUPO: 2
  */
 public class Registro {
 
-    LocalDateTime fechaYHora;
-    int tipoDePartida;
-    int nivelCPU;
-    int numeroRondas;  
-    char[] nombreDelJugador1;
-    char[] nombreDelJugador2;
-    int puntuacionJugador1;
-    int puntuacionJugador2;
-    
-    
-
+    private LocalDateTime fechaYHora;
+    private int tipoDePartida;
+    private int nivelCPU;
+    private int numeroRondas;
+    private char[] nombreDelJugador1;
+    private char[] nombreDelJugador2;
+    private int puntuacionJugador1;
+    private int puntuacionJugador2;
 
     public Registro() {
         this.fechaYHora = LocalDateTime.now();
@@ -50,8 +47,8 @@ public class Registro {
     public void setNumeroRondas(int numeroRondas) {
         this.numeroRondas = numeroRondas;
     }
-    
-       public void setNombreDelJugador1(char[] nombreDelJugador1) {
+
+    public void setNombreDelJugador1(char[] nombreDelJugador1) {
         this.nombreDelJugador1 = nombreDelJugador1;
     }
 
@@ -99,8 +96,4 @@ public class Registro {
         return puntuacionJugador2;
     }
 
-    
-    }
-
- 
-
+}

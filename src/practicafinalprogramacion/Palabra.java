@@ -10,9 +10,9 @@ package practicafinalprogramacion;
  */
 public class Palabra {
 
-    char[] letras;
-    final int maximo = 20;
-    int longitud;
+    private char[] letras;
+    private final int maximo = 20;
+    private int longitud;
     
     public Palabra() {
        this.letras = new char[maximo];

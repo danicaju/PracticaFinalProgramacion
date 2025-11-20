@@ -4,6 +4,7 @@
  */
 package practicafinalprogramacion;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 
@@ -13,14 +14,26 @@ GRUPO: 2
  */
 public class Main {
 
+    //Inicializaciones de objeto LT y objeto Registro
     LT lector = new LT();
     Registro registroPartida = new Registro();
+
+    //Entero que leera la opcion por teclado que proporcione el usuario
     int opcion;
+    //Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
+    //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     char entradaPorTeclado[];
+    //Usado para la lectura de fichero, guardara el fichero en un array de caracteres
     char arrayFichero[];
-    char caracteresAleatorios[];
+    //Numero de caracteres aleatorios de la ronda de letras
+    char caracteresAleatorios[] = new char[10];
+    //Random usado para leer letras de forma aleatoria del fichero "letras_es.txt"
     Random random = new Random();
-    int numeroRandom;
+    //Strings con los nombres de los ficheros proporcionados
+    String ficheroLetras = "letras_es.txt";
+    String diccionarioEspanyol = "dic_es.txt";
+    boolean puedeCrearse = false;
+    boolean existeEnDiccionario = false;
 
     public static void main(String[] args) {
         Main m = new Main();
@@ -77,48 +90,67 @@ public class Main {
                         int rondaActual = 1;
                         System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
                         try {
-                            LecturaFicheros lecturaFichero = new LecturaFicheros("letras_es.txt");
-                            arrayFichero = lecturaFichero.leerFichero("letras_es.txt");
-                            for (int i = 0; i < 10; i++) {
-                                int indiceAleatorio = random.nextInt(arrayFichero.length);
-                                arrayFichero[indiceAleatorio] = caracteresAleatorios[i];
-                            }
+                            LecturaFicheros lecturaFichero = new LecturaFicheros(ficheroLetras);
+                            arrayFichero = lecturaFichero.leerFichero(ficheroLetras);
                             for (int i = 0; i < caracteresAleatorios.length; i++) {
-                                System.out.println("Letras disponibles: " + caracteresAleatorios[i]);
+                                int indiceAleatorio = random.nextInt(arrayFichero.length);
+                                caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
                             }
-                            
-                            System.out.print("Introduce tu palabra: ");
+                            System.out.println("Letras disponibles: ");
+                            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                                System.out.print(caracteresAleatorios[i] + " ");
+                            }
+
+                            System.out.print("\nIntroduce tu palabra: ");
                             entradaPorTeclado = lector.llegirLinia();
-                            
-                            //Queda por hacer la validacion de la palabra
+                            System.out.println("Validando palabra...");
+
+                            //Validacion de palabra
+                            try {
+
+
+                                LecturaFicheros lecturaFicheroDiccionario = new LecturaFicheros(diccionarioEspanyol);
+                                arrayFichero = lecturaFicheroDiccionario.leerFichero(diccionarioEspanyol);
+                                for (int i = 0; i < arrayFichero.length; i++) {
+                                    System.out.print(arrayFichero[i]);
+                                }
+
+                                int indice1 = 0;
+                                int indice2 = 0;
+                                while (!existeEnDiccionario) {
+                                    for (indice1 = 0; indice1 < arrayFichero.length; indice1++) {
+                                        for (indice2 = 0; indice2 < entradaPorTeclado.length; indice2++) {
+                                            if (entradaPorTeclado[indice2] != arrayFichero[indice1]) {
+                                                indice2 = 0;
+                                            }
+                                        }
+                                    }
+
+                                    System.out.println(indice1);
+                                    if (indice2 == indice1) {
+                                        existeEnDiccionario = true;
+                                    }
+                                }
+
+                                if (existeEnDiccionario) {
+                                    System.out.println(" -puede crearse con las letras disponibles ✓\n -existe en el diccionario ✓");
+
+                                } else {
+                                    System.out.println("Palabra no valida! Intentalo de nuevo");
+                                }
+
+                            } catch (IOException e) {
+                                System.err.println("ERROR. Fichero no encontrado");
+                            }
 
                         } catch (IOException e) {
-                            System.err.println("ERROR. Archivo no encontrado");
+                            System.err.println("ERROR. Fichero no encontrado");
                         }
 
                     }
-                    case 2 -> {
-                    }
-                    case 's' ->
-                        menuPrincipal();
-                    default -> {
-                        System.err.println("ERROR. Introduce una opcion valida");
-                        menuPrincipal();
-                    }
+
                 }
             }
-            case 2 -> {
-
-            }
-            case 's' -> {
-
-            }
-
-            default -> {
-                System.err.println("ERROR. Introduzca una opcion valida!");
-                menuPrincipal();
-            }
         }
-
     }
 }

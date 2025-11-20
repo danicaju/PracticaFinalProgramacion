@@ -15,21 +15,27 @@ GRUPO: 2
  */
 public class LecturaFicheros {
 
-    String fichero;
-    BufferedReader br;
+    private String fichero;
+    private BufferedReader br;
+    private static final char separador = ' ';
 
     public LecturaFicheros(String fichero) throws FileNotFoundException {
-        br = new BufferedReader(new FileReader(fichero));
+        this.fichero = fichero;
+        this.br = new BufferedReader(new FileReader(fichero));
     }
     
     public char[] leerFichero(String fichero) throws IOException {
         String texto;
-        char res[] = null;
+        String total = "";
+        char res[];
         while((texto = br.readLine()) != null) {
-            res = texto.toCharArray();
+            total += (separador + texto);
         }
+        res=total.toCharArray();
         return res;
     }
+    
+   
 
     public String getFichero() {
         return fichero;

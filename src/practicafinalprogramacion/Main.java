@@ -27,10 +27,12 @@ public class Main {
     //Strings con los nombres de los ficheros proporcionados
     String ficheroLetras = "letras_es.txt";
     String diccionarioEspanyol = "dic_es.txt";
-    boolean puedeCrearse = false;
+    boolean puedeFormarse = false;
     boolean existeEnDiccionario = false;
+    boolean encontrada = false;
+    Linea linea = new Linea();
 
-    public void menuPrincipal() {
+    public void menuPrincipal() throws Exception {
         System.out.print("""
                          ************************************
                          MENU PRINCIPAL
@@ -105,7 +107,7 @@ public class Main {
         opcion = lector.llegirCaracter();
     }
 
-    public void opcionRegistro() {
+    public void opcionRegistro() throws Exception {
         System.out.print("""    
                          
                                    ************************************
@@ -189,49 +191,82 @@ public class Main {
         }
     }
 
-    public void validarPalabra() {
-        //METODO PENDIENTE DE REVISION (NO FUNCIONA BIEN)
+    public void validarPalabra() throws Exception {
+
         System.out.print("\nIntroduce tu palabra: ");
         entradaPorTeclado = lector.llegirLinia();
         System.out.println("Validando palabra...");
 
-        //Validacion de palabra
-        try {
-            LecturaFicheros lecturaFicheroDiccionario = new LecturaFicheros(diccionarioEspanyol);
-            arrayFichero = lecturaFicheroDiccionario.leerFichero();
-            lecturaFicheroDiccionario.cerrarFichero();
-            for (int i = 0; i < arrayFichero.length; i++) {
-                System.out.print(arrayFichero[i]);
-            }
-        } catch (IOException e) {
-            System.err.println("\nERROR. Fichero no encontrad\n");
+        // 1. Comprobar si puede formarse con las letras disponibles
+        char[] copiaLetras = new char[caracteresAleatorios.length];
+        for (int i = 0; i < caracteresAleatorios.length; i++) {
+            copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente
         }
-        int indice1 = 0;
-        int indice2 = 0;
-        while (!existeEnDiccionario) {
-            for (indice1 = 0; indice1 < arrayFichero.length; indice1++) {
-                for (indice2 = 0; indice2 < entradaPorTeclado.length; indice2++) {
-                    if (entradaPorTeclado[indice1] != arrayFichero[indice2]) {
-                        indice2 = 0;
-                    }
+
+        puedeFormarse = true;
+
+        for (int i = 0; i < entradaPorTeclado.length; i++) {
+            char letra = entradaPorTeclado[i];
+            boolean encontrada = false;
+            int j = 0;
+
+            while (!encontrada && j < copiaLetras.length) {
+                if (copiaLetras[j] == letra) {
+                    copiaLetras[j] = '*'; // marcar como usada
+                    encontrada = true;
+                } else {
+                    j++;
                 }
             }
 
-            System.out.println(indice1);
-            if (indice2 == indice1) {
-                existeEnDiccionario = true;
+            if (!encontrada) {
+                puedeFormarse = false;
             }
         }
 
-        if (existeEnDiccionario) {
-            System.out.println(" -puede crearse con las letras disponibles \n -existe en el diccionario");
+        if (!puedeFormarse) {
+            System.err.println("La palabra NO puede formarse con las letras disponibles! Inténtalo de nuevo.");
+            validarPalabra(); // volver a pedir palabra
+            return;
+        }
 
+        // 2. Buscar palabra en diccionario
+        LineaFicherosLectura ficheroDic = new LineaFicherosLectura(diccionarioEspanyol);
+        boolean encontradaEnDiccionario = false;
+
+        while (ficheroDic.quedanLineas() && !encontradaEnDiccionario) {
+            Linea lineaDic = ficheroDic.leerFichero();
+
+            if (lineaDic.getNumeroCaracteres() == entradaPorTeclado.length) {
+                boolean iguales = true;
+                int k = 0;
+
+                while (iguales && k < entradaPorTeclado.length) {
+                    if (lineaDic.getCaracter(k) != entradaPorTeclado[k]) {
+                        iguales = false;
+                    }
+                    k++;
+                }
+
+                if (iguales) {
+                    encontradaEnDiccionario = true;
+                }
+            }
+        }
+
+        ficheroDic.cerrarFichero();
+
+        // 3. Resultado final
+        if (encontradaEnDiccionario) {
+            System.out.println(" - puede crearse con las letras disponibles");
+            System.out.println(" - existe en el diccionario");
         } else {
-            System.err.println("Palabra no valida! Intentalo de nuevo\n");
+            System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo! ");
+            validarPalabra();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Main m = new Main();
         m.menuPrincipal();
     }

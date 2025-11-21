@@ -24,9 +24,6 @@ public class LecturaFicheros {
         String texto;
         String total = "";
         while ((texto = br.readLine()) != null) {
-            if (texto == "\n") {
-                texto = " ";
-            }
             total += texto;
         }
         return total.toCharArray();

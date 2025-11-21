@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package practicafinalprogramacion;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /*
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
@@ -12,32 +9,36 @@ GRUPO: 2
  */
 public class Registro {
 
-    private LocalDateTime fechaYHora;
-    private int tipoDePartida;
+    private LocalDateTime fechaHora;
+    private int totalPartidas;
+    private char[] tipoPartida;
     private int nivelCPU;
     private int numeroRondas;
-    private char[] nombreDelJugador1;
-    private char[] nombreDelJugador2;
+    private char[] nombreJugador1;
+    private char[] nombreJugador2;
     private int puntuacionJugador1;
     private int puntuacionJugador2;
+    private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Registro() {
-        this.fechaYHora = LocalDateTime.now();
-        this.tipoDePartida = tipoDePartida;
+        this.fechaHora = LocalDateTime.now();
+        this.totalPartidas = totalPartidas = 1;
+        this.tipoPartida = tipoPartida;
         this.nivelCPU = nivelCPU;
         this.numeroRondas = numeroRondas;
-        this.nombreDelJugador1 = nombreDelJugador1;
-        this.nombreDelJugador2 = nombreDelJugador2;
+        this.nombreJugador1 = nombreJugador1;
+        this.nombreJugador2 = nombreJugador2;
         this.puntuacionJugador1 = puntuacionJugador1;
         this.puntuacionJugador2 = puntuacionJugador2;
+
     }
 
-    public void setFechaYHora(LocalDateTime fechaYHora) {
-        this.fechaYHora = fechaYHora;
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    public void setTipoDePartida(int tipoDePartida) {
-        this.tipoDePartida = tipoDePartida;
+    public void setTipoPartida(char[] tipoPartida) {
+        this.tipoPartida = tipoPartida;
     }
 
     public void setNivelCPU(int nivelCPU) {
@@ -48,12 +49,12 @@ public class Registro {
         this.numeroRondas = numeroRondas;
     }
 
-    public void setNombreDelJugador1(char[] nombreDelJugador1) {
-        this.nombreDelJugador1 = nombreDelJugador1;
+    public void setNombreJugador1(char[] nombreDelJugador1) {
+        this.nombreJugador1 = nombreDelJugador1;
     }
 
-    public void setNombreDelJugador2(char[] nombreDelJugador2) {
-        this.nombreDelJugador2 = nombreDelJugador2;
+    public void setNombreJugador2(char[] nombreDelJugador2) {
+        this.nombreJugador2 = nombreDelJugador2;
     }
 
     public void setPuntuacionJugador1(int puntuacionJugador1) {
@@ -64,12 +65,23 @@ public class Registro {
         this.puntuacionJugador2 = puntuacionJugador2;
     }
 
-    public LocalDateTime getFechaYHora() {
-        return fechaYHora;
+    public void determinarGanador() {
+        if (puntuacionJugador1 > puntuacionJugador2) {
+            System.out.print("Ha ganado el jugador " + getNombreJugador1() + "!\n");
+        } else if (puntuacionJugador1 < puntuacionJugador2) {
+            System.out.print("Ha ganado el jugador " + getNombreJugador2() + "!\n");
+        } else {
+            System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreJugador2()
+                    + " han empatado!\n");
+        }
     }
 
-    public int getTipoDePartida() {
-        return tipoDePartida;
+    public String getFechaHoraFormateada() {
+        return fechaHora.format(formato);
+    }
+
+    public char[] getTipoPartida() {
+        return tipoPartida;
     }
 
     public int getNivelCPU() {
@@ -80,12 +92,12 @@ public class Registro {
         return numeroRondas;
     }
 
-    public char[] getNombreDelJugador1() {
-        return nombreDelJugador1;
+    public char[] getNombreJugador1() {
+        return nombreJugador1;
     }
 
-    public char[] getNombreDelJugador2() {
-        return nombreDelJugador2;
+    public char[] getNombreJugador2() {
+        return nombreJugador2;
     }
 
     public int getPuntuacionJugador1() {
@@ -94,6 +106,16 @@ public class Registro {
 
     public int getPuntuacionJugador2() {
         return puntuacionJugador2;
+    }
+
+    public int getTotalPartidas() {
+        return totalPartidas;
+    }
+    
+    public String toString() {
+        return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreJugador2() + "#" + getNivelCPU()
+                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionJugador2();
+
     }
 
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package practicafinalprogramacion;
 
 import java.io.BufferedReader;
@@ -23,22 +19,24 @@ public class LecturaFicheros {
         this.fichero = fichero;
         this.br = new BufferedReader(new FileReader(fichero));
     }
-    
-    public char[] leerFichero(String fichero) throws IOException {
+
+    public char[] leerFichero() throws IOException {
         String texto;
         String total = "";
-        char res[];
-        while((texto = br.readLine()) != null) {
-            total += (separador + texto);
+        while ((texto = br.readLine()) != null) {
+            if (texto == "\n") {
+                texto = " ";
+            }
+            total += texto;
         }
-        res=total.toCharArray();
-        return res;
+        return total.toCharArray();
     }
-    
-   
+
+    public void cerrarFichero() throws IOException {
+        br.close();
+    }
 
     public String getFichero() {
         return fichero;
     }
-    
 }

@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package practicafinalprogramacion;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
 
@@ -35,11 +30,6 @@ public class Main {
     boolean puedeCrearse = false;
     boolean existeEnDiccionario = false;
 
-    public static void main(String[] args) {
-        Main m = new Main();
-        m.menuPrincipal();
-    }
-
     public void menuPrincipal() {
         System.out.print("""
                          ************************************
@@ -52,10 +42,56 @@ public class Main {
                          
                          Opcion(1|2|s): """);
 
-        opcion = lector.llegirEnter();
+        opcion = lector.llegirCaracter();
+        //Switch del menuPrincipal
         switch (opcion) {
-            case 1 -> {
-                System.out.print("""
+            case '1' -> {
+                opcionJugar();
+
+                //Switch si le ha dado al 1 (Jugar)
+                switch (opcion) {
+                    case '1' -> {
+                        //Jugar contra la CPU
+                        casoJugarContraCPU();
+
+                        //Validacion de palabra
+                        validarPalabra();
+
+                    }
+                    case '2' -> {
+                        //Jugar contra otra persona (por hacer)
+                        //casoJugarContraJugador()
+                    }
+
+                    case 's' -> {
+                        menuPrincipal();
+                    }
+
+                    default -> {
+                        System.err.println("\nERROR. Introduce una opcion valida!\n");
+                        opcionRegistro();
+                    }
+
+                }
+            }
+            case '2' -> {
+                opcionRegistro();
+
+            }
+            default -> {
+                if (opcion == 's') {
+                    System.out.println("Saliendo... Gracias por Jugar a Cifras y Letras!");
+                } else {
+                    System.err.println("\nERROR. Introduce una opcion valida!\n");
+                    menuPrincipal();
+                }
+            }
+        }
+    }
+
+    //METODOS PRINCIPALES
+    public void opcionJugar() {
+        System.out.print("""
                                  
                                  ************************************
                                  JUGAR
@@ -66,91 +102,137 @@ public class Main {
                                  ************************************
                                  
                                  Opcion (1|2|3|s): """);
-                opcion = lector.llegirEnter();
-                switch (opcion) {
-                    case 1 -> {
-                        System.out.println("""
+        opcion = lector.llegirCaracter();
+    }
+
+    public void opcionRegistro() {
+        System.out.print("""    
+                         
+                                   ************************************
+                                   REGISTRO
+                                   ************************************
+                                       1. Mostrar resultados de las partidas
+                                       2. Mostrar estadisticas de un jugador
+                                       s. Volver al menu principal
+                
+                                   Opcion (1|2|3|s): """);
+
+        opcion = lector.llegirCaracter();
+        switch (opcion) {
+            case '1' -> {
+                mostrarResultadosPartida();
+            }
+            case '2' -> {
+                //por implementar:
+                //mostrarEstadisticasJugador();
+            }
+            case 's' -> {
+                System.out.println();
+                menuPrincipal();
+            }
+            default -> {
+                System.err.println("\nERROR. Introduce una opcion valida!");
+                opcionRegistro();
+            }
+        }
+    }
+
+    public void casoJugarContraCPU() {
+        System.out.println("""
                                            
                                            ************************************
                                            JUGAR CONTRA EL ORDENADOR
                                            ************************************""");
 
-                        System.out.print("\nIntroduce el nombre del jugador: ");
-                        entradaPorTeclado = lector.llegirLinia();
-                        registroPartida.setNombreDelJugador1(entradaPorTeclado);
-                        System.out.println("Nombre del jugador 2: CPU.");
-                        System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                        opcion = lector.llegirEnter();
-                        while (opcion % 2 != 0) {
-                            System.err.println("Escribe un numero par de rondas");
-                            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                            opcion = lector.llegirEnter();
-                        }
-                        registroPartida.setNumeroRondas(opcion);
-                        int rondaActual = 1;
-                        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
-                        try {
-                            LecturaFicheros lecturaFichero = new LecturaFicheros(ficheroLetras);
-                            arrayFichero = lecturaFichero.leerFichero(ficheroLetras);
-                            for (int i = 0; i < caracteresAleatorios.length; i++) {
-                                int indiceAleatorio = random.nextInt(arrayFichero.length);
-                                caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
-                            }
-                            System.out.println("Letras disponibles: ");
-                            for (int i = 0; i < caracteresAleatorios.length; i++) {
-                                System.out.print(caracteresAleatorios[i] + " ");
-                            }
+        System.out.print("\nIntroduce el nombre del jugador: ");
+        entradaPorTeclado = lector.llegirLinia();
+        registroPartida.setNombreJugador1(entradaPorTeclado);
+        System.out.println("Nombre del jugador 2: CPU.");
+        registroPartida.setNombreJugador2("CPU".toCharArray());
+        System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+        opcion = lector.llegirEnter();
+        while (opcion % 2 != 0) {
+            System.err.println("Escribe un numero par de rondas");
+            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+            opcion = lector.llegirEnter();
+        }
+        registroPartida.setNumeroRondas(opcion);
+        int rondaActual = 1;
+        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
+        mostrarLetrasDisponibles();
+    }
 
-                            System.out.print("\nIntroduce tu palabra: ");
-                            entradaPorTeclado = lector.llegirLinia();
-                            System.out.println("Validando palabra...");
+    public void mostrarResultadosPartida() {
+        System.out.print("\n************************************\nDETALLES DE LAS PARTIDAS\n************************************\nPartida "
+                + registroPartida.getTotalPartidas() + " (" + registroPartida.getFechaHoraFormateada() + "). Modo "
+                + registroPartida.getTipoPartida() + ", " + registroPartida.getNumeroRondas() + " rondas,\n"
+                + "ganador: ");
+        registroPartida.determinarGanador();
+    }
 
-                            //Validacion de palabra
-                            try {
+    public void mostrarLetrasDisponibles() {
+        try {
+            LecturaFicheros lecturaFichero = new LecturaFicheros(ficheroLetras);
+            arrayFichero = lecturaFichero.leerFichero();
+            lecturaFichero.cerrarFichero();
+            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                int indiceAleatorio = random.nextInt(arrayFichero.length);
+                caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
+            }
+            System.out.println("Letras disponibles: ");
+            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                System.out.print(caracteresAleatorios[i] + " ");
+            }
 
+        } catch (IOException e) {
+            System.err.println("\nERROR. Fichero no encontrado\n");
+        }
+    }
 
-                                LecturaFicheros lecturaFicheroDiccionario = new LecturaFicheros(diccionarioEspanyol);
-                                arrayFichero = lecturaFicheroDiccionario.leerFichero(diccionarioEspanyol);
-                                for (int i = 0; i < arrayFichero.length; i++) {
-                                    System.out.print(arrayFichero[i]);
-                                }
+    public void validarPalabra() {
+        //METODO PENDIENTE DE REVISION (NO FUNCIONA BIEN)
+        System.out.print("\nIntroduce tu palabra: ");
+        entradaPorTeclado = lector.llegirLinia();
+        System.out.println("Validando palabra...");
 
-                                int indice1 = 0;
-                                int indice2 = 0;
-                                while (!existeEnDiccionario) {
-                                    for (indice1 = 0; indice1 < arrayFichero.length; indice1++) {
-                                        for (indice2 = 0; indice2 < entradaPorTeclado.length; indice2++) {
-                                            if (entradaPorTeclado[indice2] != arrayFichero[indice1]) {
-                                                indice2 = 0;
-                                            }
-                                        }
-                                    }
-
-                                    System.out.println(indice1);
-                                    if (indice2 == indice1) {
-                                        existeEnDiccionario = true;
-                                    }
-                                }
-
-                                if (existeEnDiccionario) {
-                                    System.out.println(" -puede crearse con las letras disponibles ✓\n -existe en el diccionario ✓");
-
-                                } else {
-                                    System.out.println("Palabra no valida! Intentalo de nuevo");
-                                }
-
-                            } catch (IOException e) {
-                                System.err.println("ERROR. Fichero no encontrado");
-                            }
-
-                        } catch (IOException e) {
-                            System.err.println("ERROR. Fichero no encontrado");
-                        }
-
+        //Validacion de palabra
+        try {
+            LecturaFicheros lecturaFicheroDiccionario = new LecturaFicheros(diccionarioEspanyol);
+            arrayFichero = lecturaFicheroDiccionario.leerFichero();
+            lecturaFicheroDiccionario.cerrarFichero();
+            for (int i = 0; i < arrayFichero.length; i++) {
+                System.out.print(arrayFichero[i]);
+            }
+        } catch (IOException e) {
+            System.err.println("\nERROR. Fichero no encontrad\n");
+        }
+        int indice1 = 0;
+        int indice2 = 0;
+        while (!existeEnDiccionario) {
+            for (indice1 = 0; indice1 < arrayFichero.length; indice1++) {
+                for (indice2 = 0; indice2 < entradaPorTeclado.length; indice2++) {
+                    if (entradaPorTeclado[indice1] != arrayFichero[indice2]) {
+                        indice2 = 0;
                     }
-
                 }
             }
+
+            System.out.println(indice1);
+            if (indice2 == indice1) {
+                existeEnDiccionario = true;
+            }
         }
+
+        if (existeEnDiccionario) {
+            System.out.println(" -puede crearse con las letras disponibles \n -existe en el diccionario");
+
+        } else {
+            System.err.println("Palabra no valida! Intentalo de nuevo\n");
+        }
+    }
+
+    public static void main(String[] args) {
+        Main m = new Main();
+        m.menuPrincipal();
     }
 }

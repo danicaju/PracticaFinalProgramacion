@@ -26,7 +26,7 @@ public class LineaFicherosLectura {
         }
 
         // saltar '\n' o '\r'
-        if (codigoLeido == '\r') {
+        if (codigoLeido == '\r' || codigoLeido == '\n') {
             fichero.read();
         }
         codigoLeido = fichero.read();

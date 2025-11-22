@@ -14,6 +14,8 @@ public class Linea {
         if (numeroCaracteres < caracteres.length) {
             caracteres[numeroCaracteres] = c;
             numeroCaracteres++;
+        }else {
+            System.out.println("ARRAY LLENO");
         }
     }
 

@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/practicafinalprogramacion/LineaFicherosLectura.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>30</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/LecturaFicheros.java</file>
+            <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/FicherosLectura.java</file>
             <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/LT.java</file>
-            <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/Palabra.java</file>
             <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/Main.java</file>
             <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/Linea.java</file>
             <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/LineaFicherosLectura.java</file>
+            <file>file:/C:/Users/danic/Documents/NetBeansProjects/PracticaFinalProgramacion/src/practicafinalprogramacion/Registro.java</file>
         </group>
     </open-files>
 </project-private>

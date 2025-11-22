@@ -1,6 +1,7 @@
 package practicafinalprogramacion;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 /*
@@ -22,15 +23,14 @@ public class Main {
     char arrayFichero[];
     //Numero de caracteres aleatorios de la ronda de letras
     char caracteresAleatorios[] = new char[10];
+    //Entero que representa la ronda en la que se encuentran, supondremos que siempre
+    //el numero de rondas es >= 1
+    int rondaActual = 1;
     //Random usado para leer letras de forma aleatoria del fichero "letras_es.txt"
     Random random = new Random();
     //Strings con los nombres de los ficheros proporcionados
     String ficheroLetras = "letras_es.txt";
     String diccionarioEspanyol = "dic_es.txt";
-    boolean puedeFormarse = false;
-    boolean existeEnDiccionario = false;
-    boolean encontrada = false;
-    Linea linea = new Linea();
 
     public void menuPrincipal() throws Exception {
         System.out.print("""
@@ -49,32 +49,6 @@ public class Main {
         switch (opcion) {
             case '1' -> {
                 opcionJugar();
-
-                //Switch si le ha dado al 1 (Jugar)
-                switch (opcion) {
-                    case '1' -> {
-                        //Jugar contra la CPU
-                        casoJugarContraCPU();
-
-                        //Validacion de palabra
-                        validarPalabra();
-
-                    }
-                    case '2' -> {
-                        //Jugar contra otra persona (por hacer)
-                        //casoJugarContraJugador()
-                    }
-
-                    case 's' -> {
-                        menuPrincipal();
-                    }
-
-                    default -> {
-                        System.err.println("\nERROR. Introduce una opcion valida!\n");
-                        opcionRegistro();
-                    }
-
-                }
             }
             case '2' -> {
                 opcionRegistro();
@@ -92,7 +66,7 @@ public class Main {
     }
 
     //METODOS PRINCIPALES
-    public void opcionJugar() {
+    public void opcionJugar() throws Exception {
         System.out.print("""
                                  
                                  ************************************
@@ -104,7 +78,44 @@ public class Main {
                                  ************************************
                                  
                                  Opcion (1|2|3|s): """);
+
         opcion = lector.llegirCaracter();
+        //Switch si le ha dado al 1 (Jugar)
+        switch (opcion) {
+            case '1' -> {
+                //Jugar contra la CPU
+                casoJugarContraCPU();
+                casoTurnoJugadorContraCPU();
+                mostrarLetrasDisponibles();
+
+                //Validacion de palabra
+                puedeFormarseJugador();
+                existeEnDiccionarioJugador();
+
+                //En el caso de que exista, premiar al jugador con puntos
+                puntuacionJugador1();
+
+                casoTurnoCPUContraJugador();
+                mostrarLetrasDisponibles();
+                //Quedan metodos por implementar
+
+            }
+            case '2' -> {
+                //Jugar contra otra persona (por hacer)
+                //casoTurnoJugador1ContraJugador2
+                //casoTurnoJugador2ContraJugador1
+            }
+
+            case 's' -> {
+                menuPrincipal();
+            }
+
+            default -> {
+                System.err.println("\nERROR. Introduce una opcion valida!");
+                opcionJugar();
+            }
+
+        }
     }
 
     public void opcionRegistro() throws Exception {
@@ -148,9 +159,11 @@ public class Main {
 
         System.out.print("\nIntroduce el nombre del jugador: ");
         entradaPorTeclado = lector.llegirLinia();
-        registroPartida.setNombreJugador1(entradaPorTeclado);
+        //Comentar esto mas adelante
+        String aux = new String(entradaPorTeclado);
+        registroPartida.setNombreJugador1(aux);
         System.out.println("Nombre del jugador 2: CPU.");
-        registroPartida.setNombreJugador2("CPU".toCharArray());
+        registroPartida.setNombreJugador2("CPU");
         System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
         opcion = lector.llegirEnter();
         while (opcion % 2 != 0) {
@@ -159,9 +172,16 @@ public class Main {
             opcion = lector.llegirEnter();
         }
         registroPartida.setNumeroRondas(opcion);
-        int rondaActual = 1;
         System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
-        mostrarLetrasDisponibles();
+    }
+
+    public void casoTurnoJugadorContraCPU() {
+        System.out.println("Turno de: " + registroPartida.getNombreJugador1());
+
+    }
+
+    public void casoTurnoCPUContraJugador() {
+        System.out.println("Turno de: " + registroPartida.getNombreJugador2());
     }
 
     public void mostrarResultadosPartida() {
@@ -174,9 +194,8 @@ public class Main {
 
     public void mostrarLetrasDisponibles() {
         try {
-            LecturaFicheros lecturaFichero = new LecturaFicheros(ficheroLetras);
+            FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
             arrayFichero = lecturaFichero.leerFichero();
-            lecturaFichero.cerrarFichero();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 int indiceAleatorio = random.nextInt(arrayFichero.length);
                 caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
@@ -185,37 +204,41 @@ public class Main {
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 System.out.print(caracteresAleatorios[i] + " ");
             }
+            lecturaFichero.cerrarFichero();
 
         } catch (IOException e) {
-            System.err.println("\nERROR. Fichero no encontrado\n");
+            System.err.println("\nERROR. Fichero no encontrado");
         }
     }
 
-    public void validarPalabra() throws Exception {
-
+    public void puedeFormarseJugador() throws Exception {
         System.out.print("\nIntroduce tu palabra: ");
         entradaPorTeclado = lector.llegirLinia();
         System.out.println("Validando palabra...");
 
         // 1. Comprobar si puede formarse con las letras disponibles
+        //Copiamos el array de caracteresAleatorios en otro array 
+        //que nos ayudara mas adelante, "copiaLetras"
         char[] copiaLetras = new char[caracteresAleatorios.length];
         for (int i = 0; i < caracteresAleatorios.length; i++) {
-            copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente
+            copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
         }
 
-        puedeFormarse = true;
+        /*
+        Recorremos las letras de la palabra que el jugador ha introducido (copiaLetras).
+        Por cada letra, buscamos si existe en el array de letras disponibles.
+        Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
+        Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
+         */
+        boolean puedeFormarse = true;
 
-        for (int i = 0; i < entradaPorTeclado.length; i++) {
-            char letra = entradaPorTeclado[i];
+        for (int i = 0; i < copiaLetras.length; i++) {
+            char letra = copiaLetras[i];
             boolean encontrada = false;
-            int j = 0;
-
-            while (!encontrada && j < copiaLetras.length) {
+            for (int j = 0; j < copiaLetras.length && !encontrada; j++) {
                 if (copiaLetras[j] == letra) {
-                    copiaLetras[j] = '*'; // marcar como usada
+                    copiaLetras[j] = '*';
                     encontrada = true;
-                } else {
-                    j++;
                 }
             }
 
@@ -225,45 +248,65 @@ public class Main {
         }
 
         if (!puedeFormarse) {
-            System.err.println("La palabra NO puede formarse con las letras disponibles! Inténtalo de nuevo.");
-            validarPalabra(); // volver a pedir palabra
-            return;
+            System.err.println("\nLa palabra NO puede formarse con las letras disponibles! Intentalo de nuevo.");
+            puedeFormarseJugador();
+
         }
+    }
 
-        // 2. Buscar palabra en diccionario
+    /*
+    
+    
+    public void puedeFormarseCPU() {
+         System.out.print("\nIntroduce tu palabra: ");
+         
+    }
+     */
+    public void existeEnDiccionarioJugador() throws Exception {
         LineaFicherosLectura ficheroDic = new LineaFicherosLectura(diccionarioEspanyol);
-        boolean encontradaEnDiccionario = false;
 
-        while (ficheroDic.quedanLineas() && !encontradaEnDiccionario) {
-            Linea lineaDic = ficheroDic.leerFichero();
+        boolean existeEnDic = false;
+        while (ficheroDic.quedanLineas() && !existeEnDic) {
+            try {
 
-            if (lineaDic.getNumeroCaracteres() == entradaPorTeclado.length) {
-                boolean iguales = true;
-                int k = 0;
+                Linea lineaDic = ficheroDic.leerFichero();
 
-                while (iguales && k < entradaPorTeclado.length) {
-                    if (lineaDic.getCaracter(k) != entradaPorTeclado[k]) {
-                        iguales = false;
+                if (lineaDic.getNumeroCaracteres() == entradaPorTeclado.length) {
+                    boolean iguales = true;
+                    int i = 0;
+
+                    while (iguales && i < entradaPorTeclado.length) {
+                        if (lineaDic.getCaracter(i) != entradaPorTeclado[i]) {
+                            iguales = false;
+                        }
+                        i++;
                     }
-                    k++;
+
+                    if (iguales) {
+                        existeEnDic = true;
+                    }
                 }
 
-                if (iguales) {
-                    encontradaEnDiccionario = true;
-                }
+            } catch (IOException e) {
+                System.err.println("\nERROR. Fichero no encontrado");
             }
         }
 
         ficheroDic.cerrarFichero();
 
         // 3. Resultado final
-        if (encontradaEnDiccionario) {
+        if (existeEnDic) {
             System.out.println(" - puede crearse con las letras disponibles");
             System.out.println(" - existe en el diccionario");
         } else {
-            System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo! ");
-            validarPalabra();
+            System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo!");
+            existeEnDiccionarioJugador();
         }
+    }
+
+    public void puntuacionJugador1() {
+        registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
+        System.out.println("Felicidades. Has ganado " + entradaPorTeclado.length + " puntos!");
     }
 
     public static void main(String[] args) throws Exception {

@@ -11,11 +11,11 @@ public class Registro {
 
     private LocalDateTime fechaHora;
     private int totalPartidas;
-    private char[] tipoPartida;
+    String tipoPartida;
     private int nivelCPU;
     private int numeroRondas;
-    private char[] nombreJugador1;
-    private char[] nombreJugador2;
+    String nombreJugador1;
+    String nombreJugador2;
     private int puntuacionJugador1;
     private int puntuacionJugador2;
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -37,7 +37,7 @@ public class Registro {
         this.fechaHora = fechaHora;
     }
 
-    public void setTipoPartida(char[] tipoPartida) {
+    public void setTipoPartida(String tipoPartida) {
         this.tipoPartida = tipoPartida;
     }
 
@@ -49,11 +49,11 @@ public class Registro {
         this.numeroRondas = numeroRondas;
     }
 
-    public void setNombreJugador1(char[] nombreDelJugador1) {
+    public void setNombreJugador1(String nombreDelJugador1) {
         this.nombreJugador1 = nombreDelJugador1;
     }
 
-    public void setNombreJugador2(char[] nombreDelJugador2) {
+    public void setNombreJugador2(String nombreDelJugador2) {
         this.nombreJugador2 = nombreDelJugador2;
     }
 
@@ -80,7 +80,7 @@ public class Registro {
         return fechaHora.format(formato);
     }
 
-    public char[] getTipoPartida() {
+    public String getTipoPartida() {
         return tipoPartida;
     }
 
@@ -92,11 +92,11 @@ public class Registro {
         return numeroRondas;
     }
 
-    public char[] getNombreJugador1() {
+    public String getNombreJugador1() {
         return nombreJugador1;
     }
 
-    public char[] getNombreJugador2() {
+    public String getNombreJugador2() {
         return nombreJugador2;
     }
 

@@ -1,9 +1,7 @@
 package practicafinalprogramacion;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 /*
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
@@ -96,10 +94,13 @@ public class Main {
                 //En el caso de que exista, premiar al jugador con puntos
                 puntuacionJugador1();
 
+                //Aqui empieza el turno de la CPU
                 casoTurnoCPUContraJugador();
                 mostrarLetrasDisponibles();
                 puedeFormarseCPU();
-                puntuacionJugador2();
+                puntuacionCPU();
+                //Por implementar:
+                //finalRonda();
 
                 //Quedan metodos por implementar
             }
@@ -166,25 +167,26 @@ public class Main {
         String aux = new String(entradaPorTeclado);
         registroPartida.setNombreJugador1(aux);
         System.out.println("Nombre del jugador 2: CPU.");
-        registroPartida.setNombreJugador2("CPU");
+        registroPartida.setNombreCPU("CPU");
         System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
         opcion = lector.llegirEnter();
+        registroPartida.setNumeroRondas(opcion);
         while (opcion % 2 != 0) {
             System.err.println("Escribe un numero par de rondas");
             System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
             opcion = lector.llegirEnter();
         }
-        registroPartida.setNumeroRondas(opcion);
-        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
     }
 
     public void casoTurnoJugadorContraCPU() {
+        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
+
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
 
     }
 
     public void casoTurnoCPUContraJugador() {
-        System.out.println("\nTurno de: " + registroPartida.getNombreJugador2());
+        System.out.println("\nTurno de: " + registroPartida.getNombreCPU());
     }
 
     public void mostrarResultadosPartida() {
@@ -228,17 +230,17 @@ public class Main {
         }
 
         /*
-        Recorremos las letras de la palabra que el jugador ha introducido (copiaLetras).
-        Por cada letra, buscamos si existe en el array de letras disponibles.
+        Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
+        Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
         Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
         Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
          */
         boolean puedeFormarse = true;
 
-        for (int i = 0; i < copiaLetras.length; i++) {
-            char letra = copiaLetras[i];
+        for (int i = 0; i < entradaPorTeclado.length; i++) {
+            char letra = entradaPorTeclado[i];
             boolean encontrada = false;
-            for (int j = 0; j < copiaLetras.length && !encontrada; j++) {
+            for (int j = 0; j < caracteresAleatorios.length && !encontrada; j++) {
                 if (copiaLetras[j] == letra) {
                     copiaLetras[j] = '*';
                     encontrada = true;
@@ -257,27 +259,44 @@ public class Main {
         }
     }
 
+    /*
+    Lo que haremos para simular una CPU, es que el programa vaya leyendo
+    todo el diccionario, y a partir de eso vaya comprobando que palabras
+    del diccionario pueden ser una potencial palabra con las letras 
+    disponibles del metodo mostrarLetrasDisponibles()
+     */
     public void puedeFormarseCPU() throws IOException {
-        // Copia de las letras disponibles de la ronda
-        char copiaLetras[] = new char[caracteresAleatorios.length];
         Random random = new Random();
         char[] palabraCPU = null;
         int contador = 0;
 
-        // Abrir diccionario
         FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
         char[] palabraDic;
 
-        // Recorrer el diccionario línea por línea
+        /*
+        Mientras lo que lea no sea igual a 0 (final de linea), es decir,
+        ha devuelto null y el array.length de palabraDic es igual a 0
+        entonces que vaya comprobando si la palabraDic puede formarse
+        con auxLetras
+         */
         while ((palabraDic = ficheroDic.leerFicheroLinea()).length > 0) {
 
-            // Copiar letras disponibles para esta palabra candidata
+            /*
+            char auxLetras[] nos ayuda porque en cada iteracion
+            almacena una linea entera del diccionarioEspanyol 
+            ("dic_es.txt").
+             */
             char auxLetras[] = new char[caracteresAleatorios.length];
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 auxLetras[i] = caracteresAleatorios[i];
             }
 
-            // Comprobar si la palabraDic puede formarse con auxLetras
+            /*
+            Comprobar si la palabraDic puede formarse con auxLetras.
+            Cabe destacar que auxLetras tiene el array de
+            caracteresAleatorios que se ha formado en el
+            metodo mostrarLetrasDisponibles()
+             */
             boolean puedeFormarse = true;
             for (int i = 0; i < palabraDic.length && puedeFormarse; i++) {
                 char letra = palabraDic[i];
@@ -296,7 +315,22 @@ public class Main {
                 }
             }
 
-            // Si es válida, aplicar reservoir sampling para elegir aleatoriamente
+            /*
+            Si esa palabra, si pudiera formarse con las letras disponibles,
+            en nuestro caso con el array auxLetras, entonces, el contador
+            se incrementa para decir que ya hemos encontrado una palabra
+            valida para ser la candidata a eleccion de la CPU.
+            
+            Para elegir la palabra valida, la probabilidad siempre es de
+            1/contador, ya que por ejemplo, la primera palabra valida
+            siempre se elige ya que 1/contador = 1/1 = 1 (100%). 
+            
+            Para la segunda palabra, se hace exactamente lo mismo, 1/contador,
+            en este caso 1/contador = 1/2 (50%), y si entre el 0 y el 1,
+            saliera un 0, entonces se reemplaza la palabra de la CPU 
+            por esa palabra de diccionario. Y esa seria la nueva
+            palabra candidata a eleccion de la CPU.
+             */
             if (puedeFormarse) {
                 contador++;
                 int r = random.nextInt(contador);
@@ -312,7 +346,7 @@ public class Main {
         if (palabraCPU != null) {
             System.out.println("\nCPU elige: " + new String(palabraCPU));
             registroPartida.setPuntuacionJugador2(palabraCPU.length);
-            
+
         } else {
             System.out.println("CPU no pudo formar ninguna palabra.");
         }
@@ -349,7 +383,7 @@ public class Main {
             System.out.println(" - puede crearse con las letras disponibles");
             System.out.println(" - existe en el diccionario");
             registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
-            
+
         } else {
             System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo!");
             existeEnDiccionarioJugador();
@@ -358,13 +392,37 @@ public class Main {
 
     }
 
+    /*
+    En estos metodos de puntuacion, usamos 
+    una variable acumulador para que vaya acumulando los puntos 
+    de todas las rondas que quiera jugar el jugador
+     */
     public void puntuacionJugador1() {
-        System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + entradaPorTeclado.length + " puntos!");
+        int acumulador = 0;
+        acumulador += entradaPorTeclado.length;
+        System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + acumulador + " puntos!");
     }
 
-    public void puntuacionJugador2() {
-        System.out.println("Felicidades " + registroPartida.getNombreJugador2() + "! Has ganado " + registroPartida.getPuntuacionJugador2() + " puntos!");
+    public void puntuacionCPU() {
+        int acumulador = 0;
+        acumulador += registroPartida.getPuntuacionCPU();
+        System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumulador + " puntos!");
     }
+
+    /*
+
+    public void finalRonda() {
+        System.out.println("Ronda " + rondaActual + " de" + registroPartida.getNumeroRondas());
+
+        if (rondaActual == registroPartida.getNumeroRondas()) {
+            System.out.println("Se acabo la partida! Muy bien jugados ambos!");
+            registroPartida.determinarGanador();
+        } else {
+            rondaActual++;
+            casoTurnoJugadorContraCPU();
+        }
+    }
+*/
 
     public static void main(String[] args) throws Exception {
         Main m = new Main();

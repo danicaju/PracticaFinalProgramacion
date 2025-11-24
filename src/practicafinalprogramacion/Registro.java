@@ -15,7 +15,7 @@ public class Registro {
     private int nivelCPU;
     private int numeroRondas;
     String nombreJugador1;
-    String nombreJugador2;
+    String nombreCPU;
     private int puntuacionJugador1;
     private int puntuacionJugador2;
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -25,9 +25,9 @@ public class Registro {
         this.totalPartidas = totalPartidas = 1;
         this.tipoPartida = tipoPartida;
         this.nivelCPU = nivelCPU;
-        this.numeroRondas = numeroRondas;
+        this.numeroRondas = numeroRondas = 1;
         this.nombreJugador1 = nombreJugador1;
-        this.nombreJugador2 = nombreJugador2;
+        this.nombreCPU = nombreCPU;
         this.puntuacionJugador1 = puntuacionJugador1;
         this.puntuacionJugador2 = puntuacionJugador2;
 
@@ -53,8 +53,8 @@ public class Registro {
         this.nombreJugador1 = nombreDelJugador1;
     }
 
-    public void setNombreJugador2(String nombreDelJugador2) {
-        this.nombreJugador2 = nombreDelJugador2;
+    public void setNombreCPU(String nombreDelJugador2) {
+        this.nombreCPU = nombreDelJugador2;
     }
 
     public void setPuntuacionJugador1(int puntuacionJugador1) {
@@ -69,9 +69,9 @@ public class Registro {
         if (puntuacionJugador1 > puntuacionJugador2) {
             System.out.print("Ha ganado el jugador " + getNombreJugador1() + "!\n");
         } else if (puntuacionJugador1 < puntuacionJugador2) {
-            System.out.print("Ha ganado el jugador " + getNombreJugador2() + "!\n");
+            System.out.print("Ha ganado el jugador " + getNombreCPU() + "!\n");
         } else {
-            System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreJugador2()
+            System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreCPU()
                     + " han empatado!\n");
         }
     }
@@ -96,15 +96,15 @@ public class Registro {
         return nombreJugador1;
     }
 
-    public String getNombreJugador2() {
-        return nombreJugador2;
+    public String getNombreCPU() {
+        return nombreCPU;
     }
 
     public int getPuntuacionJugador1() {
         return puntuacionJugador1;
     }
 
-    public int getPuntuacionJugador2() {
+    public int getPuntuacionCPU() {
         return puntuacionJugador2;
     }
 
@@ -113,8 +113,8 @@ public class Registro {
     }
     
     public String toString() {
-        return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreJugador2() + "#" + getNivelCPU()
-                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionJugador2();
+        return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreCPU() + "#" + getNivelCPU()
+                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionCPU();
 
     }
 

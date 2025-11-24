@@ -9,43 +9,37 @@ import java.io.IOException;
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
-public class FicherosLectura
-{
+public class FicherosLectura {
 
-    private String fichero;
     private BufferedReader br;
 
-    public FicherosLectura(String fichero) throws FileNotFoundException {
-        this.fichero = fichero;
-        this.br = new BufferedReader(new FileReader(fichero));
+    public FicherosLectura(String nombreFichero) throws FileNotFoundException, IOException {
+        this.br = new BufferedReader(new FileReader(nombreFichero));
     }
 
-    public char[] leerFichero() throws IOException {
-    String texto;
-    String total = "";
+    public char[] leerFicheroLinea() throws IOException {
 
-    while ((texto = br.readLine()) != null) {
+        String total = "";
 
-        for (int i = 0; i < texto.length(); i++) {
-            char caracter = texto.charAt(i);
+        String linea = br.readLine();
 
-            // Comprobamos si NO es un carácter que queremos saltar
-            if (caracter != ' ' && caracter != '\t' && caracter != '\n' && caracter != '\r') {
-                // Añadimos solo los caracteres válidos
-                total = total + caracter;
+        if (linea == null) {
+            return total.toCharArray();
+        }
+
+        for (int i = 0; i < linea.length(); i++) {
+            char c = linea.charAt(i);
+
+            if (c != ' ' && c != '\t') {
+                total = total + c;   
             }
         }
+
+        return total.toCharArray();
     }
-
-    return total.toCharArray();
-}
-
 
     public void cerrarFichero() throws IOException {
         br.close();
     }
 
-    public String getFichero() {
-        return fichero;
-    }
 }

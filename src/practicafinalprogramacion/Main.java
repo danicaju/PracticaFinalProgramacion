@@ -1,8 +1,9 @@
 package practicafinalprogramacion;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /*
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
@@ -97,8 +98,10 @@ public class Main {
 
                 casoTurnoCPUContraJugador();
                 mostrarLetrasDisponibles();
-                //Quedan metodos por implementar
+                puedeFormarseCPU();
+                puntuacionJugador2();
 
+                //Quedan metodos por implementar
             }
             case '2' -> {
                 //Jugar contra otra persona (por hacer)
@@ -181,7 +184,7 @@ public class Main {
     }
 
     public void casoTurnoCPUContraJugador() {
-        System.out.println("Turno de: " + registroPartida.getNombreJugador2());
+        System.out.println("\nTurno de: " + registroPartida.getNombreJugador2());
     }
 
     public void mostrarResultadosPartida() {
@@ -195,7 +198,7 @@ public class Main {
     public void mostrarLetrasDisponibles() {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
-            arrayFichero = lecturaFichero.leerFichero();
+            arrayFichero = lecturaFichero.leerFicheroLinea();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 int indiceAleatorio = random.nextInt(arrayFichero.length);
                 caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
@@ -254,59 +257,113 @@ public class Main {
         }
     }
 
-    /*
-    
-    
-    public void puedeFormarseCPU() {
-         System.out.print("\nIntroduce tu palabra: ");
-         
-    }
-     */
-    public void existeEnDiccionarioJugador() throws Exception {
-        LineaFicherosLectura ficheroDic = new LineaFicherosLectura(diccionarioEspanyol);
+    public void puedeFormarseCPU() throws IOException {
+        // Copia de las letras disponibles de la ronda
+        char copiaLetras[] = new char[caracteresAleatorios.length];
+        Random random = new Random();
+        char[] palabraCPU = null;
+        int contador = 0;
 
-        boolean existeEnDic = false;
-        while (ficheroDic.quedanLineas() && !existeEnDic) {
-            try {
+        // Abrir diccionario
+        FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
+        char[] palabraDic;
 
-                Linea lineaDic = ficheroDic.leerFichero();
+        // Recorrer el diccionario línea por línea
+        while ((palabraDic = ficheroDic.leerFicheroLinea()).length > 0) {
 
-                if (lineaDic.getNumeroCaracteres() == entradaPorTeclado.length) {
-                    boolean iguales = true;
-                    int i = 0;
+            // Copiar letras disponibles para esta palabra candidata
+            char auxLetras[] = new char[caracteresAleatorios.length];
+            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                auxLetras[i] = caracteresAleatorios[i];
+            }
 
-                    while (iguales && i < entradaPorTeclado.length) {
-                        if (lineaDic.getCaracter(i) != entradaPorTeclado[i]) {
-                            iguales = false;
-                        }
-                        i++;
-                    }
+            // Comprobar si la palabraDic puede formarse con auxLetras
+            boolean puedeFormarse = true;
+            for (int i = 0; i < palabraDic.length && puedeFormarse; i++) {
+                char letra = palabraDic[i];
+                boolean encontrada = false;
 
-                    if (iguales) {
-                        existeEnDic = true;
+                // Buscar la letra en auxLetras
+                for (int j = 0; j < auxLetras.length && !encontrada; j++) {
+                    if (auxLetras[j] == letra) {
+                        auxLetras[j] = '*'; // marcar letra usada
+                        encontrada = true;
                     }
                 }
 
-            } catch (IOException e) {
-                System.err.println("\nERROR. Fichero no encontrado");
+                if (!encontrada) {
+                    puedeFormarse = false; // la letra no estaba disponible
+                }
+            }
+
+            // Si es válida, aplicar reservoir sampling para elegir aleatoriamente
+            if (puedeFormarse) {
+                contador++;
+                int r = random.nextInt(contador);
+                if (r == 0) {
+                    palabraCPU = palabraDic; // elegimos esta palabra
+                }
             }
         }
 
         ficheroDic.cerrarFichero();
 
+        // Mostrar la palabra elegida por la CPU
+        if (palabraCPU != null) {
+            System.out.println("\nCPU elige: " + new String(palabraCPU));
+            registroPartida.setPuntuacionJugador2(palabraCPU.length);
+            
+        } else {
+            System.out.println("CPU no pudo formar ninguna palabra.");
+        }
+    }
+
+    public void existeEnDiccionarioJugador() throws Exception {
+        FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
+
+        boolean existeEnDic = false;
+        while (!existeEnDic) {
+            try {
+                char array[] = ficheroDic.leerFicheroLinea();
+                if (array.length == entradaPorTeclado.length) {
+                    boolean iguales = true;
+                    int i = 0;
+
+                    while (iguales && i < entradaPorTeclado.length) {
+                        if (array[i] != entradaPorTeclado[i]) {
+                            iguales = false;
+                        }
+                        i++;
+                    }
+                    if (iguales);
+                    existeEnDic = true;
+                }
+            } catch (IOException e) {
+                System.err.println("\nERROR. Ficherpuo no encontrado");
+
+            }
+        }
+
         // 3. Resultado final
         if (existeEnDic) {
             System.out.println(" - puede crearse con las letras disponibles");
             System.out.println(" - existe en el diccionario");
+            registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
+            
         } else {
             System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo!");
             existeEnDiccionarioJugador();
         }
+        ficheroDic.cerrarFichero();
+
     }
 
     public void puntuacionJugador1() {
-        registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
-        System.out.println("Felicidades. Has ganado " + entradaPorTeclado.length + " puntos!");
+        System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + entradaPorTeclado.length + " puntos!");
+    }
+
+    public void puntuacionJugador2() {
+        System.out.println("Felicidades " + registroPartida.getNombreJugador2() + "! Has ganado " + registroPartida.getPuntuacionJugador2() + " puntos!");
     }
 
     public static void main(String[] args) throws Exception {

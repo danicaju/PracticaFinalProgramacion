@@ -365,10 +365,23 @@ public class Main {
         boolean iguales = false;
         while (!existeEnDic) {
             FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
-            char[] lineaDic = ficheroDic.leerFicheroLinea();
+            char[] lineaDic;
 
-            while (lineaDic.length > 0 && !existeEnDic) {
+            while ((lineaDic = ficheroDic.leerFicheroLinea()).length > 0 && (!existeEnDic)) {
 
+                /*
+                Si la linea que se lee en el diccionario tiene el mismo numero
+                de caracteres que la entrada por teclado del usuario, entonces
+                puede que sean iguales, si esto pasa entro en un bucle for que 
+                compara caracter a caracter, si hay algun caracter igual
+                significa sin lugar a duda que no son iguales, entonces
+                el booleano de iguales se settea a falso.
+                
+                Si acaba todo el bucle for y no se settea a false el booleano
+                de iguales, entonces se puede confirmar que todos los caracteres
+                son iguales (misma palabra), por tanto, iguales es true y 
+                existeEnDic es true tambien.
+                 */
                 if (lineaDic.length == entradaPorTeclado.length) {
                     iguales = true;
                 }

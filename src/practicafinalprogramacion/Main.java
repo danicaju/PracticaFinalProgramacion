@@ -25,6 +25,12 @@ public class Main {
     //Entero que representa la ronda en la que se encuentran, supondremos que siempre
     //el numero de rondas es >= 1
     int rondaActual = 1;
+    // Entero que acumula la puntuación de las rondas del jugador 1
+    int acumuladorPuntosJugador1 = 0;
+    // Entero que acumula la puntuación de las rondas del jugador 1
+    int acumuladorPuntosJugador2 = 0;
+    // Entero que acumula la puntuación de las rondas de la CPU
+    int acumuladorPuntosCPU = 0;
     //Random usado para leer letras de forma aleatoria del fichero "letras_es.txt"
     Random random = new Random();
     //Strings con los nombres de los ficheros proporcionados
@@ -84,7 +90,7 @@ public class Main {
             case '1' -> {
                 //Jugar contra la CPU
                 casoJugarContraCPU();
-                casoTurnoJugadorContraCPU();
+                casoTurnoJugadorContraCPULetras();
                 mostrarLetrasDisponibles();
 
                 //Validacion de palabra
@@ -99,7 +105,10 @@ public class Main {
                 mostrarLetrasDisponibles();
                 puedeFormarseCPU();
                 puntuacionCPU();
+                
+                //
                 //Por implementar:
+                
                 //finalRonda();
 
                 //Quedan metodos por implementar
@@ -178,7 +187,7 @@ public class Main {
         }
     }
 
-    public void casoTurnoJugadorContraCPU() {
+    public void casoTurnoJugadorContraCPULetras() {
         System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
 
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
@@ -373,7 +382,7 @@ public class Main {
                     existeEnDic = true;
                 }
             } catch (IOException e) {
-                System.err.println("\nERROR. Ficherpuo no encontrado");
+                System.err.println("\nERROR. Fichero no encontrado");
 
             }
         }
@@ -398,31 +407,27 @@ public class Main {
     de todas las rondas que quiera jugar el jugador
      */
     public void puntuacionJugador1() {
-        int acumulador = 0;
-        acumulador += entradaPorTeclado.length;
-        System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + acumulador + " puntos!");
+        acumuladorPuntosJugador1 += entradaPorTeclado.length;
+        System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + acumuladorPuntosJugador1 + " puntos!");
     }
 
     public void puntuacionCPU() {
-        int acumulador = 0;
-        acumulador += registroPartida.getPuntuacionCPU();
-        System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumulador + " puntos!");
+        acumuladorPuntosCPU += registroPartida.getPuntuacionCPU();
+        System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumuladorPuntosCPU + " puntos!");
     }
-
-    /*
-
+    
     public void finalRonda() {
-        System.out.println("Ronda " + rondaActual + " de" + registroPartida.getNumeroRondas());
-
+        System.out.println("Ronda " + rondaActual + "de" + registroPartida.getNumeroRondas());
+        
         if (rondaActual == registroPartida.getNumeroRondas()) {
             System.out.println("Se acabo la partida! Muy bien jugados ambos!");
             registroPartida.determinarGanador();
         } else {
             rondaActual++;
-            casoTurnoJugadorContraCPU();
+            casoTurnoJugadorContraCPULetras();
         }
     }
-*/
+
 
     public static void main(String[] args) throws Exception {
         Main m = new Main();

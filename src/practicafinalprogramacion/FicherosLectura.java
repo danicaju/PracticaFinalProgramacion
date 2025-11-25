@@ -33,9 +33,10 @@ public class FicherosLectura {
             if (c != ' ' && c != '\t') {
                 total = total + c;   
             }
+            
         }
 
-        return total.toCharArray();
+        return (total).toCharArray();
     }
 
     public void cerrarFichero() throws IOException {

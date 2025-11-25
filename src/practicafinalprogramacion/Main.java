@@ -105,12 +105,10 @@ public class Main {
                 mostrarLetrasDisponibles();
                 puedeFormarseCPU();
                 puntuacionCPU();
-                
+
                 //
                 //Por implementar:
-                
                 //finalRonda();
-
                 //Quedan metodos por implementar
             }
             case '2' -> {
@@ -362,49 +360,51 @@ public class Main {
     }
 
     public void existeEnDiccionarioJugador() throws Exception {
-        FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
 
         boolean existeEnDic = false;
+        boolean iguales = false;
         while (!existeEnDic) {
-            try {
-                char array[] = ficheroDic.leerFicheroLinea();
-                if (array.length == entradaPorTeclado.length) {
-                    boolean iguales = true;
-                    int i = 0;
+            FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
+            char[] lineaDic = ficheroDic.leerFicheroLinea();
 
-                    while (iguales && i < entradaPorTeclado.length) {
-                        if (array[i] != entradaPorTeclado[i]) {
-                            iguales = false;
-                        }
-                        i++;
+            while (lineaDic.length > 0 && !existeEnDic) {
+
+                if (lineaDic.length == entradaPorTeclado.length) {
+                    iguales = true;
+                }
+
+                for (int i = 0; i < lineaDic.length && iguales; i++) {
+                    if (lineaDic[i] != entradaPorTeclado[i]) {
+                        iguales = false;
                     }
-                    if (iguales);
+                }
+
+                if (iguales) {
                     existeEnDic = true;
                 }
-            } catch (IOException e) {
-                System.err.println("\nERROR. Fichero no encontrado");
+
+                lineaDic = ficheroDic.leerFicheroLinea();
 
             }
+
+            ficheroDic.cerrarFichero();
+
+            if (!existeEnDic) {
+                System.err.println("La palabra NO existe en el diccionario.");
+                System.out.println("Intentalo de nuevo!");
+                puedeFormarseJugador();
+            } else {
+                System.out.println(" - existe en el diccionario");
+                registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
+            }
+
         }
-
-        // 3. Resultado final
-        if (existeEnDic) {
-            System.out.println(" - puede crearse con las letras disponibles");
-            System.out.println(" - existe en el diccionario");
-            registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
-
-        } else {
-            System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo!");
-            existeEnDiccionarioJugador();
-        }
-        ficheroDic.cerrarFichero();
-
     }
 
     /*
-    En estos metodos de puntuacion, usamos 
-    una variable acumulador para que vaya acumulando los puntos 
-    de todas las rondas que quiera jugar el jugador
+    En estos metodos de puntuacion, usamos una variable acumulador
+    para que vaya acumulando los puntos de todas las rondas que
+    quiera jugar el jugador
      */
     public void puntuacionJugador1() {
         acumuladorPuntosJugador1 += entradaPorTeclado.length;
@@ -415,10 +415,10 @@ public class Main {
         acumuladorPuntosCPU += registroPartida.getPuntuacionCPU();
         System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumuladorPuntosCPU + " puntos!");
     }
-    
+
     public void finalRonda() {
         System.out.println("Ronda " + rondaActual + "de" + registroPartida.getNumeroRondas());
-        
+
         if (rondaActual == registroPartida.getNumeroRondas()) {
             System.out.println("Se acabo la partida! Muy bien jugados ambos!");
             registroPartida.determinarGanador();
@@ -427,7 +427,6 @@ public class Main {
             casoTurnoJugadorContraCPULetras();
         }
     }
-
 
     public static void main(String[] args) throws Exception {
         Main m = new Main();

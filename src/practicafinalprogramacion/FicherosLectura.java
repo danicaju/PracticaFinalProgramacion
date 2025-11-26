@@ -36,9 +36,10 @@ public class FicherosLectura {
         if (linea == null) {
             return total.toCharArray();
         }
-
-        for (int i = 0; i < linea.length(); i++) {
-            char c = linea.charAt(i);
+        char aux[] = linea.toCharArray();
+        for (int i = 0; i < aux.length; i++) {
+            aux = linea.toCharArray();
+            char c = aux[i];
 
             if (c != ' ' && c != '\t') {
                 /*

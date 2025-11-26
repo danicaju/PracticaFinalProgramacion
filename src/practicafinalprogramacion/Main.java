@@ -90,7 +90,7 @@ public class Main {
             case '1' -> {
                 //Jugar contra la CPU
                 casoJugarContraCPU();
-                casoTurnoJugadorContraCPULetras();
+                casoTurnoJugadorContraCPU();
                 mostrarLetrasDisponibles();
 
                 //Validacion de palabra
@@ -185,7 +185,7 @@ public class Main {
         }
     }
 
-    public void casoTurnoJugadorContraCPULetras() {
+    public void casoTurnoJugadorContraCPU() {
         System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
 
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
@@ -194,6 +194,11 @@ public class Main {
 
     public void casoTurnoCPUContraJugador() {
         System.out.println("\nTurno de: " + registroPartida.getNombreCPU());
+    }
+
+    public void jugadorPasaTurnoCPU() {
+        System.out.println("Has pasado!");
+        casoTurnoCPUContraJugador();
     }
 
     public void mostrarResultadosPartida() {
@@ -224,7 +229,7 @@ public class Main {
     }
 
     public void puedeFormarseJugador() throws Exception {
-        System.out.print("\nIntroduce tu palabra: ");
+        System.out.print("\nIntroduce tu palabra (o escribe 'paso'): ");
         entradaPorTeclado = lector.llegirLinia();
         System.out.println("Validando palabra...");
 
@@ -407,6 +412,7 @@ public class Main {
                 System.out.println("Intentalo de nuevo!");
                 puedeFormarseJugador();
             } else {
+                System.out.println(" - puede crearse con las letras disponibles");
                 System.out.println(" - existe en el diccionario");
                 registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
             }
@@ -437,7 +443,7 @@ public class Main {
             registroPartida.determinarGanador();
         } else {
             rondaActual++;
-            casoTurnoJugadorContraCPULetras();
+            casoTurnoJugadorContraCPU();
         }
     }
 

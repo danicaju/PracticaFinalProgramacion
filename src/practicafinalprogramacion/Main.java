@@ -18,10 +18,14 @@ public class Main {
     //Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
     //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     char entradaPorTeclado[];
-    //Usado para la lectura de fichero, guardara el fichero en un array de caracteres
-    char arrayFichero[];
+    //Usado para la lectura del fichero de letras, guardara el fichero en un array de caracteres
+    char arrayFicheroLetras[];
+    //Usado para la lectura del fichero de cifras, guardara el fichero en un array de enteros
+    int arrayFicheroCifras[];
     //Numero de caracteres aleatorios de la ronda de letras
     char caracteresAleatorios[] = new char[10];
+    //Numero de cifras aleatorias de la ronda de cifras
+    int cifrasAleatorias[] = new int[6];
     //Entero que representa la ronda en la que se encuentran, supondremos que siempre
     //el numero de rondas es >= 1
     int rondaActual = 1;
@@ -36,6 +40,7 @@ public class Main {
     //Strings con los nombres de los ficheros proporcionados
     String ficheroLetras = "letras_es.txt";
     String diccionarioEspanyol = "dic_es.txt";
+    String ficheroCifras = "cifras.txt";
 
     public void menuPrincipal() throws Exception {
         System.out.print("""
@@ -90,7 +95,7 @@ public class Main {
             case '1' -> {
                 //Jugar contra la CPU
                 casoJugarContraCPU();
-                casoTurnoJugadorContraCPU();
+                casoTurnoLetrasJugadorContraCPU();
                 mostrarLetrasDisponibles();
 
                 //Validacion de palabra
@@ -105,6 +110,8 @@ public class Main {
                 mostrarLetrasDisponibles();
                 puedeFormarseCPU();
                 puntuacionCPU();
+                
+                casoTurnoCifrasJugadorContraCPU();
 
                 //
                 //Por implementar:
@@ -185,11 +192,16 @@ public class Main {
         }
     }
 
-    public void casoTurnoJugadorContraCPU() {
+    public void casoTurnoLetrasJugadorContraCPU() {
         System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
 
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
+    }
 
+    public void casoTurnoCifrasJugadorContraCPU() {
+        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": cifras.");
+
+        System.out.println("Turno de: " + registroPartida.getNombreJugador1());
     }
 
     public void casoTurnoCPUContraJugador() {
@@ -212,10 +224,10 @@ public class Main {
     public void mostrarLetrasDisponibles() {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
-            arrayFichero = lecturaFichero.leerFicheroLinea();
+            arrayFicheroLetras = lecturaFichero.leerFicheroCaracter();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
-                int indiceAleatorio = random.nextInt(arrayFichero.length);
-                caracteresAleatorios[i] = arrayFichero[indiceAleatorio];
+                int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
+                caracteresAleatorios[i] = arrayFicheroLetras[indiceAleatorio];
             }
             System.out.println("Letras disponibles: ");
             for (int i = 0; i < caracteresAleatorios.length; i++) {
@@ -227,9 +239,33 @@ public class Main {
             System.err.println("\nERROR. Fichero no encontrado");
         }
     }
+    
+    /*
+     public void mostrarCifrasDisponibles() {
+         try {
+            FicherosLectura lecturaFichero = new FicherosLectura(ficheroCifras);
+            arrayFicheroLetras = lecturaFichero.leerFicheroCaracter();
+            for (int i = 0; i < cifrasAleatorias.length; i++) {
+                int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
+                cifrasAleatorias[i] = arrayFicheroLetras[indiceAleatorio];
+            }
+            System.out.println("Cifras disponibles: ");
+            for (int i = 0; i < cifrasAleatorias.length; i++) {
+                cifrasAleatorias[i] = cifrasAleatorias[i] - 48;
+                System.out.print((int) cifrasAleatorias[i] - 48 + " ");
+            }
+            lecturaFichero.cerrarFichero();
+
+        } catch (IOException e) {
+            System.err.println("\nERROR. Fichero no encontrado");
+        }
+    }
+    */
+   
+    
 
     public void puedeFormarseJugador() throws Exception {
-        System.out.print("\nIntroduce tu palabra (o escribe 'paso'): ");
+        System.out.print("\nIntroduce tu palabra: ");
         entradaPorTeclado = lector.llegirLinia();
         System.out.println("Validando palabra...");
 
@@ -291,7 +327,7 @@ public class Main {
         entonces que vaya comprobando si la palabraDic puede formarse
         con auxLetras
          */
-        while ((palabraDic = ficheroDic.leerFicheroLinea()).length > 0) {
+        while ((palabraDic = ficheroDic.leerFicheroCaracter()).length > 0) {
 
             /*
             char auxLetras[] nos ayuda porque en cada iteracion
@@ -372,7 +408,7 @@ public class Main {
             FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
             char[] lineaDic;
 
-            while ((lineaDic = ficheroDic.leerFicheroLinea()).length > 0 && (!existeEnDic)) {
+            while ((lineaDic = ficheroDic.leerFicheroCaracter()).length > 0 && (!existeEnDic)) {
 
                 /*
                 Si la linea que se lee en el diccionario tiene el mismo numero
@@ -401,7 +437,7 @@ public class Main {
                     existeEnDic = true;
                 }
 
-                lineaDic = ficheroDic.leerFicheroLinea();
+                lineaDic = ficheroDic.leerFicheroCaracter();
 
             }
 
@@ -432,7 +468,7 @@ public class Main {
 
     public void puntuacionCPU() {
         acumuladorPuntosCPU += registroPartida.getPuntuacionCPU();
-        System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumuladorPuntosCPU + " puntos!");
+        System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumuladorPuntosCPU + " puntos!\n");
     }
 
     public void finalRonda() {
@@ -443,7 +479,7 @@ public class Main {
             registroPartida.determinarGanador();
         } else {
             rondaActual++;
-            casoTurnoJugadorContraCPU();
+            casoTurnoLetrasJugadorContraCPU();
         }
     }
 

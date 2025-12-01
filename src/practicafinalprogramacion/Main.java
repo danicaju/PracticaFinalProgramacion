@@ -110,10 +110,10 @@ public class Main {
                 mostrarLetrasDisponibles();
                 puedeFormarseCPU();
                 puntuacionCPU();
-                
-                casoTurnoCifrasJugadorContraCPU();
 
-                //
+                casoTurnoCifrasJugadorContraCPU();
+                //mostrarCifrasDisponibles();
+
                 //Por implementar:
                 //finalRonda();
                 //Quedan metodos por implementar
@@ -224,7 +224,7 @@ public class Main {
     public void mostrarLetrasDisponibles() {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
-            arrayFicheroLetras = lecturaFichero.leerFicheroCaracter();
+            arrayFicheroLetras = lecturaFichero.leerFicheroLetras();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
                 caracteresAleatorios[i] = arrayFicheroLetras[indiceAleatorio];
@@ -239,31 +239,35 @@ public class Main {
             System.err.println("\nERROR. Fichero no encontrado");
         }
     }
-    
+
     /*
-     public void mostrarCifrasDisponibles() {
-         try {
+     public void mostrarCifrasDisponibles() throws Exception {
+        try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroCifras);
-            arrayFicheroLetras = lecturaFichero.leerFicheroCaracter();
+
+            // Obtenemos el array con todas las cifras del fichero
+            int[] arrayFicheroCifras = lecturaFichero.leerFicheroCifras();
+
+            // Rellenamos cifrasAleatorias con valores aleatorios del array del fichero
             for (int i = 0; i < cifrasAleatorias.length; i++) {
-                int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
-                cifrasAleatorias[i] = arrayFicheroLetras[indiceAleatorio];
+                int indiceAleatorio = random.nextInt(arrayFicheroCifras.length);
+                cifrasAleatorias[i] = arrayFicheroCifras[indiceAleatorio];
             }
-            System.out.println("Cifras disponibles: ");
+
+            // Mostramos las cifras disponibles
+            System.out.println("Cifras disponibles:");
             for (int i = 0; i < cifrasAleatorias.length; i++) {
-                cifrasAleatorias[i] = cifrasAleatorias[i] - 48;
-                System.out.print((int) cifrasAleatorias[i] - 48 + " ");
+                System.out.print(cifrasAleatorias[i] + " "); // imprimimos como entero
             }
+            System.out.println();
+
             lecturaFichero.cerrarFichero();
 
         } catch (IOException e) {
             System.err.println("\nERROR. Fichero no encontrado");
         }
     }
-    */
-   
-    
-
+     */
     public void puedeFormarseJugador() throws Exception {
         System.out.print("\nIntroduce tu palabra: ");
         entradaPorTeclado = lector.llegirLinia();
@@ -327,7 +331,7 @@ public class Main {
         entonces que vaya comprobando si la palabraDic puede formarse
         con auxLetras
          */
-        while ((palabraDic = ficheroDic.leerFicheroCaracter()).length > 0) {
+        while ((palabraDic = ficheroDic.leerFicheroLetras()).length > 0) {
 
             /*
             char auxLetras[] nos ayuda porque en cada iteracion
@@ -408,7 +412,7 @@ public class Main {
             FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
             char[] lineaDic;
 
-            while ((lineaDic = ficheroDic.leerFicheroCaracter()).length > 0 && (!existeEnDic)) {
+            while ((lineaDic = ficheroDic.leerFicheroLetras()).length > 0 && (!existeEnDic)) {
 
                 /*
                 Si la linea que se lee en el diccionario tiene el mismo numero
@@ -437,7 +441,7 @@ public class Main {
                     existeEnDic = true;
                 }
 
-                lineaDic = ficheroDic.leerFicheroCaracter();
+                lineaDic = ficheroDic.leerFicheroLetras();
 
             }
 

@@ -12,16 +12,9 @@ public class Main {
     //Inicializaciones de objeto LT y objeto Registro
     LT lector = new LT();
     Registro registroPartida = new Registro();
-
-    //Entero que leera la opcion por teclado que proporcione el usuario
-    int opcion;
     //Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
     //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     char entradaPorTeclado[];
-    //Usado para la lectura del fichero de letras, guardara el fichero en un array de caracteres
-    char arrayFicheroLetras[];
-    //Usado para la lectura del fichero de cifras, guardara el fichero en un array de enteros
-    int arrayFicheroCifras[];
     //Numero de caracteres aleatorios de la ronda de letras
     char caracteresAleatorios[] = new char[10];
     //Numero de cifras aleatorias de la ronda de cifras
@@ -35,8 +28,6 @@ public class Main {
     int acumuladorPuntosJugador2 = 0;
     // Entero que acumula la puntuación de las rondas de la CPU
     int acumuladorPuntosCPU = 0;
-    //Random usado para leer letras de forma aleatoria del fichero "letras_es.txt"
-    Random random = new Random();
     //Strings con los nombres de los ficheros proporcionados
     String ficheroLetras = "letras_es.txt";
     String diccionarioEspanyol = "dic_es.txt";
@@ -54,7 +45,7 @@ public class Main {
                          
                          Opcion(1|2|s): """);
 
-        opcion = lector.llegirCaracter();
+        int opcion = lector.llegirCaracter();
         //Switch del menuPrincipal
         switch (opcion) {
             case '1' -> {
@@ -89,7 +80,7 @@ public class Main {
                                  
                                  Opcion (1|2|3|s): """);
 
-        opcion = lector.llegirCaracter();
+        int opcion = lector.llegirCaracter();
         //Switch si le ha dado al 1 (Jugar)
         switch (opcion) {
             case '1' -> {
@@ -112,7 +103,7 @@ public class Main {
                 puntuacionCPU();
 
                 casoTurnoCifrasJugadorContraCPU();
-                //mostrarCifrasDisponibles();
+                mostrarCifrasDisponibles();
 
                 //Por implementar:
                 //finalRonda();
@@ -148,7 +139,7 @@ public class Main {
                 
                                    Opcion (1|2|3|s): """);
 
-        opcion = lector.llegirCaracter();
+        int opcion = lector.llegirCaracter();
         switch (opcion) {
             case '1' -> {
                 mostrarResultadosPartida();
@@ -183,7 +174,7 @@ public class Main {
         System.out.println("Nombre del jugador 2: CPU.");
         registroPartida.setNombreCPU("CPU");
         System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-        opcion = lector.llegirEnter();
+        int opcion = lector.llegirEnter();
         registroPartida.setNumeroRondas(opcion);
         while (opcion % 2 != 0) {
             System.err.println("Escribe un numero par de rondas");
@@ -224,7 +215,11 @@ public class Main {
     public void mostrarLetrasDisponibles() {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
-            arrayFicheroLetras = lecturaFichero.leerFicheroLetras();
+            String lecturaLetrasDisponibles;
+            lecturaLetrasDisponibles = lecturaFichero.leerFicheroLetras();
+            Random random = new Random();
+
+            char[] arrayFicheroLetras = lecturaLetrasDisponibles.toCharArray();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
                 caracteresAleatorios[i] = arrayFicheroLetras[indiceAleatorio];
@@ -240,74 +235,75 @@ public class Main {
         }
     }
 
-    /*
-     public void mostrarCifrasDisponibles() throws Exception {
-        try {
-            FicherosLectura lecturaFichero = new FicherosLectura(ficheroCifras);
+    public void mostrarCifrasDisponibles() throws IOException {
+        FicherosLectura ficheroDeCifras = new FicherosLectura(ficheroCifras);
+        String lectura;
 
-            // Obtenemos el array con todas las cifras del fichero
-            int[] arrayFicheroCifras = lecturaFichero.leerFicheroCifras();
+        while ((lectura = ficheroDeCifras.leerFicheroCifras()) != null) {
+            char aux[] = lectura.toCharArray();
+            String numero = "";
 
-            // Rellenamos cifrasAleatorias con valores aleatorios del array del fichero
-            for (int i = 0; i < cifrasAleatorias.length; i++) {
-                int indiceAleatorio = random.nextInt(arrayFicheroCifras.length);
-                cifrasAleatorias[i] = arrayFicheroCifras[indiceAleatorio];
+            for (int i = 0; i < aux.length; i++) {
+                char c = aux[i];
+
+                if (c >= '0' && c <= '9') {
+                    numero = numero + c;
+                } else {
+                    if (numero.length() > 0) {
+                        System.out.print(Integer.parseInt(numero) + " ");
+                        numero = "";
+                    }
+                }
+
+            }
+            if (numero.length() > 0) {
+                System.out.print(Integer.parseInt(numero));
             }
 
-            // Mostramos las cifras disponibles
-            System.out.println("Cifras disponibles:");
-            for (int i = 0; i < cifrasAleatorias.length; i++) {
-                System.out.print(cifrasAleatorias[i] + " "); // imprimimos como entero
-            }
-            System.out.println();
-
-            lecturaFichero.cerrarFichero();
-
-        } catch (IOException e) {
-            System.err.println("\nERROR. Fichero no encontrado");
         }
     }
-     */
+
     public void puedeFormarseJugador() throws Exception {
-        System.out.print("\nIntroduce tu palabra: ");
-        entradaPorTeclado = lector.llegirLinia();
-        System.out.println("Validando palabra...");
+        boolean puedeFormarse = false;
 
-        // 1. Comprobar si puede formarse con las letras disponibles
-        //Copiamos el array de caracteresAleatorios en otro array 
-        //que nos ayudara mas adelante, "copiaLetras"
-        char[] copiaLetras = new char[caracteresAleatorios.length];
-        for (int i = 0; i < caracteresAleatorios.length; i++) {
-            copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
-        }
+        while (!puedeFormarse) {
+            System.out.print("\nIntroduce tu palabra: ");
+            entradaPorTeclado = lector.llegirLinia();
+            System.out.println("Validando palabra...");
 
-        /*
+            // 1. Comprobar si puede formarse con las letras disponibles
+            //Copiamos el array de caracteresAleatorios en otro array 
+            //que nos ayudara mas adelante, "copiaLetras"
+            char[] copiaLetras = new char[caracteresAleatorios.length];
+            for (int i = 0; i < caracteresAleatorios.length; i++) {
+                copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
+            }
+
+            /*
         Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
         Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
         Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
         Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
-         */
-        boolean puedeFormarse = true;
+             */
+            puedeFormarse = true;
+            for (int i = 0; i < entradaPorTeclado.length; i++) {
+                char letra = entradaPorTeclado[i];
+                boolean encontrada = false;
+                for (int j = 0; j < caracteresAleatorios.length && !encontrada; j++) {
+                    if (copiaLetras[j] == letra) {
+                        copiaLetras[j] = '*';
+                        encontrada = true;
+                    }
+                }
 
-        for (int i = 0; i < entradaPorTeclado.length; i++) {
-            char letra = entradaPorTeclado[i];
-            boolean encontrada = false;
-            for (int j = 0; j < caracteresAleatorios.length && !encontrada; j++) {
-                if (copiaLetras[j] == letra) {
-                    copiaLetras[j] = '*';
-                    encontrada = true;
+                if (!encontrada) {
+                    puedeFormarse = false;
                 }
             }
 
-            if (!encontrada) {
-                puedeFormarse = false;
+            if (!puedeFormarse) {
+                System.err.println("\nLa palabra NO puede formarse con las letras disponibles! Intentalo de nuevo.");
             }
-        }
-
-        if (!puedeFormarse) {
-            System.err.println("\nLa palabra NO puede formarse con las letras disponibles! Intentalo de nuevo.");
-            puedeFormarseJugador();
-
         }
     }
 
@@ -323,7 +319,7 @@ public class Main {
         int contador = 0;
 
         FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
-        char[] palabraDic;
+        String palabraDic;
 
         /*
         Mientras lo que lea no sea igual a 0 (final de linea), es decir,
@@ -331,7 +327,7 @@ public class Main {
         entonces que vaya comprobando si la palabraDic puede formarse
         con auxLetras
          */
-        while ((palabraDic = ficheroDic.leerFicheroLetras()).length > 0) {
+        while ((palabraDic = ficheroDic.leerFicheroLetras()) != null) {
 
             /*
             char auxLetras[] nos ayuda porque en cada iteracion
@@ -350,8 +346,9 @@ public class Main {
             metodo mostrarLetrasDisponibles()
              */
             boolean puedeFormarse = true;
-            for (int i = 0; i < palabraDic.length && puedeFormarse; i++) {
-                char letra = palabraDic[i];
+            char[] palabraDicArray = palabraDic.toCharArray();
+            for (int i = 0; i < palabraDicArray.length && puedeFormarse; i++) {
+                char letra = palabraDicArray[i];
                 boolean encontrada = false;
 
                 // Buscar la letra en auxLetras
@@ -387,7 +384,7 @@ public class Main {
                 contador++;
                 int r = random.nextInt(contador);
                 if (r == 0) {
-                    palabraCPU = palabraDic; // elegimos esta palabra
+                    palabraCPU = palabraDicArray; // elegimos esta palabra
                 }
             }
         }
@@ -406,59 +403,46 @@ public class Main {
 
     public void existeEnDiccionarioJugador() throws Exception {
 
-        boolean existeEnDic = false;
-        boolean iguales = false;
-        while (!existeEnDic) {
+        boolean palabraValida = false;
+
+        while (!palabraValida) {
+            boolean existeEnDic = false;
             FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
-            char[] lineaDic;
+            String lineaDic;
 
-            while ((lineaDic = ficheroDic.leerFicheroLetras()).length > 0 && (!existeEnDic)) {
+            while ((lineaDic = ficheroDic.leerFicheroLetras()) != null && !existeEnDic) {
+                char[] lineaDicArray = lineaDic.toCharArray();
+                boolean iguales = false;
 
-                /*
-                Si la linea que se lee en el diccionario tiene el mismo numero
-                de caracteres que la entrada por teclado del usuario, entonces
-                puede que sean iguales, si esto pasa entro en un bucle for que 
-                compara caracter a caracter, si hay algun caracter igual
-                significa sin lugar a duda que no son iguales, entonces
-                el booleano de iguales se settea a falso.
-                
-                Si acaba todo el bucle for y no se settea a false el booleano
-                de iguales, entonces se puede confirmar que todos los caracteres
-                son iguales (misma palabra), por tanto, iguales es true y 
-                existeEnDic es true tambien.
-                 */
-                if (lineaDic.length == entradaPorTeclado.length) {
+                if (lineaDicArray.length == entradaPorTeclado.length) {
                     iguales = true;
-                }
-
-                for (int i = 0; i < lineaDic.length && iguales; i++) {
-                    if (lineaDic[i] != entradaPorTeclado[i]) {
-                        iguales = false;
+                    for (int i = 0; i < lineaDicArray.length && iguales; i++) {
+                        if (lineaDicArray[i] != entradaPorTeclado[i]) {
+                            iguales = false;
+                        }
                     }
                 }
 
                 if (iguales) {
                     existeEnDic = true;
                 }
-
-                lineaDic = ficheroDic.leerFicheroLetras();
-
             }
 
             ficheroDic.cerrarFichero();
 
-            if (!existeEnDic) {
-                System.err.println("La palabra NO existe en el diccionario.");
-                System.out.println("Intentalo de nuevo!");
-                puedeFormarseJugador();
-            } else {
+            if (existeEnDic) {
                 System.out.println(" - puede crearse con las letras disponibles");
                 System.out.println(" - existe en el diccionario");
                 registroPartida.setPuntuacionJugador1(entradaPorTeclado.length);
+                palabraValida = true;
+            } else {
+                System.err.println("La palabra NO existe en el diccionario.");
+                System.out.println("Intentalo de nuevo!");
+                puedeFormarseJugador();
             }
-
         }
     }
+
 
     /*
     En estos metodos de puntuacion, usamos una variable acumulador

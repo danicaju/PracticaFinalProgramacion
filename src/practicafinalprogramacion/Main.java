@@ -238,28 +238,39 @@ public class Main {
     public void mostrarCifrasDisponibles() throws IOException {
         FicherosLectura ficheroDeCifras = new FicherosLectura(ficheroCifras);
         String lectura;
+        char arrayLectura[];
+        int num = 0;
+        int j = 0;
+        int k = 0;
+        int arrayAux[] = new int[24]; //Todos los 24 
+        Random random = new Random();
 
-        while ((lectura = ficheroDeCifras.leerFicheroCifras()) != null) {
-            char aux[] = lectura.toCharArray();
-            String numero = "";
+        lectura = ficheroDeCifras.leerFicheroCifras();
+        arrayLectura = lectura.toCharArray();
 
-            for (int i = 0; i < aux.length; i++) {
-                char c = aux[i];
+        for (int i = 0; i < arrayLectura.length; i++) {
 
-                if (c >= '0' && c <= '9') {
-                    numero = numero + c;
-                } else {
-                    if (numero.length() > 0) {
-                        System.out.print(Integer.parseInt(numero) + " ");
-                        numero = "";
-                    }
-                }
+            if (arrayLectura[i] != ' ') { //Si es un numero
+                num = num * 10 + (arrayLectura[i] - '0');
+            } else {
+                arrayAux[j] = num;
+                j++;
+                num = 0;
 
             }
-            if (numero.length() > 0) {
-                System.out.print(Integer.parseInt(numero));
-            }
+        }
 
+        for (int i = 0; i < arrayAux.length; i++) {
+            int randomAux = random.nextInt(0, arrayAux.length - 1);
+            if(k < cifrasAleatorias.length) {
+                cifrasAleatorias[k] = arrayAux[randomAux];
+                k++;
+            }
+        }
+        
+        System.out.println("Cifras disponibles:");
+        for(int i = 0; i < cifrasAleatorias.length; i++) {
+            System.out.print(cifrasAleatorias[i] + " ");
         }
     }
 

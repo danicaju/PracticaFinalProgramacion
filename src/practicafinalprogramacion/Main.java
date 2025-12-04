@@ -28,6 +28,8 @@ public class Main {
     int acumuladorPuntosJugador2 = 0;
     // Entero que acumula la puntuación de las rondas de la CPU
     int acumuladorPuntosCPU = 0;
+    // Booleano que determinara si el usuario ha pasado su turno
+    boolean haPasado = false;
     //Strings con los nombres de los ficheros proporcionados
     String ficheroLetras = "letras_es.txt";
     String diccionarioEspanyol = "dic_es.txt";
@@ -53,7 +55,6 @@ public class Main {
             }
             case '2' -> {
                 opcionRegistro();
-
             }
             default -> {
                 if (opcion == 's') {
@@ -91,23 +92,25 @@ public class Main {
 
                 //Validacion de palabra
                 puedeFormarseJugador();
-                existeEnDiccionarioJugador();
+                if (!haPasado) {
+                    existeEnDiccionarioJugador();
+                    //En el caso de que exista, premiar al jugador con puntos
+                    puntuacionJugador1();
+                } else {
+                    jugador1PasaTurno();
+                    //Aqui empieza el turno de la CPU
+                    casoTurnoCPUContraJugador();
+                    mostrarLetrasDisponibles();
+                    puedeFormarseCPU();
+                    puntuacionCPU();
 
-                //En el caso de que exista, premiar al jugador con puntos
-                puntuacionJugador1();
+                    casoTurnoCifrasJugadorContraCPU();
+                    mostrarCifrasDisponibles();
 
-                //Aqui empieza el turno de la CPU
-                casoTurnoCPUContraJugador();
-                mostrarLetrasDisponibles();
-                puedeFormarseCPU();
-                puntuacionCPU();
-
-                casoTurnoCifrasJugadorContraCPU();
-                mostrarCifrasDisponibles();
-
-                //Por implementar:
-                //finalRonda();
-                //Quedan metodos por implementar
+                    //Por implementar:
+                    //finalRonda();
+                    //Quedan metodos por implementar
+                }
             }
             case '2' -> {
                 //Jugar contra otra persona (por hacer)
@@ -199,9 +202,8 @@ public class Main {
         System.out.println("\nTurno de: " + registroPartida.getNombreCPU());
     }
 
-    public void jugadorPasaTurnoCPU() {
+    public void jugador1PasaTurno() {
         System.out.println("Has pasado!");
-        casoTurnoCPUContraJugador();
     }
 
     public void mostrarResultadosPartida() {
@@ -262,14 +264,14 @@ public class Main {
 
         for (int i = 0; i < arrayAux.length; i++) {
             int randomAux = random.nextInt(0, arrayAux.length - 1);
-            if(k < cifrasAleatorias.length) {
+            if (k < cifrasAleatorias.length) {
                 cifrasAleatorias[k] = arrayAux[randomAux];
                 k++;
             }
         }
-        
+
         System.out.println("Cifras disponibles:");
-        for(int i = 0; i < cifrasAleatorias.length; i++) {
+        for (int i = 0; i < cifrasAleatorias.length; i++) {
             System.out.print(cifrasAleatorias[i] + " ");
         }
     }
@@ -277,45 +279,69 @@ public class Main {
     public void puedeFormarseJugador() throws Exception {
         boolean puedeFormarse = false;
 
-        while (!puedeFormarse) {
-            System.out.print("\nIntroduce tu palabra: ");
+        /*
+        Mientras aun no se pueda formar y el usuario no haya 
+        pasado su turno tiene que preguntarle continuamente
+        la palabra a introducir y checkear si esa palabra
+        se puede formar con las letras disponibles
+         */
+        while (!puedeFormarse && !haPasado) {
+            System.out.print("\nIntroduce tu palabra (o escribe '.' para pasar): ");
             entradaPorTeclado = lector.llegirLinia();
-            System.out.println("Validando palabra...");
 
-            // 1. Comprobar si puede formarse con las letras disponibles
-            //Copiamos el array de caracteresAleatorios en otro array 
-            //que nos ayudara mas adelante, "copiaLetras"
-            char[] copiaLetras = new char[caracteresAleatorios.length];
-            for (int i = 0; i < caracteresAleatorios.length; i++) {
-                copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
+            /*
+            Si la primera letra que lee es igual al 
+            caracter '.', entonces el usuario ha
+            decidido pasar
+             */
+            if (entradaPorTeclado[0] == '.') {
+                haPasado = true;
             }
 
             /*
-        Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
-        Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
-        Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
-        Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
+            Si no ha decidido pasar, entonces nos disponemos a validar la palabra,
+            esto esta hecho de esta manera para que si es un punto '.' no se tome 
+            el tiempo de validar la palabra.
              */
-            puedeFormarse = true;
-            for (int i = 0; i < entradaPorTeclado.length; i++) {
-                char letra = entradaPorTeclado[i];
-                boolean encontrada = false;
-                for (int j = 0; j < caracteresAleatorios.length && !encontrada; j++) {
-                    if (copiaLetras[j] == letra) {
-                        copiaLetras[j] = '*';
-                        encontrada = true;
+            if (!haPasado) {
+                System.out.println("Validando palabra...");
+
+                // 1. Comprobar si puede formarse con las letras disponibles
+                //Copiamos el array de caracteresAleatorios en otro array 
+                //que nos ayudara mas adelante, "copiaLetras"
+                char[] copiaLetras = new char[caracteresAleatorios.length];
+                for (int i = 0; i < caracteresAleatorios.length; i++) {
+                    copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
+                }
+
+                /*
+                Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
+                Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
+                Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
+                Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
+                 */
+                puedeFormarse = true;
+                for (int i = 0; i < entradaPorTeclado.length; i++) {
+                    char letra = entradaPorTeclado[i];
+                    boolean encontrada = false;
+                    for (int j = 0; j < caracteresAleatorios.length && !encontrada; j++) {
+                        if (copiaLetras[j] == letra) {
+                            copiaLetras[j] = '*';
+                            encontrada = true;
+                        }
+                    }
+
+                    if (!encontrada) {
+                        puedeFormarse = false;
                     }
                 }
 
-                if (!encontrada) {
-                    puedeFormarse = false;
+                if (!puedeFormarse) {
+                    System.err.println("\nLa palabra NO puede formarse con las letras disponibles! Intentalo de nuevo.");
                 }
             }
-
-            if (!puedeFormarse) {
-                System.err.println("\nLa palabra NO puede formarse con las letras disponibles! Intentalo de nuevo.");
-            }
         }
+
     }
 
     /*

@@ -111,7 +111,7 @@ public class Registro {
     public int getTotalPartidas() {
         return totalPartidas;
     }
-    
+
     public String toString() {
         return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreCPU() + "#" + getNivelCPU()
                 + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionCPU();

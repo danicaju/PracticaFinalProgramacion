@@ -85,32 +85,37 @@ public class Main {
         //Switch si le ha dado al 1 (Jugar)
         switch (opcion) {
             case '1' -> {
-                //Jugar contra la CPU
-                casoJugarContraCPU();
-                casoTurnoLetrasJugadorContraCPU();
-                mostrarLetrasDisponibles();
+                while (rondaActual <= registroPartida.getNumeroRondas()) {
+                    //Jugar contra la CPU
+                    casoJugarContraCPU();
+                    casoTurnoLetrasJugadorContraCPU();
+                    mostrarLetrasDisponibles();
 
-                //Validacion de palabra
-                puedeFormarseJugador();
-                if (!haPasado) {
-                    existeEnDiccionarioJugador();
-                    //En el caso de que exista, premiar al jugador con puntos
-                    puntuacionJugador1();
-                } else {
-                    jugador1PasaTurno();
+                    //Validacion de palabra
+                    puedeFormarseJugador();
+                    if (!haPasado) {
+                        existeEnDiccionarioJugador();
+                        //En el caso de que exista, premiar al jugador con puntos
+                        puntuacionJugador1();
+                    } else {
+                        jugador1PasaTurno();
+                    }
                     //Aqui empieza el turno de la CPU
                     casoTurnoCPUContraJugador();
                     mostrarLetrasDisponibles();
                     puedeFormarseCPU();
                     puntuacionCPU();
+                    rondaActual++;
 
                     casoTurnoCifrasJugadorContraCPU();
                     mostrarCifrasDisponibles();
+                    operacionesCifras();
 
-                    //Por implementar:
-                    //finalRonda();
-                    //Quedan metodos por implementar
+                    //TEMPORAL: ESTO TIENE QUE IR ABAJO DE MAS
+                    //METODOS CUANDO LA CPU ACABE RONDA DE CIFRAS
+                    rondaActual++;
                 }
+                //Quedan metodos por implementar
             }
             case '2' -> {
                 //Jugar contra otra persona (por hacer)
@@ -244,12 +249,31 @@ public class Main {
         int num = 0;
         int j = 0;
         int k = 0;
-        int arrayAux[] = new int[24]; //Todos los 24 
+        //Inicializo un array con el tamaño necesario para los 24
+        //numeros del fichero
+        int arrayAux[] = new int[24];
         Random random = new Random();
 
+        //Uso un String para leer el fichero, al haber solo una linea en el fichero
+        //no hace falta que ejecute un bucle while de lectura, simplemente una
+        //sola instruccion y convierto el String "lectura" a array de caracteres
+        //"arrayLectura"
         lectura = ficheroDeCifras.leerFicheroCifras();
         arrayLectura = lectura.toCharArray();
 
+        /*
+        Comprobamos ahora el array de caracteres, y cada vez que leemos un numero
+        le multiplicaremos 10 y ademas le restaremos el valor en ASCII del 0, 
+        para tener su equivalente en int. 
+        Los numeros se leen de uno en uno pero al estar yo almacenando en num
+        el valor del numero anterior, si multiplico por 10 y le resto el
+        equivalente en ascii al numero actual tengo el numero completo. 
+        
+        Al haber leido ya un numero completo y encontrarnos con un
+        espacio, almacenamos "num" que tiene el numero en un
+        arrayAux[j] que tiene el espacio suficiente para los
+        24 numeros del fichero.
+         */
         for (int i = 0; i < arrayLectura.length; i++) {
 
             if (arrayLectura[i] != ' ') { //Si es un numero
@@ -258,10 +282,16 @@ public class Main {
                 arrayAux[j] = num;
                 j++;
                 num = 0;
-
             }
         }
 
+        /*
+        Mediante un bucle for desde 0 hasta el tamaño del "arrayAux", genero numeros
+        aleatorios "randomAux" desde 0 hasta el  arrayAux.length - 1, asi mientras
+        un indice k < cifrasAleatorias.length (hasta llenar cifrasAleatorias), 
+        el valor de  cifrasAleatorias sera igual a alguna posicion aleatoria
+        del "arrayAux" (que contiene todos los numeros del fichero)     
+         */
         for (int i = 0; i < arrayAux.length; i++) {
             int randomAux = random.nextInt(0, arrayAux.length - 1);
             if (k < cifrasAleatorias.length) {
@@ -270,9 +300,31 @@ public class Main {
             }
         }
 
+        /*
+        Cuando ya tenemos todas las cifras aleatorias, simplemente las 
+        mostramos al usuario mediante un "System.out.println"
+         */
         System.out.println("Cifras disponibles:");
         for (int i = 0; i < cifrasAleatorias.length; i++) {
             System.out.print(cifrasAleatorias[i] + " ");
+        }
+    }
+
+    public void operacionesCifras() {
+        Random objRandom = new Random();
+        int objetivo = objRandom.nextInt(100, 999);
+        char arrayAux[] = {'+', '-', '*', '/', '='};
+
+        for (int numOperacion = 1; numOperacion < cifrasAleatorias.length; numOperacion++) {
+            System.out.println("\nObjetivo: " + objetivo);
+            System.out.print("Operando " + numOperacion + " [");
+            for (int i = 0; i < cifrasAleatorias.length; i++) {
+                if (i == cifrasAleatorias.length - 1) {
+                    System.out.print(cifrasAleatorias[i] + "]");
+                } else {
+                    System.out.print(cifrasAleatorias[i] + " ");
+                }
+            }
         }
     }
 
@@ -314,8 +366,8 @@ public class Main {
                     copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
                 }
 
-                /*
-                Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
+                /*         
+                2. Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
                 Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
                 Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
                 Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
@@ -341,7 +393,6 @@ public class Main {
                 }
             }
         }
-
     }
 
     /*
@@ -480,7 +531,6 @@ public class Main {
         }
     }
 
-
     /*
     En estos metodos de puntuacion, usamos una variable acumulador
     para que vaya acumulando los puntos de todas las rondas que
@@ -496,16 +546,10 @@ public class Main {
         System.out.println("Felicidades " + registroPartida.getNombreCPU() + "! Has ganado " + acumuladorPuntosCPU + " puntos!\n");
     }
 
-    public void finalRonda() {
-        System.out.println("Ronda " + rondaActual + "de" + registroPartida.getNumeroRondas());
-
-        if (rondaActual == registroPartida.getNumeroRondas()) {
-            System.out.println("Se acabo la partida! Muy bien jugados ambos!");
-            registroPartida.determinarGanador();
-        } else {
-            rondaActual++;
-            casoTurnoLetrasJugadorContraCPU();
-        }
+    public void finalPartida() {
+        // Solo llega aqui al final de la partida
+        System.out.println("Se acabo la partida! Muy bien jugado ambos!");
+        registroPartida.determinarGanador();
     }
 
     public static void main(String[] args) throws Exception {

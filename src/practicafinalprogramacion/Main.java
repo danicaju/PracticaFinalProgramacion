@@ -314,17 +314,50 @@ public class Main {
         Random objRandom = new Random();
         int objetivo = objRandom.nextInt(100, 999);
         char arrayAux[] = {'+', '-', '*', '/', '='};
+        int numOperacion = 1;
+        //Este entero solo podra ser uno o dos, ya que
+        //siempre tendremos solo dos operandos por 
+        //operacion
+        int numOperando = 1;
 
-        for (int numOperacion = 1; numOperacion < cifrasAleatorias.length; numOperacion++) {
-            System.out.println("\nObjetivo: " + objetivo);
-            System.out.print("Operando " + numOperacion + " [");
-            for (int i = 0; i < cifrasAleatorias.length; i++) {
-                if (i == cifrasAleatorias.length - 1) {
-                    System.out.print(cifrasAleatorias[i] + "]");
+        System.out.println("\nObjetivo: " + objetivo);
+        for (int i = 0; i < cifrasAleatorias.length; i++) {
+            System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
+            //Incrementamos de forma adelantada ya que la 
+            //proxima operacion que esperamos es la segunda
+            numOperacion++;
+            //Leera cual de las operaciones quiere realizar el usuario
+            // (suma, resta, multiplicacion, division o igual)
+            char opcionOperacion = lector.llegirCaracter();
+            System.out.print("Operando " + numOperando + " (");
+
+            for (int j = 0; j < cifrasAleatorias.length; j++) {
+                if (j == cifrasAleatorias.length - 1) {
+                    System.out.print(cifrasAleatorias[j] + "): ");
                 } else {
-                    System.out.print(cifrasAleatorias[i] + " ");
+                    System.out.print(cifrasAleatorias[j] + " ");
                 }
             }
+            int opcionOperando1 = lector.llegirEnter();
+            numOperando++;
+
+            System.out.print("Operando " + numOperando + " (");
+            for (int j = 0; j < cifrasAleatorias.length; j++) {
+                if (j == cifrasAleatorias.length - 1) {
+                    System.out.print(cifrasAleatorias[j] + "): ");
+                } else {
+                    System.out.print(cifrasAleatorias[j] + " ");
+                }
+            }
+            int opcionOperando2 = lector.llegirEnter();
+            numOperando = 1;
+
+            System.out.println("\nCifras disponibles:");
+            for (int k = 0; k < cifrasAleatorias.length; k++) {
+                System.out.print(cifrasAleatorias[k] + " ");
+            }
+            System.out.println("\nObjetivo: " + objetivo);
+
         }
     }
 

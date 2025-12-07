@@ -299,11 +299,6 @@ public class Main {
                 k++;
             }
         }
-
-        /*
-        Cuando ya tenemos todas las cifras aleatorias, simplemente las 
-        mostramos al usuario mediante un "System.out.println"
-         */
         System.out.print("Cifras disponibles: ");
         for (int i = 0; i < cifrasAleatorias.length; i++) {
             System.out.print(cifrasAleatorias[i] + " ");
@@ -311,133 +306,188 @@ public class Main {
     }
 
     public void operacionesCifras() {
+        boolean hacerOperaciones = true;
         Random objRandom = new Random();
         int objetivo = objRandom.nextInt(100, 999);
         char arrayAux[] = {'+', '-', '*', '/', '='};
+        int[] nuevoArrayAux = new int[cifrasAleatorias.length - 1];
         int numOperacion = 1;
         //Este entero solo podra ser uno o dos, ya que
         //siempre tendremos solo dos operandos por 
         //operacion
         int numOperando = 1;
 
-        System.out.println("\nObjetivo: " + objetivo);
-        System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
-        char opcionOperacion = lector.llegirCaracter();
-        //Mientras no sea una de las operaciones validas, dara error y se pedira
-        //al usuario que introduzca una operacion entre las proporcionadas
-        while (opcionOperacion != '+' && opcionOperacion != '-' && opcionOperacion != '*'
-                && opcionOperacion != '/' && opcionOperacion != '=') {
-            System.err.println("ERROR. Introduce una operacion valida!");
+        while (hacerOperaciones) {
+            System.out.println("\nObjetivo: " + objetivo);
             System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
-            opcionOperacion = lector.llegirCaracter();
-        }
-        //Si ha llegado hasta aqui, la operacion que 
-        //ha elegido el usuario es valida y 
-        //incrementamos de forma adelantada ya que la 
-        //proxima operacion que esperamos es la segunda
-        numOperacion++;
-        System.out.print("Operando " + numOperando + " (");
-
-        //Primer bucle for para el 1r operando
-        for (int j = 0; j < cifrasAleatorias.length; j++) {
-            if (j == cifrasAleatorias.length - 1) {
-                System.out.print(cifrasAleatorias[j] + "): ");
-            } else {
-                System.out.print(cifrasAleatorias[j] + " ");
+            char opcionOperacion = lector.llegirCaracter();
+            //Mientras no sea una de las operaciones validas, dara error y se pedira
+            //al usuario que introduzca una operacion entre las proporcionadas
+            while (opcionOperacion != '+' && opcionOperacion != '-' && opcionOperacion != '*'
+                    && opcionOperacion != '/' && opcionOperacion != '=') {
+                System.err.println("ERROR. Introduce una operacion valida!");
+                System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
+                opcionOperacion = lector.llegirCaracter();
             }
-        }
-        //Se guarda el primer operando del usuario
-        int opcionOperando1 = lector.llegirEnter();
-        //Booleano que usaremos para determinar si el operando
-        //que ha elegido el usuario existe entre las
-        //cifras aleatorias
-        boolean existeElOperando1 = false;
-        //Supondremos que el operando que ha puesto el usuario
-        //es erroneo por facilidad a la hora de programar
-        //y miraremos lo antes posible si es correcto
-        //o no mirando si existe entre cifrasAleatorias
-        while (!existeElOperando1) {
-            //Si en todas las cifras aleatorias, encuentra
-            //alguna que sea igual que el operando del
-            //usuario entonces, existe el operando
-            for (int l = 0; l < cifrasAleatorias.length && !existeElOperando1; l++) {
-                if (opcionOperando1 == cifrasAleatorias[l]) {
-                    existeElOperando1 = true;
+            //Si ha llegado hasta aqui, la operacion que 
+            //ha elegido el usuario es valida y 
+            //incrementamos de forma adelantada ya que la 
+            //proxima operacion que esperamos es la segunda
+            numOperacion++;
+            System.out.print("Operando " + numOperando + " (");
+
+            //Primer bucle for para el 1r operando
+            for (int j = 0; j < cifrasAleatorias.length; j++) {
+                if (j == cifrasAleatorias.length - 1) {
+                    System.out.print(cifrasAleatorias[j] + "): ");
+                } else {
+                    System.out.print(cifrasAleatorias[j] + " ");
                 }
             }
-            //Si no existiera, se llevaria a cabo un bucle 
-            //constante hasta que el usuario escribiera
-            //un operando valido
-            if (!existeElOperando1) {
-                System.err.println("ERROR. Escribe un operando valido!");
-                System.out.print("Operando " + numOperando + " (");
-                for (int j = 0; j < cifrasAleatorias.length; j++) {
-                    if (j == cifrasAleatorias.length - 1) {
-                        System.out.print(cifrasAleatorias[j] + "): ");
-                    } else {
-                        System.out.print(cifrasAleatorias[j] + " ");
+            //Se guarda el primer operando del usuario
+            int opcionOperando1 = lector.llegirEnter();
+            //Booleano que usaremos para determinar si el operando
+            //que ha elegido el usuario existe entre las
+            //cifras aleatorias
+            boolean existeElOperando1 = false;
+            //Supondremos que el operando que ha puesto el usuario
+            //es erroneo por facilidad a la hora de programar
+            //y miraremos lo antes posible si es correcto
+            //o no mirando si existe entre cifrasAleatorias
+            while (!existeElOperando1) {
+                //Si en todas las cifras aleatorias, encuentra
+                //alguna que sea igual que el operando del
+                //usuario entonces, existe el operando
+                for (int l = 0; l < cifrasAleatorias.length && !existeElOperando1; l++) {
+                    if (opcionOperando1 == cifrasAleatorias[l]) {
+                        existeElOperando1 = true;
                     }
                 }
-                opcionOperando1 = lector.llegirEnter();
+                //Si no existiera, se llevaria a cabo un bucle 
+                //constante hasta que el usuario escribiera
+                //un operando valido
+                if (!existeElOperando1) {
+                    System.err.println("ERROR. Escribe un operando valido!");
+                    System.out.print("Operando " + numOperando + " (");
+                    for (int j = 0; j < cifrasAleatorias.length; j++) {
+                        if (j == cifrasAleatorias.length - 1) {
+                            System.out.print(cifrasAleatorias[j] + "): ");
+                        } else {
+                            System.out.print(cifrasAleatorias[j] + " ");
+                        }
+                    }
+                    opcionOperando1 = lector.llegirEnter();
 
-            }
-        }
-
-        numOperando++;
-
-        //Segundo bucle for para el 2n operando
-        System.out.print("Operando " + numOperando + " (");
-        for (int j = 0; j < cifrasAleatorias.length; j++) {
-            if (j == cifrasAleatorias.length - 1) {
-                System.out.print(cifrasAleatorias[j] + "): ");
-            } else {
-                System.out.print(cifrasAleatorias[j] + " ");
-            }
-        }
-        //Se guarda el primer operando del usuario
-        int opcionOperando2 = lector.llegirEnter();
-        //Booleano que usaremos para determinar si el operando
-        //que ha elegido el usuario existe entre las
-        //cifras aleatorias
-        boolean existeElOperando2 = false;
-        //Supondremos que el operando que ha puesto el usuario
-        //es erroneo por facilidad a la hora de programar
-        //y miraremos lo antes posible si es correcto
-        //o no mirando si existe entre cifrasAleatorias
-        while (!existeElOperando2) {
-            //Si en todas las cifras aleatorias, encuentra
-            //alguna que sea igual que el operando del
-            //usuario entonces, existe el operando
-            for (int l = 0; l < cifrasAleatorias.length && !existeElOperando2; l++) {
-                if (opcionOperando2 == cifrasAleatorias[l]) {
-                    existeElOperando2 = true;
                 }
             }
-            //Si no existiera, se llevaria a cabo un bucle 
-            //constante hasta que el usuario escribiera
-            //un operando valido
-            if (!existeElOperando2) {
-                System.err.println("ERROR. Escribe un operando valido!");
-                System.out.print("Operando " + numOperando + " (");
-                for (int j = 0; j < cifrasAleatorias.length; j++) {
-                    if (j == cifrasAleatorias.length - 1) {
-                        System.out.print(cifrasAleatorias[j] + "): ");
-                    } else {
-                        System.out.print(cifrasAleatorias[j] + " ");
+
+            int indiceAEliminar = -1;
+            boolean indiceEncontrado = false;
+            //Si llego aqui, he salido del bucle, y por tanto, el operando si existe
+
+            //Busco cual es la cifra que introduzco el usuario y cuando
+            //lo encuentre, guardo el indice de esa cifra
+            for (int i = 0; i < cifrasAleatorias.length && !indiceEncontrado; i++) {
+                if (cifrasAleatorias[i] == opcionOperando1) {
+                    indiceAEliminar = i;
+                    indiceEncontrado = true;
+                }
+            }
+
+            //Si el indice a eliminar es distinto de -1 (hemos encontrado la cifra),
+            //entonces en el nuevoArrayAux[] que es del tamaño de
+            //cifrasAleatorias.length - 1, guardaremos todo 
+            //menos el numero en ese indice
+            if (indiceAEliminar != -1) {
+                for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
+                    if (i != indiceAEliminar) {
+                        //Si el indice 'i' no es el mismo que el indice
+                        //a eliminar, entonces rellenamos de forma
+                        //normal el nuevoArrayAux
+                        nuevoArrayAux[j++] = cifrasAleatorias[i];
                     }
                 }
-                opcionOperando2 = lector.llegirEnter();
-
             }
-        }
-        numOperando = 1;
 
-        System.out.print("\nCifras disponibles: ");
-        for (int k = 0; k < cifrasAleatorias.length; k++) {
-            System.out.print(cifrasAleatorias[k] + " ");
-        }
-        System.out.println("\nObjetivo: " + objetivo);
+            numOperando++;
 
+            //Segundo bucle for para el 2n operando
+            System.out.print("Operando " + numOperando + " (");
+            for (int j = 0; j < nuevoArrayAux.length; j++) {
+                if (j == nuevoArrayAux.length - 1) {
+                    System.out.print(nuevoArrayAux[j] + "): ");
+                } else {
+                    System.out.print(nuevoArrayAux[j] + " ");
+                }
+            }
+            //Se guarda el primer operando del usuario
+            int opcionOperando2 = lector.llegirEnter();
+            //Booleano que usaremos para determinar si el operando
+            //que ha elegido el usuario existe entre las
+            //cifras aleatorias
+            boolean existeElOperando2 = false;
+            //Supondremos que el operando que ha puesto el usuario
+            //es erroneo por facilidad a la hora de programar
+            //y miraremos lo antes posible si es correcto
+            //o no mirando si existe entre cifrasAleatorias
+            while (!existeElOperando2) {
+                //Si en todas las cifras aleatorias, encuentra
+                //alguna que sea igual que el operando del
+                //usuario entonces, existe el operando
+                for (int l = 0; l < cifrasAleatorias.length && !existeElOperando2; l++) {
+                    if (opcionOperando2 == cifrasAleatorias[l]) {
+                        existeElOperando2 = true;
+                    }
+                }
+                //Si no existiera, se llevaria a cabo un bucle 
+                //constante hasta que el usuario escribiera
+                //un operando valido
+                if (!existeElOperando2) {
+                    System.err.println("ERROR. Escribe un operando valido!");
+                    System.out.print("Operando " + numOperando + " (");
+                    for (int j = 0; j < cifrasAleatorias.length; j++) {
+                        if (j == cifrasAleatorias.length - 1) {
+                            System.out.print(cifrasAleatorias[j] + "): ");
+                        } else {
+                            System.out.print(cifrasAleatorias[j] + " ");
+                        }
+                    }
+                    opcionOperando2 = lector.llegirEnter();
+                }
+            }
+            int indiceAEliminar2 = -1;
+            boolean indiceEncontrado2 = false;
+            //Si llego aqui, he salido del bucle, y por tanto, el operando si existe
+
+            //Busco cual es la cifra que introduzco el usuario y cuando
+            //lo encuentre, guardo el indice de esa cifra
+            for (int i = 0; i < cifrasAleatorias.length && !indiceEncontrado2; i++) {
+                if (cifrasAleatorias[i] == opcionOperando1) {
+                    indiceAEliminar2 = i;
+                    indiceEncontrado2 = true;
+                }
+            }
+
+            //Si el indice a eliminar es distinto de -1 (hemos encontrado la cifra),
+            //entonces en el nuevoArrayAux[] que es del tamaño de
+            //cifrasAleatorias.length - 1, guardaremos todo 
+            //menos el numero en ese indice
+            if (indiceAEliminar2 != -1) {
+                for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
+                    if (i != indiceAEliminar2) {
+                        //Si el indice 'i' no es el mismo que el indice
+                        //a eliminar, entonces rellenamos de forma
+                        //normal el nuevoArrayAux
+                        nuevoArrayAux[j++] = cifrasAleatorias[i];
+                    }
+                }
+            }
+            numOperando = 1;
+        }
+        System.out.print("Cifras disponibles: ");
+        for (int i = 0; i < nuevoArrayAux.length; i++) {
+            System.out.print(nuevoArrayAux[i] + " ");
+        }
     }
 
     public void puedeFormarseJugador() throws Exception {

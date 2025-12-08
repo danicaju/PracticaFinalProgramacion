@@ -61,7 +61,7 @@ public class Registro {
         this.puntuacionJugador1 = puntuacionJugador1;
     }
 
-    public void setPuntuacionJugador2(int puntuacionJugador2) {
+    public void setPuntuacionCPU(int puntuacionJugador2) {
         this.puntuacionJugador2 = puntuacionJugador2;
     }
 

@@ -567,12 +567,10 @@ public class Main {
                         int resultadoSuma = operando1 + operando2;
                         int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[j++] = cifrasAleatorias[i];
-                            if (nuevoArrayAux[j] == 0) {
-                                nuevoArrayAux[j] = resultadoSuma;
-                            }
+                        for (int i = 0; i < cifrasAleatorias.length; i++) {
+                            nuevoArrayAux[i] = cifrasAleatorias[i];
                         }
+                        nuevoArrayAux[cifrasAleatorias.length] = resultadoSuma;
                         System.out.println(operando1 + " + " + operando2 + " = " + resultadoSuma + "\n");
                         //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
                         //que el nuevoArrayAux que tiene una posicion mas con el int resultado
@@ -591,13 +589,10 @@ public class Main {
                         }
                         int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[j++] = cifrasAleatorias[i];
-                            //Para el valor que no ha llenado el for (
-                            if (nuevoArrayAux[j] == 0) {
-                                nuevoArrayAux[j] = resultadoResta;
-                            }
+                        for (int i = 0; i < cifrasAleatorias.length; i++) {
+                            nuevoArrayAux[i] = cifrasAleatorias[i];
                         }
+                        nuevoArrayAux[cifrasAleatorias.length] = resultadoResta;
                         System.out.println(operando1 + " - " + operando2 + " = " + resultadoResta + "\n");
                         cifrasAleatorias = nuevoArrayAux;
                     }
@@ -606,13 +601,10 @@ public class Main {
                         int resultadoMultiplicacion = operando1 * operando2;
                         int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[j++] = cifrasAleatorias[i];
-                            //Para el valor que no ha llenado el for (
-                            if (nuevoArrayAux[j] == 0) {
-                                nuevoArrayAux[j] = resultadoMultiplicacion;
-                            }
+                        for (int i = 0; i < cifrasAleatorias.length; i++) {
+                            nuevoArrayAux[i] = cifrasAleatorias[i];
                         }
+                        nuevoArrayAux[cifrasAleatorias.length] = resultadoMultiplicacion;
                         System.out.println(operando1 + " * " + operando2 + " = " + resultadoMultiplicacion + "\n");
                         //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
                         //que el nuevoArrayAux que tiene una posicion mas con el int resultado
@@ -635,13 +627,10 @@ public class Main {
                         }
                         int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[j++] = cifrasAleatorias[i];
-                            //Para el valor que no ha llenado el for (
-                            if (nuevoArrayAux[j] == 0) {
-                                nuevoArrayAux[j] = resultadoDivision;
-                            }
+                        for (int i = 0; i < cifrasAleatorias.length; i++) {
+                            nuevoArrayAux[i] = cifrasAleatorias[i];
                         }
+                        nuevoArrayAux[cifrasAleatorias.length] = resultadoDivision;
                         System.out.println(operando1 + " * " + operando2 + " = " + resultadoDivision + "\n");
                         //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
                         //que el nuevoArrayAux que tiene una posicion mas con el int resultado

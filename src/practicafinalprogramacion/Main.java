@@ -26,10 +26,8 @@ public class Main {
     private int rondaActual = 1;
     // Entero que acumula la puntuación de las rondas del jugador 1
     private int acumuladorPuntosJugador1 = 0;
-    // Entero que acumula la puntuación de las rondas del jugador 1
+    // Entero que acumula la puntuación de las rondas del jugador 2
     private int acumuladorPuntosJugador2 = 0;
-    // Entero que acumula la puntuación de las rondas de la CPU
-    private int acumuladorPuntosCPU = 0;
     // Booleano que determinara si el usuario ha pasado su turno
     private boolean haPasado = false;
     // Int para puntuaje temporal de rondas de cifras
@@ -126,7 +124,7 @@ public class Main {
                     casoTurnoCPUContraJugador();
                     mostrarLetrasDisponibles();
                     puedeFormarseCPU();
-                    puntuacionLetrasCPU();
+                    puntuacionLetrasJugador2();
                     //Reinicio haPasado en el caso de que sea true, para que
                     //en la siguiente ronda, el usuario no pase directamente
                     haPasado = false;
@@ -136,7 +134,7 @@ public class Main {
                     mostrarCifrasDisponibles();
                     operacionesCifras();
                     puntuacionCifrasJugador1();
-                    mostrarPuntuacionesJugador1CPU();
+                    mostrarPuntuacionesJugador1Jugador2();
                     //Aqui arriba tiene que ir la ronda de cifras de la CPU
                     finalPartida();
 
@@ -185,7 +183,7 @@ public class Main {
         }
         switch (opcion) {
             case '1' -> {
-                mostrarResultadosPartida();
+                //Por implementar
             }
             case '2' -> {
                 //por implementar:
@@ -310,14 +308,6 @@ public class Main {
         System.out.println("Has pasado!");
     }
 
-    public void mostrarResultadosPartida() {
-        System.out.print("\n************************************\nDETALLES DE LAS PARTIDAS\n************************************\nPartida "
-                + registroPartida.getTotalPartidas() + " (" + registroPartida.getFechaHoraFormateada() + "). Modo "
-                + registroPartida.getTipoPartida() + ", " + registroPartida.getNumeroRondas() + " rondas,\n"
-                + "ganador: ");
-        registroPartida.determinarGanador();
-    }
-
     public void mostrarLetrasDisponibles() {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
@@ -421,10 +411,9 @@ public class Main {
         //Este entero solo podra ser uno o dos, ya que
         //siempre tendremos solo dos operandos por 
         //operacion
-        boolean resultadoElegido = false;
-        boolean estaElResultado = false;
+        boolean resultadoValidoElegido = false;
 
-        while (hacerOperaciones && !resultadoElegido) {
+        while (hacerOperaciones && !resultadoValidoElegido) {
             System.out.print("Cifras disponibles: ");
             for (int i = 0; i < cifrasAleatorias.length; i++) {
                 System.out.print(cifrasAleatorias[i] + " ");
@@ -433,18 +422,14 @@ public class Main {
             System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
             Character tipoOperacion = lector.llegirCaracter();
             //Si es nulo (intro), entonces vuelve a pedirle que escriba
-            //una operacion valida
-            while (tipoOperacion == null) {
+            //una operacion valida. Ademas mientras no sea una de las
+            //operaciones validas, dara error y se pedira al usuario
+            //que introduzca una operacion entre las proporcionadas
+            while (tipoOperacion == null || (tipoOperacion != '+' && tipoOperacion != '-'
+                    && tipoOperacion != '*' && tipoOperacion != '/' && tipoOperacion != '=')) {
                 System.err.println("ERROR. Introduce una operacion valida!");
                 System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
-                tipoOperacion = lector.llegirCaracter();
-            }
-            //Mientras no sea una de las operaciones validas, dara error y se pedira
-            //al usuario que introduzca una operacion entre las proporcionadas
-            while (tipoOperacion != '+' && tipoOperacion != '-' && tipoOperacion != '*'
-                    && tipoOperacion != '/' && tipoOperacion != '=') {
-                System.err.println("ERROR. Introduce una operacion valida!");
-                System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
+                lector.clear();
                 tipoOperacion = lector.llegirCaracter();
             }
 
@@ -462,26 +447,22 @@ public class Main {
                     System.out.print("Introduce el resultado final: ");
                     resultado = lector.llegirEnter();
                 }
-                for (int i = 0; i < cifrasAleatorias.length && !estaElResultado; i++) {
-                    if (cifrasAleatorias[i] == resultado) {
-                        estaElResultado = true;
-                    }
-                }
 
-                if (!estaElResultado) {
-                    while (!estaElResultado) {
-                        System.err.println("ERROR. El resultado no esta entre las cifras disponibles!");
-                        System.out.print("Introduce el resultado final: ");
-                        resultado = lector.llegirEnter();
-                        for (int i = 0; i < cifrasAleatorias.length && !estaElResultado; i++) {
-                            if (cifrasAleatorias[i] == resultado) {
-                                estaElResultado = true;
-                            }
+                while (!resultadoValidoElegido) {
+                    for (int i = 0; i < cifrasAleatorias.length && !resultadoValidoElegido; i++) {
+                        if (cifrasAleatorias[i] == resultado) {
+                            resultadoValidoElegido = true;
                         }
                     }
+                    if (!resultadoValidoElegido) {
+                        System.err.println("ERROR. El resultado no esta entre las cifras disponibles!");
+                        System.out.print("Introduce el resultado final: ");
+                        lector.clear();
+                        resultado = lector.llegirEnter();
+                    }
                 }
 
-                if (estaElResultado) {
+                if (resultadoValidoElegido) {
                     //Si el resultado esta en el array, entonces si que podemos
                     //calcular la diferencia entre objetivo y resultado
                     int diferencia = objetivo - resultado;
@@ -504,16 +485,15 @@ public class Main {
                         puntuajeCifras = 0;
                         System.out.println("Resultado no exacto: +" + puntuajeCifras + " puntos\n");
                     }
-                    resultadoElegido = true;
+                    resultadoValidoElegido = true;
                 }
             }
 
-            if (!resultadoElegido) {
+            if (!resultadoValidoElegido) {
                 //Si ha llegado hasta aqui, la operacion que 
                 //ha elegido el usuario es valida y 
                 //incrementamos de forma adelantada ya que la 
                 //proxima operacion que esperamos es la segunda
-                numOperacion++;
 
                 //Este System,out.println() y todo el bucle for
                 //es para que se vea de la manera que queremos
@@ -539,13 +519,14 @@ public class Main {
                             System.out.print(cifrasAleatorias[j] + " ");
                         }
                     }
-                    tipoOperacion = lector.llegirCaracter();
+                    operando1 = lector.llegirEnter();
                 }
 
                 //Booleano que usaremos para determinar si el operando
                 //que ha elegido el usuario existe entre las
                 //cifras aleatorias
                 boolean existeElOperando1 = false;
+                int indiceAEliminar = -1;
 
                 //Supondremos que el operando que ha puesto el usuario
                 //es erroneo por facilidad a la hora de programar
@@ -557,6 +538,7 @@ public class Main {
                     //usuario entonces, existe el operando
                     for (int i = 0; i < cifrasAleatorias.length && !existeElOperando1; i++) {
                         if (operando1 == cifrasAleatorias[i]) {
+                            indiceAEliminar = i;
                             existeElOperando1 = true;
                         }
                     }
@@ -573,31 +555,20 @@ public class Main {
                                 System.out.print(cifrasAleatorias[i] + " ");
                             }
                         }
+                        lector.clear();
                         operando1 = lector.llegirEnter();
                     }
                 }
 
-                //Inicializaremos esta variable int "indiceAEliminar" con el valor
-                //de -1, asi luego la usaremos para comprobar si el opearando
-                //escrito por el usuario existe entre el array (tiene indice),
-                //logicamente si por la comprobacion anterior pero esta hecho 
-                //para refuerzo de errores
-                int indiceAEliminar = -1;
-                boolean indiceEncontrado = false;
-
-                //Busco cual es la cifra que introduzco el usuario y cuando
-                //lo encuentre, guardo el indice de esa cifra
-                for (int i = 0; i < cifrasAleatorias.length && !indiceEncontrado; i++) {
-                    if (cifrasAleatorias[i] == operando1) {
-                        indiceAEliminar = i;
-                        indiceEncontrado = true;
-                    }
-                }
-
                 //Si el indice a eliminar es distinto de -1 (hemos encontrado la cifra),
-                //entonces en el nuevoArrayAux[] que es del tamaño de
-                //cifrasAleatorias.length - 1, guardaremos todo 
-                //menos el numero en ese indice
+                //Y ADEMÁS la ultima operacion fue valida (se llevo a cabo una resta
+                //o division de forma valida), entonces en el nuevoArrayAux[]
+                //que es del tamaño de cifrasAleatorias.length - 1, 
+                //guardaremos todo menos el numero en ese indice
+                //EN EL CASO DE QUE LA OPERACION QUE LLEVEMOS A CABO LUEGO NO 
+                //SEA VALIDA, SE RECUPERARA CIFRAS ALEATORIAS CON ESTA
+                //REFERENCIA
+                int arrayRecuperarCifrasAleatorias[] = cifrasAleatorias;
                 if (indiceAEliminar != -1) {
                     int[] nuevoArrayAux = new int[cifrasAleatorias.length - 1];
                     for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
@@ -626,6 +597,7 @@ public class Main {
                 Integer operando2 = lector.llegirEnter();
                 while (operando2 == null) {
                     System.err.println("ERROR. Introduce un operando valido!");
+                    System.out.print("Operando " + numOperando + " (");
                     for (int j = 0; j < cifrasAleatorias.length; j++) {
                         if (j == cifrasAleatorias.length - 1) {
                             System.out.print(cifrasAleatorias[j] + "): ");
@@ -633,12 +605,13 @@ public class Main {
                             System.out.print(cifrasAleatorias[j] + " ");
                         }
                     }
-                    tipoOperacion = lector.llegirCaracter();
+                    operando2 = lector.llegirEnter();
                 }
                 //Booleano que usaremos para determinar si el operando
                 //que ha elegido el usuario existe entre las
                 //cifras aleatorias
                 boolean existeElOperando2 = false;
+                int indiceAEliminar2 = -1;
                 //Supondremos que el operando que ha puesto el usuario
                 //es erroneo por facilidad a la hora de programar
                 //y miraremos lo antes posible si es correcto
@@ -649,6 +622,7 @@ public class Main {
                     //usuario entonces, existe el operando
                     for (int i = 0; i < cifrasAleatorias.length && !existeElOperando2; i++) {
                         if (operando2 == cifrasAleatorias[i]) {
+                            indiceAEliminar2 = i;
                             existeElOperando2 = true;
                         }
                     }
@@ -665,121 +639,105 @@ public class Main {
                                 System.out.print(cifrasAleatorias[i] + " ");
                             }
                         }
+                        lector.clear();
                         operando2 = lector.llegirEnter();
                     }
                 }
-                int indiceAEliminar2 = -1;
-                boolean indiceEncontrado2 = false;
-                //Si llego aqui, he salido del bucle, y por tanto, el operando si existe
+                numOperando--;
 
-                //Busco cual es la cifra que introduzco el usuario y cuando
-                //lo encuentre, guardo el indice de esa cifra
-                for (int i = 0; i < cifrasAleatorias.length && !indiceEncontrado2; i++) {
-                    if (cifrasAleatorias[i] == operando2) {
-                        indiceAEliminar2 = i;
-                        indiceEncontrado2 = true;
-                    }
-                }
-
-                //Si el indice a eliminar es distinto de -1 (hemos encontrado la cifra),
-                //entonces en el nuevoArrayAux[] que es del tamaño de
-                //cifrasAleatorias.length - 1, guardaremos todo 
-                //menos el numero en ese indice
                 if (indiceAEliminar2 != -1) {
                     int[] nuevoArrayAux2 = new int[cifrasAleatorias.length - 1];
                     for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
                         if (i != indiceAEliminar2) {
                             //Si el indice 'i' no es el mismo que el indice
                             //a eliminar, entonces rellenamos de forma
-                            //normal el nuevoArrayAux
+                            //normal el nuevoArrayAux2
                             nuevoArrayAux2[j++] = cifrasAleatorias[i];
                         }
                     }
                     cifrasAleatorias = nuevoArrayAux2;
                 }
-                numOperando--;
 
                 switch (tipoOperacion) {
                     case '+' -> {
+                        numOperacion++;
                         int resultadoSuma = operando1 + operando2;
-                        int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
+                        int nuevoArrayAuxSuma[] = new int[cifrasAleatorias.length + 1];
 
                         for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[i] = cifrasAleatorias[i];
+                            nuevoArrayAuxSuma[i] = cifrasAleatorias[i];
                         }
-                        nuevoArrayAux[cifrasAleatorias.length] = resultadoSuma;
+                        nuevoArrayAuxSuma[cifrasAleatorias.length] = resultadoSuma;
                         System.out.println(operando1 + " + " + operando2 + " = " + resultadoSuma + "\n");
                         //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
                         //que el nuevoArrayAux que tiene una posicion mas con el int resultado
                         //en ultima posicion
-                        cifrasAleatorias = nuevoArrayAux;
-                    }
-
-                    case '-' -> {
-                        int resultadoResta = operando1 - operando2;
-                        if (resultadoResta < 0) {
-                            System.err.println("ERROR. La division no se puede llevar a cabo!");
-                            //FALTA CONTROLAR EL FLUJO DEL ERROR AQUI
-                        } else {
-                            System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
-                                    + operando1 + " - " + operando2 + ".");
-                        }
-                        int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
-
-                        for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[i] = cifrasAleatorias[i];
-                        }
-                        nuevoArrayAux[cifrasAleatorias.length] = resultadoResta;
-                        System.out.println(operando1 + " - " + operando2 + " = " + resultadoResta + "\n");
-                        cifrasAleatorias = nuevoArrayAux;
+                        cifrasAleatorias = nuevoArrayAuxSuma;
                     }
 
                     case '*' -> {
+                        numOperacion++;
                         int resultadoMultiplicacion = operando1 * operando2;
-                        int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
+                        int nuevoArrayAuxMultiplicacion[] = new int[cifrasAleatorias.length + 1];
 
                         for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[i] = cifrasAleatorias[i];
+                            nuevoArrayAuxMultiplicacion[i] = cifrasAleatorias[i];
                         }
-                        nuevoArrayAux[cifrasAleatorias.length] = resultadoMultiplicacion;
+                        nuevoArrayAuxMultiplicacion[cifrasAleatorias.length] = resultadoMultiplicacion;
                         System.out.println(operando1 + " * " + operando2 + " = " + resultadoMultiplicacion + "\n");
                         //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
                         //que el nuevoArrayAux que tiene una posicion mas con el int resultado
                         //en ultima posicion
-                        cifrasAleatorias = nuevoArrayAux;
+                        cifrasAleatorias = nuevoArrayAuxMultiplicacion;
                     }
+                    case '-' -> {
+                        int resultadoResta = operando1 - operando2;
+                        if (resultadoResta < 0) {
+                            System.err.println("ERROR. La resta no puede llevarse a cabo!");
+                            cifrasAleatorias = arrayRecuperarCifrasAleatorias;
+                        } else {
+                            numOperacion++;
+                            System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
+                                    + operando1 + " - " + operando2 + ".");
 
+                            int nuevoArrayAuxResta[] = new int[cifrasAleatorias.length + 1];
+
+                            for (int i = 0; i < cifrasAleatorias.length; i++) {
+                                nuevoArrayAuxResta[i] = cifrasAleatorias[i];
+                            }
+                            nuevoArrayAuxResta[cifrasAleatorias.length] = resultadoResta;
+                            System.out.println(operando1 + " - " + operando2 + " = " + resultadoResta + "\n");
+                            cifrasAleatorias = nuevoArrayAuxResta;
+                        }
+                    }
                     case '/' -> {
-                        //Esto da problemas ya que encogemos el array 
-                        //antes de comprobar si se puede hacer o no
-                        //la division entera FALTA ARREGLAR ESTO
                         int resultadoDivision = operando1 / operando2;
                         if (operando1 % operando2 != 0) {
                             System.err.println("ERROR. La division no es entera!");
-                            //FALTA CONTROLAR EL FLUJO DEL ERROR AQUI
-                            operacionesCifras();
+                            cifrasAleatorias = arrayRecuperarCifrasAleatorias;
                         } else {
+                            numOperacion++;
                             System.out.println("- se ha comprobado que puede llevarse a cabo la division entera "
                                     + operando1 + " / " + operando2 + ".");
-                        }
-                        int nuevoArrayAux[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAux[i] = cifrasAleatorias[i];
+                            int nuevoArrayAuxDivision[] = new int[cifrasAleatorias.length + 1];
+
+                            for (int i = 0; i < cifrasAleatorias.length; i++) {
+                                nuevoArrayAuxDivision[i] = cifrasAleatorias[i];
+                            }
+                            nuevoArrayAuxDivision[cifrasAleatorias.length] = resultadoDivision;
+                            System.out.println(operando1 + " * " + operando2 + " = " + resultadoDivision + "\n");
+                            //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
+                            //que el nuevoArrayAux que tiene una posicion mas con el int resultado
+                            //en ultima posicion
+                            cifrasAleatorias = nuevoArrayAuxDivision;
                         }
-                        nuevoArrayAux[cifrasAleatorias.length] = resultadoDivision;
-                        System.out.println(operando1 + " * " + operando2 + " = " + resultadoDivision + "\n");
-                        //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
-                        //que el nuevoArrayAux que tiene una posicion mas con el int resultado
-                        //en ultima posicion
-                        cifrasAleatorias = nuevoArrayAux;
                     }
                     default -> {
-                        System.err.println("ERROR. Escribe un operando valido!");
+                        System.err.println("ERROR. Introduce un operando valido!");
                     }
                 }
             }
-
         }
     }
 
@@ -948,7 +906,7 @@ public class Main {
         // Mostrar la palabra elegida por la CPU
         if (palabraCPU != null) {
             System.out.println("\nCPU elige: " + new String(palabraCPU));
-            registroPartida.setPuntuacionCPU(palabraCPU.length);
+            registroPartida.setPuntuacionJugador2(palabraCPU.length);
         } else {
             System.out.println("CPU no pudo formar ninguna palabra.");
         }
@@ -1006,9 +964,9 @@ public class Main {
         System.out.println("Felicidades " + registroPartida.getNombreJugador1() + "! Has ganado " + entradaPorTeclado.length + " puntos!");
     }
 
-    public void puntuacionLetrasCPU() {
-        int puntosRonda = registroPartida.getPuntuacionCPU();
-        acumuladorPuntosCPU += puntosRonda;
+    public void puntuacionLetrasJugador2() {
+        int puntosRonda = registroPartida.getPuntuacionJugador2();
+        acumuladorPuntosJugador2 += puntosRonda;
         System.out.println("Felicidades " + registroPartida.getNombreJugador2() + "! Has ganado " + puntosRonda + " puntos!\n");
     }
 
@@ -1017,15 +975,15 @@ public class Main {
         registroPartida.setPuntuacionJugador1(acumuladorPuntosJugador1);
     }
 
-    public void puntuacionCifrasCPU(int puntuajeCifras) {
+    public void puntuacionCifrasJugador2(int puntuajeCifras) {
         //QUEDA POR HACER
     }
 
-    public void mostrarPuntuacionesJugador1CPU() {
+    public void mostrarPuntuacionesJugador1Jugador2() {
         System.out.println("Puntuaciones:\n - " + registroPartida.getNombreJugador1()
                 + ": " + registroPartida.getPuntuacionJugador1() + " puntos.\n"
                 + " - " + registroPartida.getNombreJugador2() + ": "
-                + registroPartida.getPuntuacionCPU() + " puntos.\n");
+                + registroPartida.getPuntuacionJugador2() + " puntos.\n");
     }
 
     public void finalPartida() {

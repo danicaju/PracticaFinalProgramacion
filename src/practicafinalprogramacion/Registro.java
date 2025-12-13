@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
+
 public class Registro {
 
     private LocalDateTime fechaHora;
@@ -22,7 +23,6 @@ public class Registro {
 
     public Registro() {
         this.fechaHora = LocalDateTime.now();
-        this.totalPartidas = totalPartidas = 1;
         this.tipoPartida = tipoPartida;
         this.nivelCPU = nivelCPU;
         this.numeroRondas = numeroRondas = 1;
@@ -36,6 +36,7 @@ public class Registro {
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
     }
+    
 
     public void setTipoPartida(String tipoPartida) {
         this.tipoPartida = tipoPartida;
@@ -61,25 +62,14 @@ public class Registro {
         this.puntuacionJugador1 = puntuacionJugador1;
     }
 
-    public void setPuntuacionCPU(int puntuacionJugador2) {
+    public void setPuntuacionJugador2(int puntuacionJugador2) {
         this.puntuacionJugador2 = puntuacionJugador2;
-    }
-
-    public void determinarGanador() {
-        if (puntuacionJugador1 > puntuacionJugador2) {
-            System.out.print("Ha ganado " + getNombreJugador1() + ". Mucha suerte a la proxima " + getNombreJugador2() + "\n");
-        } else if (puntuacionJugador1 < puntuacionJugador2) {
-            System.out.print("Ha ganado " + getNombreJugador2() + ". Mucha suerte a la proxima " + getNombreJugador1() + "!\n");
-        } else {
-            System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreJugador2()
-                    + " han empatado!\n");
-        }
     }
 
     public String getFechaHoraFormateada() {
         return fechaHora.format(formato);
     }
-
+    
     public String getTipoPartida() {
         return tipoPartida;
     }
@@ -104,18 +94,25 @@ public class Registro {
         return puntuacionJugador1;
     }
 
-    public int getPuntuacionCPU() {
+    public int getPuntuacionJugador2() {
         return puntuacionJugador2;
     }
 
-    public int getTotalPartidas() {
-        return totalPartidas;
-    }
-
+        public void determinarGanador() {
+        if (puntuacionJugador1 > puntuacionJugador2) {
+            System.out.print("Ha ganado " + getNombreJugador1() + ". Mucha suerte a la proxima " + getNombreJugador2() + "\n");
+        } else if (puntuacionJugador1 < puntuacionJugador2) {
+            System.out.print("Ha ganado " + getNombreJugador2() + ". Mucha suerte a la proxima " + getNombreJugador1() + "!\n");
+        } else {
+            System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreJugador2()
+                    + " han empatado!\n");
+        }
+        }
+        
+    @Override
     public String toString() {
         return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreJugador2() + "#" + getNivelCPU()
-                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionCPU();
+                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionJugador2();
 
     }
-
 }

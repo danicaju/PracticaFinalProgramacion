@@ -100,7 +100,7 @@ public class Registro {
 
         public void determinarGanador() {
         if (puntuacionJugador1 > puntuacionJugador2) {
-            System.out.print("Ha ganado " + getNombreJugador1() + ". Mucha suerte a la proxima " + getNombreJugador2() + "\n");
+            System.out.print("Ha ganado " + getNombreJugador1() + ". Mucha suerte a la proxima " + getNombreJugador2() + "!\n");
         } else if (puntuacionJugador1 < puntuacionJugador2) {
             System.out.print("Ha ganado " + getNombreJugador2() + ". Mucha suerte a la proxima " + getNombreJugador1() + "!\n");
         } else {

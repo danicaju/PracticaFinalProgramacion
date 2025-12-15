@@ -11,7 +11,7 @@ public class Main {
 
     //Inicializaciones de objeto LT y objeto Registro
     private final LT lector = new LT();
-    private final Registro registroPartida = new Registro();
+    private Registro registroPartida;
     //Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
     //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     private char entradaPorTeclado[];
@@ -35,6 +35,17 @@ public class Main {
     private final String diccionarioEspanyol = "dic_es.txt";
     private final String ficheroCifras = "cifras.txt";
 
+    public void inicializarPartida() {
+        registroPartida = new Registro();
+        rondaActual = 1;
+        acumuladorPuntosJugador1 = 0;
+        acumuladorPuntosJugador2 = 0;
+        puntuajeCifras = 0;
+        haPasado = false;
+        // Limpiar el lector si es necesario
+        lector.clear();
+    }
+
     public void menuPrincipal() throws Exception {
         boolean salirDelPrograma = false;
 
@@ -56,7 +67,7 @@ public class Main {
 
             if (opcion == null) {
                 lector.clear(); // Limpiamos buffer
-                System.err.println("\nERROR. Introduce una opcion valida!\n");
+                System.err.println("\nERROR. Introduce una opcion valida!");
             } else {
                 switch (opcion) {
                     case '1' -> {
@@ -106,19 +117,14 @@ public class Main {
                 //Switch si le ha dado al 1 (Jugar)
                 switch (opcion) {
                     case '1' -> {
-                        lector.clear();
+                        inicializarPartida();
+
                         //Jugar contra la CPU
                         casoJugarContraCPU();
-
-                        // Reiniciamos la ronda para que empiece desde la 1
-                        // y reiniciamos tambien los acumuladores de puntos
-                        rondaActual = 1;
-                        acumuladorPuntosJugador1 = 0;
-                        acumuladorPuntosJugador2 = 0;
                         while (rondaActual <= registroPartida.getNumeroRondas()) {
 
-                            // TURNO LETRAS JUGADOR
-                            casoTurnoLetrasJugadorContraCPU();
+                            // TURNO LETRAS JUGADOR 1
+                            casoTurnoJugador1ContraJugador2();
                             mostrarLetrasDisponibles();
                             puedeFormarseJugador();
                             if (!haPasado) {
@@ -130,25 +136,27 @@ public class Main {
                             }
                             mostrarPuntuacionesJugador1Jugador2();
 
-                            // TURNO LETRAS CPU
-                            casoTurnoCPUContraJugador();
-                            mostrarLetrasDisponibles();
-                            puedeFormarseCPU();
-                            puntuacionLetrasJugador2();
                             //Reinicio haPasado en el caso de que sea true, para que
                             //en la siguiente ronda, el usuario no pase directamente
                             haPasado = false;
+
+                            // TURNO LETRAS CPU
+                            casoTurnoJugador2ContraJugador1();
+                            mostrarLetrasDisponibles();
+                            puedeFormarseCPU();
+                            puntuacionLetrasJugador2();
+                            mostrarPuntuacionesJugador1Jugador2();
                             rondaActual++;
 
                             // TURNO CIFRAS JUGADOR
-                            casoTurnoCifrasJugadorContraCPU();
+                            casoTurnoJugador1ContraJugador2();
                             generacionCifrasAleatorias();
                             operacionesCifrasJugador();
                             puntuacionCifrasJugador1();
                             mostrarPuntuacionesJugador1Jugador2();
 
                             // TURNO CIFRAS CPU
-                            casoTurnoCPUContraJugador();
+                            casoTurnoJugador2ContraJugador1();
                             generacionCifrasAleatorias();
                             operacionesCifrasCPU();
                             puntuacionCifrasJugador2();
@@ -160,10 +168,64 @@ public class Main {
                         volverAlMenu = true;
                     }
                     case '2' -> {
-                        lector.clear();
-                        //Jugar contra otra persona (por hacer)
-                        //casoTurnoJugador1ContraJugador2
-                        //casoTurnoJugador2ContraJugador1
+                        inicializarPartida();
+
+                        //Jugar contra otro jugador
+                        casoJugador1ContraJugador2();
+                        while (rondaActual <= registroPartida.getNumeroRondas()) {
+
+                            // TURNO LETRAS JUGADOR 1
+                            casoTurnoJugador1ContraJugador2();
+                            mostrarLetrasDisponibles();
+                            puedeFormarseJugador();
+                            if (!haPasado) {
+                                existeEnDiccionarioJugador();
+                                //En el caso de que exista, premiar al jugador con puntos
+                                puntuacionLetrasJugador1();
+                            } else {
+                                jugador1PasaTurno();
+                            }
+                            mostrarPuntuacionesJugador1Jugador2();
+
+                            //Reinicio haPasado en el caso de que sea true, para que
+                            //en la siguiente ronda, el usuario no pase directamente
+                            haPasado = false;
+
+                            // TURNO LETRAS JUGADOR 2
+                            casoTurnoJugador2ContraJugador1();
+                            mostrarLetrasDisponibles();
+                            puedeFormarseJugador();
+                            if (!haPasado) {
+                                existeEnDiccionarioJugador();
+                                //En el caso de que exista, premiar al jugador con puntos
+                                puntuacionLetrasJugador2();
+                            } else {
+                                jugador2PasaTurno();
+                            }
+                            mostrarPuntuacionesJugador1Jugador2();
+                            rondaActual++;
+
+                            //Reinicio haPasado en el caso de que sea true, para que
+                            //en la siguiente ronda, el usuario no pase directamente
+                            haPasado = false;
+
+                            // TURNO CIFRAS JUGADOR 1
+                            casoTurnoJugador1ContraJugador2();
+                            generacionCifrasAleatorias();
+                            operacionesCifrasJugador();
+                            puntuacionCifrasJugador1();
+                            mostrarPuntuacionesJugador1Jugador2();
+
+                            // TURNO CIFRAS JUGADOR 2
+                            casoTurnoJugador2ContraJugador1();
+                            generacionCifrasAleatorias();
+                            operacionesCifrasJugador();
+                            puntuacionCifrasJugador2();
+                            mostrarPuntuacionesJugador1Jugador2();
+                            rondaActual++;
+                        }
+                        finalPartida();
+                        volverAlMenu = true;
                     }
 
                     case 's' -> {
@@ -175,13 +237,16 @@ public class Main {
                         lector.clear();
                         System.err.println("\nERROR. Introduce una opcion valida!");
                     }
+
                 }
             }
         }
     }
 
     public void opcionRegistro() throws Exception {
-        System.out.print("""    
+        boolean volverAlMenu = false;
+        while (!volverAlMenu) {
+            System.out.print("""    
                          
                                    ************************************
                                    REGISTRO
@@ -193,28 +258,27 @@ public class Main {
                 
                                    Opcion (1|2|3|s): """);
 
-        Character opcion;
-        if ((opcion = lector.llegirCaracter()) == null) {
-            lector.clear();
-            System.err.println("\nERROR. Introduce una opcion valida!");
-            opcionRegistro();
-        }
-        switch (opcion) {
-            case '1' -> {
-                //Por implementar
-            }
-            case '2' -> {
-                //por implementar:
-                //mostrarEstadisticasJugador();
-            }
-            case 's' -> {
-                System.out.println();
-                menuPrincipal();
-            }
-            default -> {
+            Character opcion = lector.llegirCaracter();
+            if (opcion == null) {
                 lector.clear();
                 System.err.println("\nERROR. Introduce una opcion valida!");
-                opcionRegistro();
+            } else {
+                switch (opcion) {
+                    case '1' -> {
+                        //Por implementar
+                    }
+                    case '2' -> {
+                        //por implementar:
+                        //mostrarEstadisticasJugador();
+                    }
+                    case 's' -> {
+                        volverAlMenu = true;
+                    }
+                    default -> {
+                        lector.clear();
+                        System.err.println("\nERROR. Introduce una opcion valida!");
+                    }
+                }
             }
         }
     }
@@ -308,23 +372,170 @@ public class Main {
         registroPartida.setNumeroRondas(opcion);
     }
 
-    public void casoTurnoLetrasJugadorContraCPU() {
+    public void casoJugador1ContraJugador2() {
+        System.out.println("""
+                                           
+                                           ************************************
+                                           JUGAR CONTRA OTRO JUGADOR
+                                           ************************************""");
+
+        //Validacion del nombre del jugador 1
+        boolean nombreValido = false;
+        while (!nombreValido) {
+            System.out.print("\nIntroduce el nombre del jugador 1: ");
+            entradaPorTeclado = lector.llegirLinia();
+
+            //Comprobamos si lo que ha introducido el usuario es un intro
+            if (entradaPorTeclado.length == 0) {
+                System.err.println("ERROR. No has escrito nada!");
+                lector.clear();
+                //Si es un espacio tambien da error ya que no queremos que empiece por espacio
+            } else if (entradaPorTeclado[0] == ' ') {
+                System.err.println("ERROR. El nombre no puede empezar por espacio!");
+                lector.clear();
+            } else {
+                nombreValido = true;
+            }
+        }
+
+        /*
+        Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
+        Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
+        introducir el usuario
+         */
+        char arrayAux[] = new char[entradaPorTeclado.length];
+        boolean espacioYaPuesto = false;
+        int tamañoArrayFinal = 0;
+
+        for (int i = 0, j = 0; i < entradaPorTeclado.length; i++) {
+            if (entradaPorTeclado[i] != ' ') {
+                arrayAux[j++] = entradaPorTeclado[i];
+                espacioYaPuesto = false;
+                tamañoArrayFinal++;
+            } else {
+                // Solo metemos espacio si no acabamos de poner uno
+                if (!espacioYaPuesto) {
+                    arrayAux[j++] = ' ';
+                    espacioYaPuesto = true;
+                    tamañoArrayFinal++;
+
+                }
+            }
+        }
+
+        //Ajustamos el tamaño final del array al
+        char arrayFinalAux[] = new char[tamañoArrayFinal];
+        for (int k = 0; k < tamañoArrayFinal; k++) {
+            arrayFinalAux[k] = arrayAux[k];
+        }
+
+        //Hacemos que entradaPorTeclado ahora apunte a arrayFinalAux
+        //para que entradaPorTeclado tenga el mismo contenido
+        entradaPorTeclado = arrayFinalAux;
+
+        String aux = new String(entradaPorTeclado);
+        registroPartida.setNombreJugador1(aux);
+
+        //Validacion del nombre del jugador 2
+        nombreValido = false;
+        while (!nombreValido) {
+            lector.clear();
+            System.out.print("Introduce el nombre del jugador 2: ");
+            entradaPorTeclado = lector.llegirLinia();
+
+            //Comprobamos si lo que ha introducido el usuario es un intro
+            if (entradaPorTeclado.length == 0) {
+                System.err.println("ERROR. No has escrito nada!");
+                lector.clear();
+                //Si es un espacio tambien da error ya que no queremos que empiece por espacio
+            } else if (entradaPorTeclado[0] == ' ') {
+                System.err.println("ERROR. El nombre no puede empezar por espacio!");
+                lector.clear();
+            } else {
+                nombreValido = true;
+            }
+        }
+
+        /*
+        Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
+        Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
+        introducir el usuario
+         */
+        arrayAux = new char[entradaPorTeclado.length];
+        espacioYaPuesto = false;
+        tamañoArrayFinal = 0;
+
+        for (int i = 0, j = 0; i < entradaPorTeclado.length; i++) {
+            if (entradaPorTeclado[i] != ' ') {
+                arrayAux[j++] = entradaPorTeclado[i];
+                espacioYaPuesto = false;
+                tamañoArrayFinal++;
+            } else {
+                // Solo metemos espacio si no acabamos de poner uno
+                if (!espacioYaPuesto) {
+                    arrayAux[j++] = ' ';
+                    espacioYaPuesto = true;
+                    tamañoArrayFinal++;
+
+                }
+            }
+        }
+
+        //Ajustamos el tamaño final del array al
+        arrayFinalAux = new char[tamañoArrayFinal];
+        for (int k = 0; k < tamañoArrayFinal; k++) {
+            arrayFinalAux[k] = arrayAux[k];
+        }
+        //Hacemos que entradaPorTeclado ahora apunte a arrayFinalAux
+        //para que entradaPorTeclado tenga el mismo contenido
+        entradaPorTeclado = arrayFinalAux;
+
+        //Comentar esto mas adelante
+        String aux2 = new String(entradaPorTeclado);
+        registroPartida.setNombreJugador2(aux2);
+
+        System.out.println("Nombre del jugador 1: " + aux);
+        System.out.println("Nombre del jugador 2: " + aux2);
+        registroPartida.setNombreJugador2(aux2);
+        System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+        /*
+        Aqui, usamos un Integer porque nos dimos cuenta que al poner cualquier cosa que no 
+        fuera un numero con un int opcion, el programa petaba devolviendo nulo, por ejemplo,
+        si pusieramos un caracter del abecedario, entonces lo que hicimos es usar
+        la variante objeto del entero que es el Integer para poder capturar ese
+        error de nulo y pedir otro numero al usuario.
+         */
+        Integer opcion = lector.llegirEnter();
+        while (opcion == null) {
+            lector.clear();
+            System.err.println("ERROR. Escribe un numero par de rondas!");
+            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+            opcion = lector.llegirEnter();
+        }
+        while (opcion % 2 != 0) {
+            System.err.println("ERROR. Escribe un numero par de rondas!");
+            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+            opcion = lector.llegirEnter();
+        }
+        //Si ha llegado aqui, la opcion no es nula y tampoco es impar
+        registroPartida.setNumeroRondas(opcion);
+    }
+
+    public void casoTurnoJugador1ContraJugador2() {
         System.out.println("\nRonda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
 
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
     }
 
-    public void casoTurnoCifrasJugadorContraCPU() {
-        System.out.println("Ronda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": cifras.");
-
-        System.out.println("Turno de: " + registroPartida.getNombreJugador1());
-    }
-
-    public void casoTurnoCPUContraJugador() {
+    public void casoTurnoJugador2ContraJugador1() {
         System.out.println("\nTurno de: " + registroPartida.getNombreJugador2());
     }
 
     public void jugador1PasaTurno() {
+        System.out.println("Has pasado!");
+    }
+
+    public void jugador2PasaTurno() {
         System.out.println("Has pasado!");
     }
 
@@ -1256,7 +1467,9 @@ public class Main {
         // Mostrar la palabra elegida por la CPU
         if (palabraCPU != null) {
             System.out.println("\nCPU elige: " + new String(palabraCPU));
-            registroPartida.setPuntuacionJugador2(palabraCPU.length);
+            entradaPorTeclado = palabraCPU;
+            registroPartida.setPuntuacionJugador2(entradaPorTeclado.length);
+            lector.clear();
         } else {
             System.out.println("CPU no pudo formar ninguna palabra.");
         }
@@ -1315,9 +1528,9 @@ public class Main {
     }
 
     public void puntuacionLetrasJugador2() {
-        int puntosRonda = registroPartida.getPuntuacionJugador2();
-        acumuladorPuntosJugador2 += puntosRonda;
-        System.out.println("Felicidades " + registroPartida.getNombreJugador2() + "! Has ganado " + puntosRonda + " puntos!\n");
+        acumuladorPuntosJugador2 += entradaPorTeclado.length;
+        registroPartida.setPuntuacionJugador2(acumuladorPuntosJugador2);
+        System.out.println("Felicidades " + registroPartida.getNombreJugador2() + "! Has ganado " + entradaPorTeclado.length + " puntos!");
     }
 
     public void puntuacionCifrasJugador1() {

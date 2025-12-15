@@ -23,14 +23,9 @@ public class Registro {
 
     public Registro() {
         this.fechaHora = LocalDateTime.now();
-        this.tipoPartida = tipoPartida;
-        this.nivelCPU = nivelCPU;
-        this.numeroRondas = numeroRondas = 1;
-        this.nombreJugador1 = nombreJugador1;
-        this.nombreJugador2 = nombreJugador2;
-        this.puntuacionJugador1 = puntuacionJugador1;
-        this.puntuacionJugador2 = puntuacionJugador2;
-
+        this.numeroRondas = 1;
+        this.puntuacionJugador1 = 0;
+        this.puntuacionJugador2 = 0;
     }
 
     public void setFechaHora(LocalDateTime fechaHora) {

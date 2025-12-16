@@ -730,23 +730,23 @@ public class Main {
                 }
                 lector.clear();
                 resultadoFinal = lector.llegirEnter();
-                //Entrara aqui si resultado es nulo (intro)
-                while (resultadoFinal == null) {
-                    lector.clear();
-                    System.err.println("ERROR. No has escrito nada!");
-                    System.out.print("Introduce el resultado final (");
-                    for (int i = 0; i < historialNumeros.length; i++) {
-                        if (i == historialNumeros.length - 1) {
-                            System.out.print(historialNumeros[i] + "): ");
-                        } else {
-                            System.out.print(historialNumeros[i] + " ");
-
-                        }
-                    }
-                    resultadoFinal = lector.llegirEnter();
-                }
 
                 while (!resultadoValidoElegido) {
+                    //Entrara aqui si resultado es nulo (intro)
+                    while (resultadoFinal == null) {
+                        lector.clear();
+                        System.err.println("ERROR. No has escrito nada!");
+                        System.out.print("Introduce el resultado final (");
+                        for (int i = 0; i < historialNumeros.length; i++) {
+                            if (i == historialNumeros.length - 1) {
+                                System.out.print(historialNumeros[i] + "): ");
+                            } else {
+                                System.out.print(historialNumeros[i] + " ");
+
+                            }
+                        }
+                        resultadoFinal = lector.llegirEnter();
+                    }
                     for (int i = 0; i < historialNumeros.length && !resultadoValidoElegido; i++) {
                         if (historialNumeros[i] == resultadoFinal) {
                             resultadoValidoElegido = true;
@@ -756,9 +756,13 @@ public class Main {
                         System.err.println("ERROR. El resultado no esta entre las cifras disponibles!");
                         System.out.print("Introduce el resultado final (");
                         for (int i = 0; i < historialNumeros.length; i++) {
-                            System.out.print(historialNumeros[i] + " ");
+                            if (i == historialNumeros.length - 1) {
+                                System.out.print(historialNumeros[i] + "): ");
+                            } else {
+                                System.out.print(historialNumeros[i] + " ");
+
+                            }
                         }
-                        System.out.print("): ");
                         lector.clear();
                         resultadoFinal = lector.llegirEnter();
                     }

@@ -7,13 +7,10 @@ import java.time.format.DateTimeFormatter;
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
-
 public class Registro {
 
     private LocalDateTime fechaHora;
-    private int totalPartidas;
     String tipoPartida;
-    private int nivelCPU;
     private int numeroRondas;
     String nombreJugador1;
     String nombreJugador2;
@@ -31,14 +28,9 @@ public class Registro {
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
     }
-    
 
     public void setTipoPartida(String tipoPartida) {
         this.tipoPartida = tipoPartida;
-    }
-
-    public void setNivelCPU(int nivelCPU) {
-        this.nivelCPU = nivelCPU;
     }
 
     public void setNumeroRondas(int numeroRondas) {
@@ -64,13 +56,9 @@ public class Registro {
     public String getFechaHoraFormateada() {
         return fechaHora.format(formato);
     }
-    
+
     public String getTipoPartida() {
         return tipoPartida;
-    }
-
-    public int getNivelCPU() {
-        return nivelCPU;
     }
 
     public int getNumeroRondas() {
@@ -93,7 +81,7 @@ public class Registro {
         return puntuacionJugador2;
     }
 
-        public void determinarGanador() {
+    public void determinarGanador() {
         if (puntuacionJugador1 > puntuacionJugador2) {
             System.out.print("Ha ganado " + getNombreJugador1() + ". Mucha suerte a la proxima " + getNombreJugador2() + "!\n");
         } else if (puntuacionJugador1 < puntuacionJugador2) {
@@ -102,12 +90,11 @@ public class Registro {
             System.out.print("El jugador " + getNombreJugador1() + " y el jugador " + getNombreJugador2()
                     + " han empatado!\n");
         }
-        }
-        
+    }
+
     @Override
     public String toString() {
-        return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreJugador2() + "#" + getNivelCPU()
-                + "#" + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionJugador2();
-
+        return getFechaHoraFormateada() + "#" + getTipoPartida() + "#" + getNombreJugador1() + "#" + getNombreJugador2() + "#"
+                + getNumeroRondas() + "#" + getPuntuacionJugador1() + "#" + getPuntuacionJugador2();
     }
 }

@@ -34,6 +34,7 @@ public class Main {
     private final String ficheroLetras = "letras_es.txt";
     private final String diccionarioEspanyol = "dic_es.txt";
     private final String ficheroCifras = "cifras.txt";
+    private final String ficheroPartidas = "partidas.txt";
 
     public void inicializarPartida() {
         registroPartida = new Registro();
@@ -265,7 +266,7 @@ public class Main {
             } else {
                 switch (opcion) {
                     case '1' -> {
-                        //Por implementar
+                        mostrarResultadosPartidas();
                     }
                     case '2' -> {
                         //por implementar:
@@ -281,6 +282,21 @@ public class Main {
                 }
             }
         }
+    }
+
+    //POR IMPLEMENTAR, ESTO NO ESTA BIEN HAY QUE HACERLO ASI:
+    //Es obligatorio procesar el fichero de texto como resultados que
+    //contengan campos.
+    public void mostrarResultadosPartidas() throws IOException {
+        FicherosLectura ficheroLectura = new FicherosLectura(ficheroPartidas);
+        String leerFicheroRegistro = "";
+        String total = "";
+
+        while ((leerFicheroRegistro = ficheroLectura.leerFichero()) != null) {
+            total += leerFicheroRegistro;
+        }
+
+        System.out.println(total);
     }
 
     public void casoJugarContraCPU() {
@@ -370,6 +386,7 @@ public class Main {
         }
         //Si ha llegado aqui, la opcion no es nula y tampoco es impar
         registroPartida.setNumeroRondas(opcion);
+        registroPartida.setTipoPartida("vs CPU");
     }
 
     public void casoJugador1ContraJugador2() {
@@ -519,6 +536,7 @@ public class Main {
         }
         //Si ha llegado aqui, la opcion no es nula y tampoco es impar
         registroPartida.setNumeroRondas(opcion);
+        registroPartida.setTipoPartida("vs CPU");
     }
 
     public void casoTurnoJugador1ContraJugador2() {
@@ -543,7 +561,7 @@ public class Main {
         try {
             FicherosLectura lecturaFichero = new FicherosLectura(ficheroLetras);
             String lecturaLetrasDisponibles;
-            lecturaLetrasDisponibles = lecturaFichero.leerFicheroLetras();
+            lecturaLetrasDisponibles = lecturaFichero.leerFichero();
             Random random = new Random();
 
             char[] arrayFicheroLetras = lecturaLetrasDisponibles.toCharArray();
@@ -576,7 +594,7 @@ public class Main {
         //no hace falta que ejecute un bucle while de lectura, simplemente una
         //sola instruccion y convierto el String "lectura" a array de caracteres
         //"arrayLectura"
-        lectura = ficheroDeCifras.leerFicheroCifras();
+        lectura = ficheroDeCifras.leerFichero();
         arrayLectura = lectura.toCharArray();
 
         /*
@@ -1400,7 +1418,7 @@ public class Main {
         entonces que vaya comprobando si la palabraDic puede formarse
         con auxLetras
          */
-        while ((palabraDic = ficheroDic.leerFicheroLetras()) != null) {
+        while ((palabraDic = ficheroDic.leerFichero()) != null) {
 
             /*
             char auxLetras[] nos ayuda porque en cada iteracion
@@ -1484,7 +1502,7 @@ public class Main {
             FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
             String lineaDic;
 
-            while ((lineaDic = ficheroDic.leerFicheroLetras()) != null && !existeEnDic) {
+            while ((lineaDic = ficheroDic.leerFichero()) != null && !existeEnDic) {
                 char[] lineaDicArray = lineaDic.toCharArray();
                 boolean iguales = false;
 
@@ -1550,9 +1568,12 @@ public class Main {
                 + registroPartida.getPuntuacionJugador2() + " puntos.");
     }
 
-    public void finalPartida() {
+    public void finalPartida() throws IOException {
         // Solo llega aqui al final de la partida
         System.out.println("\nSe acabo la partida! Muy bien jugado ambos!");
+        FicherosEscritura ficherosEscritura = new FicherosEscritura(ficheroPartidas);
+        ficherosEscritura.escribirFichero(registroPartida.toString());
+        ficherosEscritura.cerrarFichero();
         registroPartida.determinarGanador();
     }
 

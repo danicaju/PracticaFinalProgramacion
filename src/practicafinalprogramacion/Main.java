@@ -125,7 +125,7 @@ public class Main {
                         while (rondaActual <= registroPartida.getNumeroRondas()) {
 
                             // TURNO LETRAS JUGADOR 1
-                            casoTurnoJugador1ContraJugador2();
+                            casoTurnoLetrasJugador1ContraJugador2();
                             mostrarLetrasDisponibles();
                             puedeFormarseJugador();
                             if (!haPasado) {
@@ -150,7 +150,7 @@ public class Main {
                             rondaActual++;
 
                             // TURNO CIFRAS JUGADOR
-                            casoTurnoJugador1ContraJugador2();
+                            casoTurnoCifrasJugador1ContraJugador2();
                             generacionCifrasAleatorias();
                             operacionesCifrasJugador();
                             puntuacionCifrasJugador1();
@@ -165,6 +165,7 @@ public class Main {
 
                             rondaActual++;
                         }
+                        escribirResultadosPartida();
                         finalPartida();
                         volverAlMenu = true;
                     }
@@ -176,7 +177,7 @@ public class Main {
                         while (rondaActual <= registroPartida.getNumeroRondas()) {
 
                             // TURNO LETRAS JUGADOR 1
-                            casoTurnoJugador1ContraJugador2();
+                            casoTurnoLetrasJugador1ContraJugador2();
                             mostrarLetrasDisponibles();
                             puedeFormarseJugador();
                             if (!haPasado) {
@@ -211,7 +212,7 @@ public class Main {
                             haPasado = false;
 
                             // TURNO CIFRAS JUGADOR 1
-                            casoTurnoJugador1ContraJugador2();
+                            casoTurnoCifrasJugador1ContraJugador2();
                             generacionCifrasAleatorias();
                             operacionesCifrasJugador();
                             puntuacionCifrasJugador1();
@@ -225,6 +226,7 @@ public class Main {
                             mostrarPuntuacionesJugador1Jugador2();
                             rondaActual++;
                         }
+                        escribirResultadosPartida();
                         finalPartida();
                         volverAlMenu = true;
                     }
@@ -282,21 +284,6 @@ public class Main {
                 }
             }
         }
-    }
-
-    //POR IMPLEMENTAR, ESTO NO ESTA BIEN HAY QUE HACERLO ASI:
-    //Es obligatorio procesar el fichero de texto como resultados que
-    //contengan campos.
-    public void mostrarResultadosPartidas() throws IOException {
-        FicherosLectura ficheroLectura = new FicherosLectura(ficheroPartidas);
-        String leerFicheroRegistro = "";
-        String total = "";
-
-        while ((leerFicheroRegistro = ficheroLectura.leerFichero()) != null) {
-            total += leerFicheroRegistro;
-        }
-
-        System.out.println(total);
     }
 
     public void casoJugarContraCPU() {
@@ -373,16 +360,28 @@ public class Main {
         error de nulo y pedir otro numero al usuario.
          */
         Integer opcion = lector.llegirEnter();
-        while (opcion == null) {
-            lector.clear();
-            System.err.println("ERROR. Escribe un numero par de rondas!");
-            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-            opcion = lector.llegirEnter();
-        }
-        while (opcion % 2 != 0) {
-            System.err.println("ERROR. Escribe un numero par de rondas!");
-            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-            opcion = lector.llegirEnter();
+        boolean numeroRondasValido = false;
+
+        while (!numeroRondasValido) {
+            if (opcion == null) {
+                lector.clear();
+                System.err.println("ERROR. No has escrito nada!");
+                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                opcion = lector.llegirEnter();
+            } else if (opcion >= 20) {
+                lector.clear();
+                System.err.println("ERROR. Maximo 20 rondas!");
+                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                opcion = lector.llegirEnter();
+            } else if (opcion % 2 != 0) {
+                lector.clear();
+                System.err.println("ERROR. Escribe un numero par de rondas!");
+                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                opcion = lector.llegirEnter();
+            } else if (opcion % 2 == 0) {
+                lector.clear();
+                numeroRondasValido = true;
+            }
         }
         //Si ha llegado aqui, la opcion no es nula y tampoco es impar
         registroPartida.setNumeroRondas(opcion);
@@ -523,25 +522,35 @@ public class Main {
         error de nulo y pedir otro numero al usuario.
          */
         Integer opcion = lector.llegirEnter();
-        while (opcion == null) {
-            lector.clear();
-            System.err.println("ERROR. Escribe un numero par de rondas!");
-            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-            opcion = lector.llegirEnter();
-        }
-        while (opcion % 2 != 0) {
-            System.err.println("ERROR. Escribe un numero par de rondas!");
-            System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-            opcion = lector.llegirEnter();
+        boolean numeroRondasValido = false;
+
+        while (!numeroRondasValido) {
+            if (opcion == null) {
+                lector.clear();
+                System.err.println("ERROR. No has escrito nada!");
+                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                opcion = lector.llegirEnter();
+            } else if (opcion % 2 != 0) {
+                System.err.println("ERROR. Escribe un numero par de rondas!");
+                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                opcion = lector.llegirEnter();
+            } else if (opcion % 2 == 0) {
+                numeroRondasValido = true;
+            }
         }
         //Si ha llegado aqui, la opcion no es nula y tampoco es impar
         registroPartida.setNumeroRondas(opcion);
-        registroPartida.setTipoPartida("vs CPU");
+        registroPartida.setTipoPartida("vs humano");
     }
 
-    public void casoTurnoJugador1ContraJugador2() {
+    public void casoTurnoLetrasJugador1ContraJugador2() {
         System.out.println("\nRonda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
 
+        System.out.println("Turno de: " + registroPartida.getNombreJugador1());
+    }
+
+    public void casoTurnoCifrasJugador1ContraJugador2() {
+        System.out.println("\nRonda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
     }
 
@@ -682,12 +691,22 @@ public class Main {
             //operaciones validas, dara error y se pedira al usuario
             //que introduzca una operacion entre las proporcionadas
             tipoOperacion = lector.llegirCaracter();
-            while (tipoOperacion == null || (tipoOperacion != '+' && tipoOperacion != '-'
-                    && tipoOperacion != '*' && tipoOperacion != '/' && tipoOperacion != '=')) {
-                lector.clear();
-                System.err.println("ERROR. Introduce una operacion valida!");
-                System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
-                tipoOperacion = lector.llegirCaracter();
+            boolean operacionValida = false;
+            while (!operacionValida) {
+                if (tipoOperacion == null) {
+                    System.err.println("ERROR. No has escrito nada!");
+                    System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
+                    lector.clear();
+                    tipoOperacion = lector.llegirCaracter();
+                } else if (tipoOperacion != '+' && tipoOperacion != '-'
+                        && tipoOperacion != '*' && tipoOperacion != '/' && tipoOperacion != '=') {
+                    System.err.println("ERROR. Introduce una operacion valida!");
+                    System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
+                    lector.clear();
+                    tipoOperacion = lector.llegirCaracter();
+                } else {
+                    operacionValida = true;
+                }
             }
 
             //Si cifrasAleatorias.length es 1 entonces solo queda un numero 
@@ -1024,11 +1043,20 @@ public class Main {
                         // Actualizo la referencia
                         historialNumeros = tempHistorial;
                     }
+
                     case '-' -> {
                         int resultadoResta = operando1 - operando2;
                         if (resultadoResta < 0) {
                             System.err.println("ERROR. La resta no puede llevarse a cabo!");
                             cifrasAleatorias = arrayRecuperarCifrasAleatorias;
+                        } else if (operando1 == operando2) {
+                            /*
+                            Si son iguales, no hago nada para que no se acumule un 0
+                            en el array, entonces cifrasAleatorias[] ha llegado aqui
+                            y sera la misma que cuando se suprimieron el operando1
+                            y operando2 del array, para que una resta entre dos
+                            numeros iguales no se pueda guardar un 0.
+                             */
                         } else {
                             numOperacion++;
                             System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
@@ -1055,6 +1083,7 @@ public class Main {
                             historialNumeros = tempHistorial;
                         }
                     }
+
                     case '/' -> {
                         int resultadoDivision = operando1 / operando2;
                         if (operando1 % operando2 != 0) {
@@ -1117,7 +1146,7 @@ public class Main {
         while (quedanNumeros) {
 
             /*
-            Usamos el booleano anteriorOperacionNoValida porque solo me interesa que pongaeste mensaje
+            Usamos el booleano anteriorOperacionNoValida porque solo me interesa que ponga este mensaje
             cuando la anterior operacion ha sido valida (no ha dado numero negativo
             ni tampoco ha intentado hacer una  division no entera). Asi da la
             sensacion de que la CPU no se equivoca aunque realmente
@@ -1253,11 +1282,20 @@ public class Main {
                         //en ultima posicion
                         cifrasAleatorias = nuevoArrayAuxSuma;
                     }
+
                     case '-' -> {
                         resultado = operando1 - operando2;
                         if (resultado < 0) {
                             cifrasAleatorias = arrayRecuperarCifrasAleatorias;
                             anteriorOperacionValida = false;
+                        } else if (operando1 == operando2) {
+                            /*
+                            Si son iguales, no hago nada para que no se acumule un 0
+                            en el array, entonces cifrasAleatorias[] ha llegado aqui
+                            y sera la misma que cuando se suprimieron el operando1
+                            y operando2 del array, para que una resta entre dos
+                            numeros iguales no se pueda guardar un 0.
+                             */
                         } else {
                             numOperacion++;
                             System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
@@ -1572,13 +1610,55 @@ public class Main {
                 + registroPartida.getPuntuacionJugador2() + " puntos.");
     }
 
-    public void finalPartida() throws IOException {
-        // Solo llega aqui al final de la partida
-        System.out.println("\nSe acabo la partida! Muy bien jugado ambos!");
+    public void escribirResultadosPartida() throws IOException {
         FicherosEscritura ficherosEscritura = new FicherosEscritura(ficheroPartidas);
         ficherosEscritura.escribirFichero(registroPartida.toString());
+        ficherosEscritura.escribirSaltoLinea();
         ficherosEscritura.cerrarFichero();
         registroPartida.determinarGanador();
+    }
+
+    public void mostrarResultadosPartidas() throws IOException {
+        FicherosLectura ficheroLectura = new FicherosLectura(ficheroPartidas);
+        String leerFicheroRegistro = "";
+        String campo = "";
+        String arrayCampos[] = new String[7];
+        int contadorPosiciones = 0;
+        int numeroPartidas = 1;
+        boolean esNulo = false;
+
+        System.out.println("\n------------------ REGISTRO DE LAS PARTIDAS ------------------\n");
+
+        while (!esNulo) {
+            leerFicheroRegistro = ficheroLectura.leerFichero();
+            if (leerFicheroRegistro == null) {
+                System.out.println("--------------------------------------------------------------");
+                esNulo = true;
+            } else {
+                char aux[] = leerFicheroRegistro.toCharArray();
+                for (int i = 0; i < aux.length; i++) {
+                    if (aux[i] != '#') {
+                        campo += aux[i];
+                    }
+                    if (aux[i] == '#' || i == aux.length - 1) {
+                        arrayCampos[contadorPosiciones] = campo;
+                        contadorPosiciones++;
+                        campo = "";
+                    }
+                }
+                System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                        + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,"
+                        + "\n- Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + ".\n"
+                        + "- Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + ".\n");
+                numeroPartidas++;
+                contadorPosiciones = 0;
+            }
+        }
+    }
+
+    public void finalPartida() {
+        // Solo llega aqui al final de la partida
+        System.out.println("\nSe acabo la partida! Muy bien jugado ambos!");
     }
 
     public static void main(String[] args) throws Exception {

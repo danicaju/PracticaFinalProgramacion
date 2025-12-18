@@ -19,6 +19,10 @@ public class FicherosEscritura {
     public void escribirFichero(String parametroAEscribir) throws IOException {
         bw.write(parametroAEscribir);
     }
+    
+    public void escribirSaltoLinea() throws IOException {
+        bw.newLine();
+    }
 
     public void cerrarFichero() throws IOException {
         bw.close();

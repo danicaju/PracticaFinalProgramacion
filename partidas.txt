@@ -1,1 +1,3 @@
-2025-12-16 11:12:40#null#dani#CPU#0#2#4#42025-12-16 11:22:10#vs CPU#dani#CPU#2#11#52025-12-16 11:56:07#vs CPU#dani#CPU#2#0#5
+2025-12-17 20:59:54#vs CPU#teremari#CPU#2#14#4
+2025-12-17 21:06:55#vs humano#perro#rata#4#10#22
+2025-12-18 11:09:48#vs humano#Pablo#Daniel#4#24#19

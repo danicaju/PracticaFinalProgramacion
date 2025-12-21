@@ -16,7 +16,7 @@ public class Main {
     //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     private char entradaPorTeclado[];
     //Numero de caracteres aleatorios de la ronda de letras
-    private final char caracteresAleatorios[] = new char[10];
+    private char caracteresAleatorios[] = new char[10];
     //Numero de cifras aleatorias de la ronda de cifras
     private int cifrasAleatorias[] = new int[6];
     //Entero que representa la ronda en la que se encuentran, supondremos que siempre
@@ -30,9 +30,11 @@ public class Main {
     private boolean haPasado = false;
     // Int para puntuaje temporal de rondas de cifras
     private int puntuajeCifras = 0;
+    // Cantidad de cifras que selecciona el usuario
+    private int cantidadCifras = 6;
     //Strings con los nombres de los ficheros proporcionados
-    private final String ficheroLetras = "letras_es.txt";
-    private final String diccionarioEspanyol = "dic_es.txt";
+    private String ficheroLetras = "letras_es.txt";
+    private String diccionario = "dic_es.txt";
     private final String ficheroCifras = "cifras.txt";
     private final String ficheroPartidas = "partidas.txt";
 
@@ -59,6 +61,7 @@ public class Main {
                          ************************************
                              1. Jugar
                              2. Registro
+                             3. Opciones
                              s. Salir
                          ************************************
                          
@@ -74,11 +77,14 @@ public class Main {
                     case '1' -> {
                         lector.clear();
                         opcionJugar();
-                        // Al terminar opcionJugar, volverá arriba del while automáticamente
                     }
                     case '2' -> {
                         lector.clear();
                         opcionRegistro();
+                    }
+                    case '3' -> {
+                        lector.clear();
+                        opcionOpciones();
                     }
                     case 's' -> {
                         System.out.println("Saliendo... Gracias por Jugar a Cifras y Letras!");
@@ -86,7 +92,7 @@ public class Main {
                     }
                     default -> {
                         lector.clear();
-                        System.err.println("\nERROR. Introduce una opcion valida!\n");
+                        System.err.println("\nERROR. Introduce una opcion valida!");
                     }
                 }
             }
@@ -269,10 +275,11 @@ public class Main {
                 switch (opcion) {
                     case '1' -> {
                         mostrarResultadosPartidas();
+                        lector.clear();
                     }
                     case '2' -> {
-                        //por implementar:
-                        //mostrarEstadisticasJugador();
+                        mostrarEstadisticasJugador();
+                        lector.clear();
                     }
                     case 's' -> {
                         volverAlMenu = true;
@@ -286,23 +293,155 @@ public class Main {
         }
     }
 
-    public void casoJugarContraCPU() {
-        System.out.println("""
-                                           
-                                           ************************************
-                                           JUGAR CONTRA EL ORDENADOR
-                                           ************************************""");
+    public void opcionOpciones() throws Exception {
+        boolean volverAlMenu = false;
+        while (!volverAlMenu) {
+            System.out.print("""    
+                         
+                                   ************************************
+                                   OPCIONES
+                                   ************************************
+                                       1. Configurar cantidad de letras
+                                       2. Configurar cantidad de cifras
+                                       3. Configurar idioma
+                                       s. Volver al menu principal
+                                   ************************************
+                
+                                   Opcion (1|2|3|s): """);
 
+            Character opcion = lector.llegirCaracter();
+            if (opcion == null) {
+                lector.clear();
+                System.err.println("\nERROR. Introduce una opcion valida!");
+            } else {
+                switch (opcion) {
+                    case '1' -> {
+                        configurarCantidadLetras();
+
+                    }
+                    case '2' -> {
+                        configurarCantidadCifras();
+                    }
+                    case '3' -> {
+                        configurarIdioma();
+                    }
+                    case 's' -> {
+                        volverAlMenu = true;
+                    }
+                    default -> {
+                        lector.clear();
+                        System.err.println("\nERROR. Introduce una opcion valida!");
+                    }
+                }
+            }
+        }
+    }
+
+    public void configurarCantidadLetras() {
+        boolean cantidadLetrasValida = false;
+        System.out.println("\n[INFO] Longitud establecida en 10 (por defecto).");
+
+        while (!cantidadLetrasValida) {
+            System.out.print("Introduce la cantidad de letras [10-20]: ");
+            lector.clear();
+            Integer opcion = lector.llegirEnter();
+            if (opcion == null) {
+                System.err.println("ERROR. Escribe una cantidad valida!");
+            } else if (opcion > 20) {
+                System.err.println("ERROR. Maximo 20 letras!");
+            } else if (opcion < 10) {
+                System.err.println("ERROR. Minimo 10 letras!");
+            } else {
+                lector.clear();
+                caracteresAleatorios = new char[opcion];
+                cantidadLetrasValida = true;
+            }
+        }
+    }
+
+    public void configurarCantidadCifras() {
+        boolean cantidadCifrasValida = false;
+        System.out.println("\n[INFO] Longitud establecida en 6 (por defecto).");
+
+        while (!cantidadCifrasValida) {
+            System.out.print("Introduce la cantidad de cifras [6-10]: ");
+            lector.clear();
+            Integer opcion = lector.llegirEnter();
+            if (opcion == null) {
+                System.err.println("ERROR. Escribe una cantidad valida!");
+            } else if (opcion > 10) {
+                System.err.println("ERROR. Maximo 10 cifras!");
+            } else if (opcion < 6) {
+                System.err.println("ERROR. Minimo 6 cifras!");
+            } else {
+                lector.clear();
+                cantidadCifras = opcion;
+                cifrasAleatorias = new int[cantidadCifras];
+                cantidadCifrasValida = true;
+            }
+        }
+    }
+
+    public void configurarIdioma() {
+        boolean idiomaValido = false;
+        System.out.print("\n[INFO] Idioma establecido en castellano (por defecto).\n");
+
+        while (!idiomaValido) {
+
+            System.out.print("""    
+                         
+                                   ************************************
+                                   IDIOMAS DISPONIBLES
+                                   ************************************
+                                       1. Castellano
+                                       2. Catalan
+                                       3. Ingles
+                                   ************************************
+                
+                                   Opcion (1|2|3|s): """);
+            lector.clear();
+            Integer opcion = lector.llegirEnter();
+            if (opcion == null) {
+                System.err.println("ERROR. No has escrito nada!");
+            } else {
+                switch (opcion) {
+                    case 1 -> {
+                        diccionario = "dic_es.txt";
+                        ficheroLetras = "letras_es.txt";
+                        lector.clear();
+                        idiomaValido = true;
+                    }
+                    case 2 -> {
+                        diccionario = "dic_ca.txt";
+                        ficheroLetras = "letras_ca.txt";
+                        lector.clear();
+                        idiomaValido = true;
+                    }
+                    case 3 -> {
+                        diccionario = "dic_en.txt";
+                        ficheroLetras = "letras_en.txt";
+                        lector.clear();
+                        idiomaValido = true;
+                    }
+                    default -> {
+                        System.err.println("ERROR. Introduce una opcion valida!");
+                        lector.clear();
+                    }
+                }
+            }
+        }
+    }
+
+    private void pedirNombreValido() {
         boolean nombreValido = false;
+
         while (!nombreValido) {
-            System.out.print("\nIntroduce el nombre del jugador: ");
+            System.out.print("Introduce el nombre del jugador: ");
             entradaPorTeclado = lector.llegirLinia();
 
-            //Comprobamos si lo que ha introducido el usuario es un intro
             if (entradaPorTeclado.length == 0) {
                 System.err.println("ERROR. No has escrito nada!");
                 lector.clear();
-                //Si es un espacio tambien da error ya que no queremos que empiece por espacio
             } else if (entradaPorTeclado[0] == ' ') {
                 System.err.println("ERROR. El nombre no puede empezar por espacio!");
                 lector.clear();
@@ -310,7 +449,6 @@ public class Main {
                 nombreValido = true;
             }
         }
-
         /*
         Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
         Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
@@ -318,39 +456,36 @@ public class Main {
          */
         char arrayAux[] = new char[entradaPorTeclado.length];
         boolean espacioYaPuesto = false;
-        int tamañoArrayFinal = 0;
+        int numCaracteres = 0;
 
         for (int i = 0, j = 0; i < entradaPorTeclado.length; i++) {
             if (entradaPorTeclado[i] != ' ') {
                 arrayAux[j++] = entradaPorTeclado[i];
                 espacioYaPuesto = false;
-                tamañoArrayFinal++;
+                numCaracteres++;
             } else {
                 // Solo metemos espacio si no acabamos de poner uno
                 if (!espacioYaPuesto) {
                     arrayAux[j++] = ' ';
                     espacioYaPuesto = true;
-                    tamañoArrayFinal++;
+                    numCaracteres++;
 
                 }
             }
         }
 
-        //Ajustamos el tamaño final del array al
-        char arrayFinalAux[] = new char[tamañoArrayFinal];
-        for (int k = 0; k < tamañoArrayFinal; k++) {
+        //Ajustamos la longitud final del array
+        char arrayFinalAux[] = new char[numCaracteres];
+        for (int k = 0; k < numCaracteres; k++) {
             arrayFinalAux[k] = arrayAux[k];
         }
 
         //Hacemos que entradaPorTeclado ahora apunte a arrayFinalAux
         //para que entradaPorTeclado tenga el mismo contenido
         entradaPorTeclado = arrayFinalAux;
+    }
 
-        //Comentar esto mas adelante
-        String aux = new String(entradaPorTeclado);
-        registroPartida.setNombreJugador1(aux);
-        System.out.println("Nombre del jugador 2: CPU.");
-        registroPartida.setNombreJugador2("CPU");
+    public void pedirNumeroRondasValido() {
         System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
         /*
         Aqui, usamos un Integer porque nos dimos cuenta que al poner cualquier cosa que no 
@@ -359,32 +494,46 @@ public class Main {
         la variante objeto del entero que es el Integer para poder capturar ese
         error de nulo y pedir otro numero al usuario.
          */
-        Integer opcion = lector.llegirEnter();
         boolean numeroRondasValido = false;
+        int numeroRondas = 0;
 
         while (!numeroRondasValido) {
+            lector.clear();
+            Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                lector.clear();
                 System.err.println("ERROR. No has escrito nada!");
                 System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                opcion = lector.llegirEnter();
             } else if (opcion >= 20) {
-                lector.clear();
                 System.err.println("ERROR. Maximo 20 rondas!");
                 System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                opcion = lector.llegirEnter();
             } else if (opcion % 2 != 0) {
-                lector.clear();
                 System.err.println("ERROR. Escribe un numero par de rondas!");
                 System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                opcion = lector.llegirEnter();
             } else if (opcion % 2 == 0) {
-                lector.clear();
+                numeroRondas = opcion;
                 numeroRondasValido = true;
             }
         }
         //Si ha llegado aqui, la opcion no es nula y tampoco es impar
-        registroPartida.setNumeroRondas(opcion);
+        registroPartida.setNumeroRondas(numeroRondas);
+    }
+
+    public void casoJugarContraCPU() {
+        System.out.println("""
+                                           
+                                           ************************************
+                                           JUGAR CONTRA EL ORDENADOR
+                                           ************************************""");
+
+        pedirNombreValido();
+
+        String aux = new String(entradaPorTeclado);
+        registroPartida.setNombreJugador1(aux);
+
+        System.out.println("Nombre del jugador 2: CPU.");
+        registroPartida.setNombreJugador2("CPU");
+
+        pedirNumeroRondasValido();
         registroPartida.setTipoPartida("vs CPU");
     }
 
@@ -395,151 +544,21 @@ public class Main {
                                            JUGAR CONTRA OTRO JUGADOR
                                            ************************************""");
 
-        //Validacion del nombre del jugador 1
-        boolean nombreValido = false;
-        while (!nombreValido) {
-            System.out.print("\nIntroduce el nombre del jugador 1: ");
-            entradaPorTeclado = lector.llegirLinia();
-
-            //Comprobamos si lo que ha introducido el usuario es un intro
-            if (entradaPorTeclado.length == 0) {
-                System.err.println("ERROR. No has escrito nada!");
-                lector.clear();
-                //Si es un espacio tambien da error ya que no queremos que empiece por espacio
-            } else if (entradaPorTeclado[0] == ' ') {
-                System.err.println("ERROR. El nombre no puede empezar por espacio!");
-                lector.clear();
-            } else {
-                nombreValido = true;
-            }
-        }
-
-        /*
-        Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
-        Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
-        introducir el usuario
-         */
-        char arrayAux[] = new char[entradaPorTeclado.length];
-        boolean espacioYaPuesto = false;
-        int tamañoArrayFinal = 0;
-
-        for (int i = 0, j = 0; i < entradaPorTeclado.length; i++) {
-            if (entradaPorTeclado[i] != ' ') {
-                arrayAux[j++] = entradaPorTeclado[i];
-                espacioYaPuesto = false;
-                tamañoArrayFinal++;
-            } else {
-                // Solo metemos espacio si no acabamos de poner uno
-                if (!espacioYaPuesto) {
-                    arrayAux[j++] = ' ';
-                    espacioYaPuesto = true;
-                    tamañoArrayFinal++;
-
-                }
-            }
-        }
-
-        //Ajustamos el tamaño final del array al
-        char arrayFinalAux[] = new char[tamañoArrayFinal];
-        for (int k = 0; k < tamañoArrayFinal; k++) {
-            arrayFinalAux[k] = arrayAux[k];
-        }
-
-        //Hacemos que entradaPorTeclado ahora apunte a arrayFinalAux
-        //para que entradaPorTeclado tenga el mismo contenido
-        entradaPorTeclado = arrayFinalAux;
+        pedirNombreValido();
 
         String aux = new String(entradaPorTeclado);
         registroPartida.setNombreJugador1(aux);
 
-        //Validacion del nombre del jugador 2
-        nombreValido = false;
-        while (!nombreValido) {
-            lector.clear();
-            System.out.print("Introduce el nombre del jugador 2: ");
-            entradaPorTeclado = lector.llegirLinia();
+        pedirNombreValido();
 
-            //Comprobamos si lo que ha introducido el usuario es un intro
-            if (entradaPorTeclado.length == 0) {
-                System.err.println("ERROR. No has escrito nada!");
-                lector.clear();
-                //Si es un espacio tambien da error ya que no queremos que empiece por espacio
-            } else if (entradaPorTeclado[0] == ' ') {
-                System.err.println("ERROR. El nombre no puede empezar por espacio!");
-                lector.clear();
-            } else {
-                nombreValido = true;
-            }
-        }
-
-        /*
-        Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
-        Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
-        introducir el usuario
-         */
-        arrayAux = new char[entradaPorTeclado.length];
-        espacioYaPuesto = false;
-        tamañoArrayFinal = 0;
-
-        for (int i = 0, j = 0; i < entradaPorTeclado.length; i++) {
-            if (entradaPorTeclado[i] != ' ') {
-                arrayAux[j++] = entradaPorTeclado[i];
-                espacioYaPuesto = false;
-                tamañoArrayFinal++;
-            } else {
-                // Solo metemos espacio si no acabamos de poner uno
-                if (!espacioYaPuesto) {
-                    arrayAux[j++] = ' ';
-                    espacioYaPuesto = true;
-                    tamañoArrayFinal++;
-
-                }
-            }
-        }
-
-        //Ajustamos el tamaño final del array al
-        arrayFinalAux = new char[tamañoArrayFinal];
-        for (int k = 0; k < tamañoArrayFinal; k++) {
-            arrayFinalAux[k] = arrayAux[k];
-        }
-        //Hacemos que entradaPorTeclado ahora apunte a arrayFinalAux
-        //para que entradaPorTeclado tenga el mismo contenido
-        entradaPorTeclado = arrayFinalAux;
-
-        //Comentar esto mas adelante
         String aux2 = new String(entradaPorTeclado);
         registroPartida.setNombreJugador2(aux2);
 
         System.out.println("Nombre del jugador 1: " + aux);
         System.out.println("Nombre del jugador 2: " + aux2);
         registroPartida.setNombreJugador2(aux2);
-        System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-        /*
-        Aqui, usamos un Integer porque nos dimos cuenta que al poner cualquier cosa que no 
-        fuera un numero con un int opcion, el programa petaba devolviendo nulo, por ejemplo,
-        si pusieramos un caracter del abecedario, entonces lo que hicimos es usar
-        la variante objeto del entero que es el Integer para poder capturar ese
-        error de nulo y pedir otro numero al usuario.
-         */
-        Integer opcion = lector.llegirEnter();
-        boolean numeroRondasValido = false;
 
-        while (!numeroRondasValido) {
-            if (opcion == null) {
-                lector.clear();
-                System.err.println("ERROR. No has escrito nada!");
-                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                opcion = lector.llegirEnter();
-            } else if (opcion % 2 != 0) {
-                System.err.println("ERROR. Escribe un numero par de rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
-                opcion = lector.llegirEnter();
-            } else if (opcion % 2 == 0) {
-                numeroRondasValido = true;
-            }
-        }
-        //Si ha llegado aqui, la opcion no es nula y tampoco es impar
-        registroPartida.setNumeroRondas(opcion);
+        pedirNumeroRondasValido();
         registroPartida.setTipoPartida("vs humano");
     }
 
@@ -573,7 +592,7 @@ public class Main {
             lecturaLetrasDisponibles = lecturaFichero.leerFichero();
             Random random = new Random();
 
-            char[] arrayFicheroLetras = lecturaLetrasDisponibles.toCharArray();
+            char arrayFicheroLetras[] = lecturaLetrasDisponibles.toCharArray();
             for (int i = 0; i < caracteresAleatorios.length; i++) {
                 int indiceAleatorio = random.nextInt(arrayFicheroLetras.length);
                 caracteresAleatorios[i] = arrayFicheroLetras[indiceAleatorio];
@@ -594,15 +613,15 @@ public class Main {
         String lectura;
         char arrayLectura[];
         int num = 0;
-        //Inicializo un array con el tamaño necesario para los 24
-        //numeros del fichero (1-10 x2, 25, 50, 75, 100).
+        // Inicializo un array con la longitud necesaria para los 24
+        // numeros del fichero (1-10 x2, 25, 50, 75, 100).
         int arrayAux[] = new int[24];
         Random random = new Random();
 
-        //Uso un String para leer el fichero, al haber solo una linea en el fichero
-        //no hace falta que ejecute un bucle while de lectura, simplemente una
-        //sola instruccion y convierto el String "lectura" a array de caracteres
-        //"arrayLectura"
+        // Uso un String para leer el fichero, al haber solo una linea en el fichero
+        // no hace falta que ejecute un bucle while de lectura, simplemente una
+        // sola instruccion y convierto el String "lectura" a array de caracteres
+        // "arrayLectura"
         lectura = ficheroDeCifras.leerFichero();
         arrayLectura = lectura.toCharArray();
 
@@ -619,7 +638,8 @@ public class Main {
         arrayAux[j] que tiene el espacio suficiente para los
         24 numeros del fichero.
          */
-        for (int i = 0, j = 0; i < arrayLectura.length; i++) {
+        int j = 0; // Declaramos j fuera para usarla tras el bucle
+        for (int i = 0; i < arrayLectura.length; i++) {
             if (arrayLectura[i] != ' ') { //Si es un numero
                 num = num * 10 + (arrayLectura[i] - '0');
             } else {
@@ -628,34 +648,33 @@ public class Main {
             }
         }
 
-        // El último número del fichero se añade después del bucle,
+        // El último número del fichero se agrega después del bucle,
         // ya que no termina con un espacio.
         if (num != 0) {
-            arrayAux[arrayAux.length - 1] = num;
+            arrayAux[j] = num;
         }
 
-        /*
-        Ahora seleccionamos 6 números únicos del arrayAux (muestreo sin reemplazo).
-        Usamos una variable 'numerosDisponibles' para limitar el rango de números aleatorios 
-        y la técnica de intercambio (swap) para mover los números usados al final 
-        del arrayAux, fuera del rango de selección.
-         */
         int cantidadDisponibles = arrayAux.length; // 24
-        cifrasAleatorias = new int[6];
 
-        for (int k = 0; k < cifrasAleatorias.length; k++) { // Bucle de 6 iteraciones
-            // 1. Elegimos un índice aleatorio entre 0 y los que quedan disponibles (exclusivo)
+        // Vuelvo a hacer que cifrasAleatorias[] tenga esta longitud porque al estar reutilizando
+        // el metodo tanto para el jugador 1 como para el jugador 2, si no hago esto,
+        // cuando ya es el turno del jugador 2, cifrasAleatorias[] tiene la longitud
+        // con la que el jugador 1 dejo el array cuando acabo su turno
+        cifrasAleatorias = new int[cantidadCifras];
+
+        for (int k = 0; k < cifrasAleatorias.length; k++) {
+            // Primero elegimos un índice aleatorio entre 0 y los que quedan disponibles
             int indiceAleatorio = random.nextInt(cantidadDisponibles);
 
-            // 2. Asignamos el número de ese índice a nuestro array de cifras de la ronda
+            // Luego asignamos el número de ese índice a nuestro array de cifras de la ronda
             cifrasAleatorias[k] = arrayAux[indiceAleatorio];
-            // 3. Intercambiamos: Reemplazamos el número que acabamos de usar 
-            // con el último número que aún no ha sido seleccionado.
-            // Esto lo "elimina" de facto de la selección futura.
-            arrayAux[indiceAleatorio] = arrayAux[cantidadDisponibles - 1];
-            // arrayAux[cantidadDisponibles - 1] = temp; // No es necesario, ya lo hemos guardado en cifrasAleatorias[k]
 
-            // 4. Reducimos el rango de selección para que el último número (el recién movido) no vuelva a ser elegido.
+            // Reemplazamos el número que acabamos de usar 
+            // con el ultimo número que aun no ha sido seleccionado.
+            arrayAux = eliminarNumeroDelArray(arrayAux, cantidadDisponibles - 1);
+
+            // Por ultimo, reducimos el rango de seleccion para que el ultimo número
+            // (el recién movido) no vuelva a ser elegido.
             cantidadDisponibles--;
         }
         ficheroDeCifras.cerrarFichero();
@@ -887,27 +906,13 @@ public class Main {
                         operando1 = lector.llegirEnter();
                     }
                 }
-
-                //Si el indice a eliminar es distinto de -1 (hemos encontrado la cifra),
-                //Y ADEMÁS la ultima operacion fue valida (se llevo a cabo una resta
-                //o division de forma valida), entonces en el nuevoArrayAux[]
-                //que es del tamaño de cifrasAleatorias.length - 1, 
-                //guardaremos todo menos el numero en ese indice
-                //EN EL CASO DE QUE LA OPERACION QUE LLEVEMOS A CABO LUEGO NO 
-                //SEA VALIDA, SE RECUPERARA CIFRAS ALEATORIAS CON ESTA
-                //REFERENCIA
+                // EN EL CASO DE QUE LA OPERACION QUE LLEVEMOS A CABO LUEGO NO 
+                // SEA VALIDA, SE RECUPERARA CIFRAS ALEATORIAS CON ESTA
+                // REFERENCIA
                 int arrayRecuperarCifrasAleatorias[] = cifrasAleatorias;
+
                 if (indiceAEliminar != -1) {
-                    int[] nuevoArrayAux = new int[cifrasAleatorias.length - 1];
-                    for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                        if (i != indiceAEliminar) {
-                            //Si el indice 'i' no es el mismo que el indice
-                            //a eliminar, entonces rellenamos de forma
-                            //normal el nuevoArrayAux
-                            nuevoArrayAux[j++] = cifrasAleatorias[i];
-                        }
-                    }
-                    cifrasAleatorias = nuevoArrayAux;
+                    cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceAEliminar);
                 }
 
                 numOperando++;
@@ -924,15 +929,15 @@ public class Main {
 
                 lector.clear();
                 Integer operando2 = lector.llegirEnter();
-                //Booleano que usaremos para determinar si el operando
-                //que ha elegido el usuario existe entre las
-                //cifras aleatorias
+                // Booleano que usaremos para determinar si el operando
+                // que ha elegido el usuario existe entre las
+                // cifras aleatorias
                 boolean existeElOperando2 = false;
                 int indiceAEliminar2 = -1;
-                //Supondremos que el operando que ha puesto el usuario
-                //es erroneo por facilidad a la hora de programar
-                //y miraremos lo antes posible si es correcto
-                //o no mirando si existe entre cifrasAleatorias
+                // Supondremos que el operando que ha puesto el usuario
+                // es erroneo por facilidad a la hora de programar
+                // y miraremos lo antes posible si es correcto
+                // o no mirando si existe entre cifrasAleatorias
                 while (!existeElOperando2) {
 
                     while (operando2 == null) {
@@ -948,18 +953,18 @@ public class Main {
                         }
                         operando2 = lector.llegirEnter();
                     }
-                    //Si en todas las cifras aleatorias, encuentra
-                    //alguna que sea igual que el operando del
-                    //usuario entonces, existe el operando
+                    // Si en todas las cifras aleatorias, encuentra
+                    // alguna que sea igual que el operando del
+                    // usuario entonces, existe el operando
                     for (int i = 0; i < cifrasAleatorias.length && !existeElOperando2; i++) {
                         if (operando2 == cifrasAleatorias[i]) {
                             indiceAEliminar2 = i;
                             existeElOperando2 = true;
                         }
                     }
-                    //Si no existiera, se llevaria a cabo un bucle 
-                    //constante hasta que el usuario escribiera
-                    //un operando valido
+                    // Si no existiera, se llevaria a cabo un bucle 
+                    // constante hasta que el usuario escribiera
+                    // un operando valido
                     if (!existeElOperando2) {
                         System.err.println("ERROR. Escribe un operando valido!");
                         System.out.print("Operando " + numOperando + " (");
@@ -977,71 +982,28 @@ public class Main {
                 numOperando--;
 
                 if (indiceAEliminar2 != -1) {
-                    int[] nuevoArrayAux2 = new int[cifrasAleatorias.length - 1];
-                    for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                        if (i != indiceAEliminar2) {
-                            //Si el indice 'i' no es el mismo que el indice
-                            //a eliminar, entonces rellenamos de forma
-                            //normal el nuevoArrayAux2
-                            nuevoArrayAux2[j++] = cifrasAleatorias[i];
-                        }
-                    }
-                    cifrasAleatorias = nuevoArrayAux2;
+                    cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceAEliminar);
                 }
 
                 switch (tipoOperacion) {
                     case '+' -> {
                         numOperacion++;
                         int resultadoSuma = operando1 + operando2;
-                        int nuevoArrayAuxSuma[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAuxSuma[i] = cifrasAleatorias[i];
-                        }
-                        nuevoArrayAuxSuma[cifrasAleatorias.length] = resultadoSuma;
                         System.out.println(operando1 + " + " + operando2 + " = " + resultadoSuma + "\n");
-                        //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
-                        //que el nuevoArrayAux que tiene una posicion mas con el int resultado
-                        //en ultima posicion
-                        cifrasAleatorias = nuevoArrayAuxSuma;
 
-                        //Creo otro array con el tamaño de historialNumeros+1
-                        int[] tempHistorial = new int[historialNumeros.length + 1];
-                        // Copio lo que ya habia 
-                        for (int k = 0; k < historialNumeros.length; k++) {
-                            tempHistorial[k] = historialNumeros[k];
-                        }
-                        // Añado el nuevo resultado al final
-                        tempHistorial[historialNumeros.length] = resultadoSuma;
-                        // Actualizo la referencia
-                        historialNumeros = tempHistorial;
+                        cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultadoSuma);
+                        historialNumeros = agregarNumeroAlArray(historialNumeros, resultadoSuma);
                     }
 
                     case '*' -> {
                         numOperacion++;
                         int resultadoMultiplicacion = operando1 * operando2;
-                        int nuevoArrayAuxMultiplicacion[] = new int[cifrasAleatorias.length + 1];
 
-                        for (int i = 0; i < cifrasAleatorias.length; i++) {
-                            nuevoArrayAuxMultiplicacion[i] = cifrasAleatorias[i];
-                        }
-                        nuevoArrayAuxMultiplicacion[cifrasAleatorias.length] = resultadoMultiplicacion;
                         System.out.println(operando1 + " * " + operando2 + " = " + resultadoMultiplicacion + "\n");
-                        //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
-                        //que el nuevoArrayAux que tiene una posicion mas con el int resultado
-                        //en ultima posicion
-                        cifrasAleatorias = nuevoArrayAuxMultiplicacion;
 
-                        //Creo otro array con el tamaño de historialNumeros+1
-                        int[] tempHistorial = new int[historialNumeros.length + 1];
-                        // Copio lo que ya habia 
-                        for (int k = 0; k < historialNumeros.length; k++) {
-                            tempHistorial[k] = historialNumeros[k];
-                        }
-                        // Añado el nuevo resultado al final
-                        tempHistorial[historialNumeros.length] = resultadoMultiplicacion;
-                        // Actualizo la referencia
-                        historialNumeros = tempHistorial;
+                        cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultadoMultiplicacion);
+                        historialNumeros = agregarNumeroAlArray(historialNumeros, resultadoMultiplicacion);
                     }
 
                     case '-' -> {
@@ -1061,26 +1023,10 @@ public class Main {
                             numOperacion++;
                             System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
                                     + operando1 + " - " + operando2 + ".");
-
-                            int nuevoArrayAuxResta[] = new int[cifrasAleatorias.length + 1];
-
-                            for (int i = 0; i < cifrasAleatorias.length; i++) {
-                                nuevoArrayAuxResta[i] = cifrasAleatorias[i];
-                            }
-                            nuevoArrayAuxResta[cifrasAleatorias.length] = resultadoResta;
                             System.out.println(operando1 + " - " + operando2 + " = " + resultadoResta + "\n");
-                            cifrasAleatorias = nuevoArrayAuxResta;
 
-                            //Creo otro array con el tamaño de historialNumeros+1
-                            int[] tempHistorial = new int[historialNumeros.length + 1];
-                            // Copio lo que ya habia 
-                            for (int k = 0; k < historialNumeros.length; k++) {
-                                tempHistorial[k] = historialNumeros[k];
-                            }
-                            // Añado el nuevo resultado al final
-                            tempHistorial[historialNumeros.length] = resultadoResta;
-                            // Actualizo la referencia
-                            historialNumeros = tempHistorial;
+                            cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultadoResta);
+                            historialNumeros = agregarNumeroAlArray(historialNumeros, resultadoResta);
                         }
                     }
 
@@ -1094,28 +1040,8 @@ public class Main {
                             System.out.println("- se ha comprobado que puede llevarse a cabo la division entera "
                                     + operando1 + " / " + operando2 + ".");
 
-                            int nuevoArrayAuxDivision[] = new int[cifrasAleatorias.length + 1];
-
-                            for (int i = 0; i < cifrasAleatorias.length; i++) {
-                                nuevoArrayAuxDivision[i] = cifrasAleatorias[i];
-                            }
-                            nuevoArrayAuxDivision[cifrasAleatorias.length] = resultadoDivision;
-                            System.out.println(operando1 + " * " + operando2 + " = " + resultadoDivision + "\n");
-                            //Hago que ahora cifrasAleatorias haga referencia (apunte al mismo sitio)
-                            //que el nuevoArrayAux que tiene una posicion mas con el int resultado
-                            //en ultima posicion
-                            cifrasAleatorias = nuevoArrayAuxDivision;
-
-                            //Creo otro array con el tamaño de historialNumeros+1
-                            int[] tempHistorial = new int[historialNumeros.length + 1];
-                            // Copio lo que ya habia 
-                            for (int k = 0; k < historialNumeros.length; k++) {
-                                tempHistorial[k] = historialNumeros[k];
-                            }
-                            // Añado el nuevo resultado al final
-                            tempHistorial[historialNumeros.length] = resultadoDivision;
-                            // Actualizo la referencia
-                            historialNumeros = tempHistorial;
+                            cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultadoDivision);
+                            historialNumeros = agregarNumeroAlArray(historialNumeros, resultadoDivision);
                         }
                     }
                     default -> {
@@ -1160,8 +1086,8 @@ public class Main {
                 }
                 System.out.println("\nObjetivo: " + objetivo);
             }
-            //Reinicio el booleano a false, luego se puede poner a true
-            //cuando miro si la resta o division es valida en el switch
+            // Reinicio el booleano a false, luego se puede poner a true
+            // cuando miro si la resta o division es valida en el switch
             anteriorOperacionValida = true;
 
             if (diferencia < diferenciaAnterior) {
@@ -1173,8 +1099,8 @@ public class Main {
                 System.out.println("Resultado final: " + numeroMasCercanoResultado + ".");
                 diferencia = objetivo - numeroMasCercanoResultado;
                 if (diferencia < 0) {
-                    //Si la diferencia es negativa, entonces, la pasamos a positivo
-                    //para asignar un valor positivo de puntos al usuario
+                    // Si la diferencia es negativa, entonces, la pasamos a positivo
+                    // para asignar un valor positivo de puntos al usuario
                     diferencia = diferencia * (-1);
                 }
 
@@ -1221,50 +1147,29 @@ public class Main {
                     }
                 }
 
-                //En el caso de que no se pueda realizar una operacion recuperare el valor
-                //de cifrasAleatorias con esta referencia
+                // En el caso de que no se pueda realizar una operacion recuperare el valor
+                // de cifrasAleatorias con esta referencia
                 int arrayRecuperarCifrasAleatorias[] = cifrasAleatorias;
 
-                //Creo un array auxiliar que contendra todos los numeros menos el 1r operando
-                int arrayAux1[] = new int[cifrasAleatorias.length - 1];
-
-                //Bucle para rellenar un array auxiliar que me servira de referencia
-                for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                    if (indiceOperando1 != i) {
-                        arrayAux1[j++] = cifrasAleatorias[i];
-                    }
-                }
-
-                //Hago que cifrasAleatorias ahora apunte a arrayAux para que tenga todos los 
-                //numeros menos el que ha escogido la CPU como primer operando para que
-                //no pueda sumar, restar, dividir o multiplicar el mismo operando 2 veces
-                cifrasAleatorias = arrayAux1;
+                // Elimino el primer operando que ha cogido del array para que no pueda
+                // usarlo otra vez
+                cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceOperando1);
 
                 if (cifrasAleatorias.length != 0) {
                     indiceOperando2 = random.nextInt(0, cifrasAleatorias.length);
-                    //Bucle para ver si encuentra el segundo operando
+                    // Bucle para ver si encuentra el segundo operando
                     for (int i = 0; i < cifrasAleatorias.length; i++) {
                         if (i == indiceOperando2) {
                             operando2 = cifrasAleatorias[i];
                         }
                     }
                 } else {
-                    //Solo puede ser 0
+                    // Solo puede ser este
                     operando2 = cifrasAleatorias[0];
                 }
 
-                //Creo un array auxiliar que contendra todos los numeros menos el 2n operando.
-                int arrayAux2[] = new int[cifrasAleatorias.length - 1];
-
-                //Bucle para rellenar un array auxiliar que me servira de referencia
-                //En el caso de ser el .length igual a 0, aqui entonces directamente
-                //no entra al for y se va para el switch directo
-                for (int i = 0, j = 0; i < cifrasAleatorias.length; i++) {
-                    if (indiceOperando2 != i) {
-                        arrayAux2[j++] = cifrasAleatorias[i];
-                    }
-                }
-                cifrasAleatorias = arrayAux2;
+                // Elimino el segundo operando del array
+                cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceOperando1);
 
                 switch (operacion) {
                     case '+' -> {
@@ -1376,9 +1281,9 @@ public class Main {
 
             /*
             Si el usuario escribe un "intro" sin nada mas, el array seria de
-            tamaño 0, por tanto, luego al querer comprobar el array 
+            longitud 0, por tanto, luego al querer comprobar el array 
             el programa petaria, asi que hemos creado este while
-            para arreglar ese error. Si el tamaño del array es 0,
+            para arreglar ese error. Si la longitud del array es 0,
             entonces, te vuelve a pedir que escribas la palabra.
              */
             while (entradaPorTeclado.length == 0) {
@@ -1406,7 +1311,7 @@ public class Main {
                 // 1. Comprobar si puede formarse con las letras disponibles
                 //Copiamos el array de caracteresAleatorios en otro array 
                 //que nos ayudara mas adelante, "copiaLetras"
-                char[] copiaLetras = new char[caracteresAleatorios.length];
+                char copiaLetras[] = new char[caracteresAleatorios.length];
                 for (int i = 0; i < caracteresAleatorios.length; i++) {
                     copiaLetras[i] = caracteresAleatorios[i]; // copiar manualmente         
                 }
@@ -1448,10 +1353,10 @@ public class Main {
      */
     public void puedeFormarseCPU() throws IOException {
         Random random = new Random();
-        char[] palabraCPU = null;
+        char palabraCPU[] = null;
         int contador = 0;
 
-        FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
+        FicherosLectura ficheroDic = new FicherosLectura(diccionario);
         String palabraDic;
 
         /*
@@ -1479,7 +1384,7 @@ public class Main {
             metodo mostrarLetrasDisponibles()
              */
             boolean puedeFormarse = true;
-            char[] palabraDicArray = palabraDic.toCharArray();
+            char palabraDicArray[] = palabraDic.toCharArray();
             for (int i = 0; i < palabraDicArray.length && puedeFormarse; i++) {
                 char letra = palabraDicArray[i];
                 boolean encontrada = false;
@@ -1541,11 +1446,11 @@ public class Main {
 
         while (!palabraValida) {
             boolean existeEnDic = false;
-            FicherosLectura ficheroDic = new FicherosLectura(diccionarioEspanyol);
+            FicherosLectura ficheroDic = new FicherosLectura(diccionario);
             String lineaDic;
 
             while ((lineaDic = ficheroDic.leerFichero()) != null && !existeEnDic) {
-                char[] lineaDicArray = lineaDic.toCharArray();
+                char lineaDicArray[] = lineaDic.toCharArray();
                 boolean iguales = false;
 
                 if (lineaDicArray.length == entradaPorTeclado.length) {
@@ -1620,7 +1525,7 @@ public class Main {
 
     public void mostrarResultadosPartidas() throws IOException {
         FicherosLectura ficheroLectura = new FicherosLectura(ficheroPartidas);
-        String leerFicheroRegistro = "";
+        String leerFicheroRegistro;
         String campo = "";
         String arrayCampos[] = new String[7];
         int contadorPosiciones = 0;
@@ -1632,6 +1537,7 @@ public class Main {
         while (!esNulo) {
             leerFicheroRegistro = ficheroLectura.leerFichero();
             if (leerFicheroRegistro == null) {
+                ficheroLectura.cerrarFichero();
                 System.out.println("--------------------------------------------------------------");
                 esNulo = true;
             } else {
@@ -1646,19 +1552,226 @@ public class Main {
                         campo = "";
                     }
                 }
-                System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
-                        + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,"
-                        + "\n- Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + ".\n"
-                        + "- Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + ".\n");
+                int puntuacionJugador1 = 0;
+                int puntuacionJugador2 = 0;
+                // Array auxiliar con la puntuacion del jugador 1
+                char arrayAux[] = arrayCampos[5].toCharArray();
+
+                for (int i = 0; i < arrayAux.length; i++) {
+                    // Utilizamos una tecnica parecida que en generacionCifrasAleatorias()
+                    // para tener la puntuacion del jugador 1 
+                    puntuacionJugador1 = puntuacionJugador1 * 10 + (arrayAux[i] - '0');
+                }
+
+                arrayAux = arrayCampos[6].toCharArray();
+                for (int i = 0; i < arrayAux.length; i++) {
+                    puntuacionJugador2 = puntuacionJugador2 * 10 + (arrayAux[i] - '0');
+                }
+
+                if (puntuacionJugador1 > puntuacionJugador2) {
+                    System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                            + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,\n"
+                            + "ganador: " + '"' + arrayCampos[2] + '"'
+                            + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + " puntos.\n"
+                            + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + " puntos.\n");
+                } else {
+                    System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                            + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,\n"
+                            + "ganador: " + '"' + arrayCampos[3] + '"'
+                            + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + " puntos.\n"
+                            + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + " puntos.\n");
+                }
                 numeroPartidas++;
                 contadorPosiciones = 0;
             }
         }
     }
 
+    public void mostrarEstadisticasJugador() throws IOException {
+        FicherosLectura ficheroLectura = new FicherosLectura(ficheroPartidas);
+        String leerFicheroRegistro;
+        String campo = "";
+        String arrayCampos[] = new String[7];
+        int contadorPosiciones = 0;
+        int numeroPartidas = 0;
+        int numeroPartidasGanadas = 0;
+        int puntuacionTotal = 0;
+        double porcentajePartidasGanadas = 0;
+        double promedioPuntuacion = 0;
+        boolean esNulo = false;
+        boolean existeElJugador = false;
+        boolean nombreValido = false;
+
+        while (!nombreValido) {
+            lector.clear();
+            System.out.print("Introduce el nombre del jugador: ");
+            entradaPorTeclado = lector.llegirLinia();
+            // En caso de que el usuario solo escriba un intro
+            if (entradaPorTeclado.length == 0) {
+                System.err.println("ERROR. No has escrito nada!");
+            } else if (entradaPorTeclado[0] == ' ') {
+                System.err.println("ERROR. El nombre no puede empezar por espacio!");
+            } else {
+                nombreValido = true;
+            }
+        }
+
+        while (!esNulo) {
+            leerFicheroRegistro = ficheroLectura.leerFichero();
+            if (leerFicheroRegistro == null) {
+                ficheroLectura.cerrarFichero();
+                if (existeElJugador) {
+                    // Si este booleano es true, entonces hemos encontrado al jugador 
+                    // en algun momento, por tanto, si existe dentro del fichero
+                    porcentajePartidasGanadas = (double) (numeroPartidasGanadas / numeroPartidas) * 100;
+                    promedioPuntuacion = (double) puntuacionTotal / numeroPartidas;
+                    System.out.println("\n------------------ ESTADISTICAS DEL JUGADOR ------------------\n"
+                            + "Total de partidas jugadas: " + numeroPartidas + ".\n"
+                            + "Total de partidas ganadas: " + numeroPartidasGanadas + ".\n"
+                            + "Porcentaje de partidas ganadas: " + porcentajePartidasGanadas + "%.\n"
+                            + "Promedio de puntuacion obtenida por partida: " + promedioPuntuacion + ".\n"
+                            + "--------------------------------------------------------------");
+                } else {
+                    System.err.println("\nERROR. El jugador no existe!");
+                    lector.clear();
+                }
+
+                esNulo = true;
+            } else {
+                char aux[] = leerFicheroRegistro.toCharArray();
+                for (int i = 0; i < aux.length; i++) {
+                    if (aux[i] != '#') {
+                        campo += aux[i];
+                    }
+                    if (aux[i] == '#' || i == aux.length - 1) {
+                        arrayCampos[contadorPosiciones] = campo;
+                        contadorPosiciones++;
+                        campo = "";
+                    }
+                }
+                // Supondremos que en la linea que hemos leido el jugador si esta
+                // por facilidad a la hora de programar
+                boolean esJugador1 = true;
+                char auxNombre1[] = arrayCampos[2].toCharArray();
+
+                // Si no tienen la misma longitud, directamente obviamos que 
+                // no es el jugador 1
+                if (auxNombre1.length != entradaPorTeclado.length) {
+                    esJugador1 = false;
+                }
+
+                // Si todos los caracteres coinciden, esJugador1 seguira siendo true
+                for (int i = 0; i < auxNombre1.length && esJugador1; i++) {
+                    if (entradaPorTeclado[i] != auxNombre1[i]) {
+                        esJugador1 = false;
+                    }
+                }
+
+                boolean esJugador2 = true;
+                char auxNombre2[] = arrayCampos[3].toCharArray();
+
+                // Si no tienen la misma longitud, directamente obviamos que 
+                // no es el jugador 2
+                if (auxNombre2.length != entradaPorTeclado.length) {
+                    esJugador2 = false;
+                }
+
+                // Si todos los caracteres coinciden, esJugador2 seguira siendo true
+                for (int i = 0; i < auxNombre2.length && esJugador2; i++) {
+                    if (entradaPorTeclado[i] != auxNombre2[i]) {
+                        esJugador2 = false;
+                    }
+                }
+
+                if (esJugador1 || esJugador2) {
+                    System.out.println("\n------------------ PARTIDAS JUGADAS POR ESTE JUGADOR ------------------\n");
+                    existeElJugador = true;
+                    int puntuacionJugador1 = 0;
+                    int puntuacionJugador2 = 0;
+                    // Array auxiliar con la puntuacion del jugador 1
+                    char arrayAuxPuntuacion[] = arrayCampos[5].toCharArray();
+
+                    for (int i = 0; i < arrayAuxPuntuacion.length; i++) {
+                        // Utilizamos una tecnica parecida que en generacionCifrasAleatorias()
+                        // para tener la puntuacion del jugador 1 
+                        puntuacionJugador1 = puntuacionJugador1 * 10 + (arrayAuxPuntuacion[i] - '0');
+                    }
+
+                    // Array auxiliar con la puntuacion del jugador 1
+                    arrayAuxPuntuacion = arrayCampos[6].toCharArray();
+                    for (int i = 0; i < arrayAuxPuntuacion.length; i++) {
+                        puntuacionJugador2 = puntuacionJugador2 * 10 + (arrayAuxPuntuacion[i] - '0');
+                    }
+
+                    if ((puntuacionJugador1 > puntuacionJugador2) && esJugador1) {
+                        numeroPartidas++;
+                        numeroPartidasGanadas++;
+                        puntuacionTotal += puntuacionJugador1;
+                    } else if (puntuacionJugador1 < puntuacionJugador2 && esJugador1) {
+                        numeroPartidas++;
+                        puntuacionTotal += puntuacionJugador1;
+                    } else if ((puntuacionJugador2 > puntuacionJugador1) && esJugador2) {
+                        numeroPartidas++;
+                        numeroPartidasGanadas++;
+                        puntuacionTotal += puntuacionJugador2;
+                    } else if ((puntuacionJugador2 < puntuacionJugador1) && esJugador2) {
+                        numeroPartidas++;
+                        puntuacionTotal += puntuacionJugador2;
+                    } else if ((puntuacionJugador1 == puntuacionJugador2) && esJugador1) {
+                        numeroPartidas++;
+                        puntuacionTotal += puntuacionJugador1;
+                    } else {
+                        // Llegara aqui en caso de empate y de ser el jugador 2
+                        numeroPartidas++;
+                        puntuacionTotal += puntuacionJugador2;
+                    }
+                    if (puntuacionJugador1 > puntuacionJugador2) {
+                        System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                                + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,\n"
+                                + "ganador: " + '"' + arrayCampos[2] + '"'
+                                + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + " puntos.\n"
+                                + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + " puntos.\n");
+                    } else {
+                        System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                                + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[4] + " rondas,\n"
+                                + "ganador: " + '"' + arrayCampos[3] + '"'
+                                + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[5] + " puntos.\n"
+                                + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[6] + " puntos.\n");
+                    }
+                }
+            }
+            contadorPosiciones = 0;
+        }
+    }
+
     public void finalPartida() {
         // Solo llega aqui al final de la partida
         System.out.println("\nSe acabo la partida! Muy bien jugado ambos!");
+    }
+
+    private int[] agregarNumeroAlArray(int[] arrayOriginal, int nuevoNumero) {
+        int[] nuevoArray = new int[arrayOriginal.length + 1];
+
+        // Copiamos el array original
+        for (int i = 0; i < arrayOriginal.length; i++) {
+            nuevoArray[i] = arrayOriginal[i];
+        }
+        // Añadimos el numero nuevo al final
+        nuevoArray[arrayOriginal.length] = nuevoNumero;
+        return nuevoArray;
+    }
+
+    private int[] eliminarNumeroDelArray(int[] arrayOriginal, int indiceAEliminar) {
+        if (indiceAEliminar < 0 || indiceAEliminar >= arrayOriginal.length) {
+            return arrayOriginal; // O error
+        }
+        int[] nuevoArray = new int[arrayOriginal.length - 1];
+        for (int i = 0, j = 0; i < arrayOriginal.length; i++) {
+            if (i != indiceAEliminar) {
+                nuevoArray[j++] = arrayOriginal[i];
+            }
+        }
+        return nuevoArray;
     }
 
     public static void main(String[] args) throws Exception {

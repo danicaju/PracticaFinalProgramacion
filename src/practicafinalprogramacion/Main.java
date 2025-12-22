@@ -9,18 +9,18 @@ GRUPO: 2
  */
 public class Main {
 
-    //Inicializaciones de objeto LT y objeto Registro
+    // Inicializaciones de objeto LT y objeto Registro
     private final LT lector = new LT();
     private Registro registroPartida;
-    //Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
+    // Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
     //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     private char entradaPorTeclado[];
-    //Numero de caracteres aleatorios de la ronda de letras
+    // Numero de caracteres aleatorios de la ronda de letras
     private char caracteresAleatorios[] = new char[10];
     //Numero de cifras aleatorias de la ronda de cifras
     private int cifrasAleatorias[] = new int[6];
-    //Entero que representa la ronda en la que se encuentran, supondremos que siempre
-    //el numero de rondas es >= 1
+    // Entero que representa la ronda en la que se encuentran, supondremos que siempre
+    // el numero de rondas es >= 1
     private int rondaActual = 1;
     // Entero que acumula la puntuación de las rondas del jugador 1
     private int acumuladorPuntosJugador1 = 0;
@@ -45,7 +45,7 @@ public class Main {
         acumuladorPuntosJugador2 = 0;
         puntuajeCifras = 0;
         haPasado = false;
-        // Limpiar el lector si es necesario
+        // Limpiamos el lector por precaucion
         lector.clear();
     }
 
@@ -308,14 +308,15 @@ public class Main {
             } else {
                 switch (opcion) {
                     case '1' -> {
-                        mostrarResultadosPartidas();
                         lector.clear();
+                        mostrarResultadosPartidas();
                     }
                     case '2' -> {
-                        mostrarEstadisticasJugador();
                         lector.clear();
+                        mostrarEstadisticasJugador();
                     }
                     case 's' -> {
+                        lector.clear();
                         volverAlMenu = true;
                     }
                     default -> {
@@ -350,16 +351,20 @@ public class Main {
             } else {
                 switch (opcion) {
                     case '1' -> {
+                        lector.clear();
                         configurarCantidadLetras();
 
                     }
                     case '2' -> {
+                        lector.clear();
                         configurarCantidadCifras();
                     }
                     case '3' -> {
+                        lector.clear();
                         configurarIdioma();
                     }
                     case 's' -> {
+                        lector.clear();
                         volverAlMenu = true;
                     }
                     default -> {
@@ -380,12 +385,13 @@ public class Main {
             lector.clear();
             Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                System.err.println("ERROR. Escribe una cantidad valida!");
+                System.err.println("ERROR. Introduce una cantidad valida!");
             } else if (opcion > 20) {
                 System.err.println("ERROR. Maximo 20 letras!");
             } else if (opcion < 10) {
                 System.err.println("ERROR. Minimo 10 letras!");
             } else {
+                System.out.println("\n[INFO] Has cambiado la cantidad de letras a " + opcion + "!");
                 lector.clear();
                 caracteresAleatorios = new char[opcion];
                 cantidadLetrasValida = true;
@@ -395,19 +401,20 @@ public class Main {
 
     public void configurarCantidadCifras() {
         boolean cantidadCifrasValida = false;
-        System.out.println("\n[INFO] Longitud establecida en 6 (por defecto).");
+        System.out.println("\n[INFO] Cantidad de cifras establecida en 6 (por defecto).");
 
         while (!cantidadCifrasValida) {
             System.out.print("Introduce la cantidad de cifras [6-10]: ");
             lector.clear();
             Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                System.err.println("ERROR. Escribe una cantidad valida!");
+                System.err.println("ERROR. Introduce una cantidad valida!");
             } else if (opcion > 10) {
                 System.err.println("ERROR. Maximo 10 cifras!");
             } else if (opcion < 6) {
                 System.err.println("ERROR. Minimo 6 cifras!");
             } else {
+                System.out.println("\n[INFO] Has cambiado la cantidad de cifras a " + opcion + "!");
                 lector.clear();
                 cantidadCifras = opcion;
                 cifrasAleatorias = new int[cantidadCifras];
@@ -432,26 +439,29 @@ public class Main {
                                        3. Ingles
                                    ************************************
                 
-                                   Opcion (1|2|3|s): """);
+                                   Opcion (1|2|3): """);
             lector.clear();
             Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                System.err.println("ERROR. No has escrito nada!");
+                System.err.println("ERROR. Introduce un idioma disponible!");
             } else {
                 switch (opcion) {
                     case 1 -> {
+                        System.out.println("\n[INFO] Has cambiado el idioma a castellano!");
                         diccionario = "dic_es.txt";
                         ficheroLetras = "letras_es.txt";
                         lector.clear();
                         idiomaValido = true;
                     }
                     case 2 -> {
+                        System.out.println("\n[INFO] Has cambiado el idioma a catalan!");
                         diccionario = "dic_ca.txt";
                         ficheroLetras = "letras_ca.txt";
                         lector.clear();
                         idiomaValido = true;
                     }
                     case 3 -> {
+                        System.out.println("\n[INFO] Has cambiado el idioma a ingles!");
                         diccionario = "dic_en.txt";
                         ficheroLetras = "letras_en.txt";
                         lector.clear();
@@ -520,7 +530,7 @@ public class Main {
     }
 
     public void pedirNumeroRondasValido() {
-        System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+        System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
         /*
         Aqui, usamos un Integer porque nos dimos cuenta que al poner cualquier cosa que no 
         fuera un numero con un int opcion, el programa petaba devolviendo nulo, por ejemplo,
@@ -535,14 +545,14 @@ public class Main {
             lector.clear();
             Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                System.err.println("ERROR. No has escrito nada!");
-                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                System.err.println("ERROR. Entrada no valida!");
+                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
             } else if (opcion >= 20) {
                 System.err.println("ERROR. Maximo 20 rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
             } else if (opcion % 2 != 0) {
-                System.err.println("ERROR. Escribe un numero par de rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar (numero par): ");
+                System.err.println("ERROR. Introduce un numero par de rondas!");
+                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
             } else if (opcion % 2 == 0) {
                 numeroRondas = opcion;
                 numeroRondasValido = true;
@@ -603,7 +613,7 @@ public class Main {
     }
 
     public void casoTurnoCifrasJugador1ContraJugador2() {
-        System.out.println("\nRonda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": letras.");
+        System.out.println("\nRonda " + rondaActual + " de " + registroPartida.getNumeroRondas() + ": cifras.");
         System.out.println("Turno de: " + registroPartida.getNombreJugador1());
     }
 
@@ -743,7 +753,7 @@ public class Main {
             boolean operacionValida = false;
             while (!operacionValida) {
                 if (tipoOperacion == null) {
-                    System.err.println("ERROR. No has escrito nada!");
+                    System.err.println("ERROR. Introduce una operacion valida!!");
                     System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
                     lector.clear();
                     tipoOperacion = lector.llegirCaracter();
@@ -801,7 +811,7 @@ public class Main {
                     // Entrara aqui si resultado es nulo (intro)
                     while (resultadoFinal == null) {
                         lector.clear();
-                        System.err.println("ERROR. No has escrito nada!");
+                        System.err.println("ERROR. Entrada no valida!");
                         System.out.print("Introduce el resultado final (");
                         for (int i = 0; i < historialNumeros.length; i++) {
                             if (i == historialNumeros.length - 1) {
@@ -1087,7 +1097,7 @@ public class Main {
         int operando1 = 0;
         int operando2 = 0;
         int indiceOperando1;
-        int indiceOperando2;
+        int indiceOperando2 = 0;
         int numOperacion = 1;
         int numeroMasCercanoResultado = 0;
         int resultado = 0;
@@ -1166,7 +1176,7 @@ public class Main {
             }
 
             // Elimino el segundo operando del array
-            cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceOperando1);
+            cifrasAleatorias = eliminarNumeroDelArray(cifrasAleatorias, indiceOperando2);
 
             switch (operacion) {
                 case '+' -> {
@@ -1612,7 +1622,7 @@ public class Main {
                 nombreValido = true;
             }
         }
-
+        System.out.println("\n------------------ PARTIDAS JUGADAS POR ESTE JUGADOR ------------------\n");
         while (!esNulo) {
             leerFicheroRegistro = ficheroLectura.leerFichero();
             if (leerFicheroRegistro == null) {
@@ -1681,13 +1691,12 @@ public class Main {
                 }
 
                 if (esJugador1 || esJugador2) {
-                    System.out.println("\n------------------ PARTIDAS JUGADAS POR ESTE JUGADOR ------------------\n");
                     existeElJugador = true;
                     int puntuacionJugador1 = 0;
                     int puntuacionJugador2 = 0;
+
                     // Array auxiliar con la puntuacion del jugador 1
                     char arrayAuxPuntuacion[] = arrayCampos[5].toCharArray();
-
                     for (int i = 0; i < arrayAuxPuntuacion.length; i++) {
                         // Utilizamos una tecnica parecida que en generacionCifrasAleatorias()
                         // para tener la puntuacion del jugador 1 

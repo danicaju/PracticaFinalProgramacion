@@ -49,6 +49,41 @@ public class Main {
         lector.clear();
     }
 
+    public void pantallaPrincipal() {
+        System.out.println("""
+                           
+    .-------------------------------------------------------------------------------.
+    |    ____ _  __                    __   __   _          _                       |
+    |   / ___(_)/ _| _ __ __ _ ___     \\ \\ / /  | |    ___ | |_ _ __ __ _ ___       |
+    |  | |   | | |_ | '__/ _` / __|     \\ V /   | |   / _ \\| __| '__/ _` / __|      |
+    |  | |___| |  _|| | | (_| \\__ \\      | |    | |__|  __/| |_| | | (_| \\__ \\      |
+    |   \\____|_|_|  |_|  \\__,_|___/      |_|    |_____\\___| \\__|_|  \\__,_|___/      |
+    |                                                                               |
+    +-------------------------------------------------------------------------------+
+    |                          >>>   G R U P O   2   <<<                            |
+    +-------------------------------------------------------------------------------+
+    |                                                                               |
+    |   DESARROLLADO POR:                                                           |
+    |    > Maria Teresa Sbert Gomila                                                |
+    |    > Daniel Casado Juan                                                       |
+    |                                                                               |
+    '-------------------------------------------------------------------------------'   
+    """);
+        boolean esIntro = false;
+        while (!esIntro) {
+            System.out.print("Bienvenido jugador! Pulsa Enter para continuar: ");
+            lector.clear();
+            Character opcion = lector.llegirCaracter();
+            if (opcion != null) {
+                System.err.println("ERROR. Solo introduce la tecla Enter! ");
+            } else {
+                lector.clear();
+                esIntro = true;
+            }
+        }
+
+    }
+
     public void menuPrincipal() throws Exception {
         boolean salirDelPrograma = false;
 
@@ -1742,6 +1777,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Main m = new Main();
+        m.pantallaPrincipal();
         m.menuPrincipal();
     }
 }

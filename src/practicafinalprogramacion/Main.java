@@ -1093,7 +1093,7 @@ public class Main {
         int resultado = 0;
         int objetivo = random.nextInt(100, 999);
         boolean quedanNumeros = true;
-        boolean anteriorOperacionValida = false;
+        boolean anteriorOperacionValida = true;
         int historialNumeros[] = new int[cifrasAleatorias.length];
         for (int i = 0; i < cifrasAleatorias.length; i++) {
             historialNumeros[i] = cifrasAleatorias[i];
@@ -1170,10 +1170,9 @@ public class Main {
 
             switch (operacion) {
                 case '+' -> {
-                    numOperacion++;
                     resultado = operando1 + operando2;
                     System.out.println("Operacion: " + numOperacion + ": " + operando1 + " + " + operando2 + " = " + resultado + "\n");
-
+                    numOperacion++;
                     cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                     historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
                 }
@@ -1194,22 +1193,20 @@ public class Main {
                         anteriorOperacionValida = false;
 
                     } else {
-                        numOperacion++;
                         resultado = operando1 - operando2;
                         System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
                                 + operando1 + " - " + operando2 + ".");
                         System.out.println("Operacion: " + numOperacion + ": " + operando1 + " - " + operando2 + " = " + resultado + "\n");
-
+                        numOperacion++;
                         cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                         historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
                     }
                 }
 
                 case '*' -> {
-                    numOperacion++;
                     resultado = operando1 * operando2;
                     System.out.println("Operacion: " + numOperacion + ": " + operando1 + " * " + operando2 + " = " + resultado + "\n");
-
+                    numOperacion++;
                     cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                     historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
                 }
@@ -1219,12 +1216,11 @@ public class Main {
                         cifrasAleatorias = arrayRecuperarCifrasAleatorias;
                         anteriorOperacionValida = false;
                     } else {
-                        numOperacion++;
                         resultado = operando1 / operando2;
                         System.out.println("- se ha comprobado que puede llevarse a cabo la division entera "
                                 + operando1 + " / " + operando2 + ".");
                         System.out.println("Operacion: " + numOperacion + ": " + operando1 + " / " + operando2 + " = " + resultado + "\n");
-
+                        numOperacion++;
                         cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                         historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
                     }

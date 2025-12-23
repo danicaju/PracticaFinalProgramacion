@@ -749,28 +749,26 @@ public class Main {
         }
 
         int cantidadDisponibles = arrayAux.length; // 24
-
-        // Vuelvo a hacer que cifrasAleatorias[] tenga esta longitud porque al estar reutilizando
-        // el metodo tanto para el jugador 1 como para el jugador 2, si no hago esto,
-        // cuando ya es el turno del jugador 2, cifrasAleatorias[] tiene la longitud
-        // con la que el jugador 1 dejo el array cuando acabo su turno
+        
         cifrasAleatorias = new int[cantidadCifras];
 
         for (int k = 0; k < cifrasAleatorias.length; k++) {
-            // Primero elegimos un índice aleatorio entre 0 y los que quedan disponibles
+
+            // Vamos a elegir un índice aleatorio dentro del rango disponible
             int indiceAleatorio = random.nextInt(cantidadDisponibles);
 
-            // Luego asignamos el número de ese índice a nuestro array de cifras de la ronda
+            // Guardamos el numero elegido
             cifrasAleatorias[k] = arrayAux[indiceAleatorio];
 
-            // Reemplazamos el número que acabamos de usar 
-            // con el ultimo número que aun no ha sido seleccionado.
-            arrayAux = eliminarNumeroDelArray(arrayAux, cantidadDisponibles - 1);
+            // Movemos el ÚLTIMO número disponible a la posición que acabamos de usar
+            // (la del índice aleatorio). Así, la posición que ya usamos se "rellena"
+            // con otro número válido y no se pierde hueco.
+            arrayAux[indiceAleatorio] = arrayAux[cantidadDisponibles - 1];
 
-            // Por ultimo, reducimos el rango de seleccion para que el ultimo número
-            // (el recién movido) no vuelva a ser elegido.
+            // Ahora el 'random' nunca elegirá la última posición (que ya hemos movido)
             cantidadDisponibles--;
         }
+
         ficheroDeCifras.cerrarFichero();
     }
 

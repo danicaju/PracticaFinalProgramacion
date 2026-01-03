@@ -1,2 +1,3 @@
 2025-12-23 16:58:54#vs CPU#Daniel#CPU#1#4#15#8
 2025-12-23 17:37:54#vs humano#Daniel#Maritere#0#2#12#3
+2026-01-03 17:22:15#vs CPU#Daniel#CPU#1#4#23#9

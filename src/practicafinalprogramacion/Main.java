@@ -801,7 +801,7 @@ public class Main {
             boolean operacionValida = false;
             while (!operacionValida) {
                 if (tipoOperacion == null) {
-                    System.err.println("ERROR. Introduce una operacion valida!!");
+                    System.err.println("ERROR. Introduce una operacion valida!");
                     System.out.print("Operacion " + numOperacion + " (+|-|*|/|=): ");
                     lector.clear();
                     tipoOperacion = lector.llegirCaracter();
@@ -1183,34 +1183,76 @@ public class Main {
 
             // LOGICA NIVEL DIFICIL
             if (registroPartida.getNivelDificultad() == 2) {
-                // Iteramos mientras no hayamos encontrado una solucion
-                for (int i = 0; i < cifrasAleatorias.length && !movimientoDecidido; i++) {
-                    for (int j = 0; j < cifrasAleatorias.length && !movimientoDecidido; j++) {
-                        // Solo procesamos si los indices son distintos
-                        if (i != j) {
-                            int operandoNivDif1 = cifrasAleatorias[i];
-                            int operandoNivDif2 = cifrasAleatorias[j];
+                
+                // Hacemos dos pasadas:
+                // intento = 0 -> Busca exactitud total (margen 0)
+                // intento = 1 -> Busca aproximación (margen 10)
+                for (int intento = 0; intento < 2 && !movimientoDecidido; intento++) {
+                    
+                    int margenError = 0;
+                    if (intento == 1) {
+                        margenError = 30; // Aquí definimos la tolerancia de error
+                    }
 
-                            if (operandoNivDif1 + operandoNivDif2 == objetivo) {
-                                operacion = '+';
-                                indiceOperando1 = i;
-                                indiceTempOperando2 = j;
-                                movimientoDecidido = true;
-                            } else if (operandoNivDif1 - operandoNivDif2 == objetivo) {
-                                operacion = '-';
-                                indiceOperando1 = i;
-                                indiceTempOperando2 = j;
-                                movimientoDecidido = true;
-                            } else if (operandoNivDif1 * operandoNivDif2 == objetivo) {
-                                operacion = '*';
-                                indiceOperando1 = i;
-                                indiceTempOperando2 = j;
-                                movimientoDecidido = true;
-                            } else if (operandoNivDif2 != 0 && operandoNivDif1 % operandoNivDif2 == 0 && operandoNivDif1 / operandoNivDif2 == objetivo) {
-                                operacion = '/';
-                                indiceOperando1 = i;
-                                indiceTempOperando2 = j;
-                                movimientoDecidido = true;
+                    for (int i = 0; i < cifrasAleatorias.length && !movimientoDecidido; i++) {
+                        for (int j = 0; j < cifrasAleatorias.length && !movimientoDecidido; j++) {
+                            
+                            // Solo procesamos si los indices son distintos
+                            if (i != j) {
+                                int operandoNivDif1 = cifrasAleatorias[i];
+                                int operandoNivDif2 = cifrasAleatorias[j];
+                                
+                                // --- SUMA ---
+                                int suma = operandoNivDif1 + operandoNivDif2;
+                                int difSuma = suma - objetivo;
+                                if (difSuma < 0) difSuma = difSuma * -1;
+
+                                if (difSuma <= margenError) {
+                                    operacion = '+';
+                                    indiceOperando1 = i;
+                                    indiceTempOperando2 = j;
+                                    movimientoDecidido = true;
+                                } 
+                                // --- RESTA ---
+                                else if ((operandoNivDif1 - operandoNivDif2) > 0) { // Solo restas positivas
+                                    int resta = operandoNivDif1 - operandoNivDif2;
+                                    int difResta = resta - objetivo;
+                                    if (difResta < 0) difResta = difResta * -1;
+
+                                    if (difResta <= margenError) {
+                                        operacion = '-';
+                                        indiceOperando1 = i;
+                                        indiceTempOperando2 = j;
+                                        movimientoDecidido = true;
+                                    }
+                                } 
+                                // --- MULTIPLICACION ---
+                                // Nota: Ponemos !movimientoDecidido para que no entre si ya encontró una anterior
+                                if (!movimientoDecidido) {
+                                    int mult = operandoNivDif1 * operandoNivDif2;
+                                    int difMult = mult - objetivo;
+                                    if (difMult < 0) difMult = difMult * -1;
+
+                                    if (difMult <= margenError) {
+                                        operacion = '*';
+                                        indiceOperando1 = i;
+                                        indiceTempOperando2 = j;
+                                        movimientoDecidido = true;
+                                    }
+                                }
+                                // --- DIVISION ---
+                                if (!movimientoDecidido && operandoNivDif2 != 0 && operandoNivDif1 % operandoNivDif2 == 0) {
+                                    int div = operandoNivDif1 / operandoNivDif2;
+                                    int difDiv = div - objetivo;
+                                    if (difDiv < 0) difDiv = difDiv * -1;
+
+                                    if (difDiv <= margenError) {
+                                        operacion = '/';
+                                        indiceOperando1 = i;
+                                        indiceTempOperando2 = j;
+                                        movimientoDecidido = true;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1243,6 +1285,8 @@ public class Main {
                         operando1 = cifrasAleatorias[i];
                     }
                 }
+            } else {
+                operando1 = cifrasAleatorias[indiceOperando1];
             }
 
             // En el caso de que no se pueda realizar una operacion recuperare el valor
@@ -1259,7 +1303,8 @@ public class Main {
                         indiceOperando2 = indiceTempOperando2 - 1;
                     } else {
                         indiceOperando2 = indiceTempOperando2;
-                    }
+                    }                   
+                    operando2 = cifrasAleatorias[indiceOperando2];
                 } else {
                     indiceOperando2 = random.nextInt(0, cifrasAleatorias.length);
                     // Bucle para ver si encuentra el segundo operando

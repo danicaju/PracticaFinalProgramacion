@@ -13,11 +13,11 @@ public class Main {
     private final LT lector = new LT();
     private Registro registroPartida;
     // Entrada por teclado que leera como array de caracteres algunos de los datos del usuario
-    //como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
+    // como su nombre, tambien la palabra que introduzca en la ronda de letras, etc.
     private char entradaPorTeclado[];
     // Numero de caracteres aleatorios de la ronda de letras
     private char caracteresAleatorios[] = new char[10];
-    //Numero de cifras aleatorias de la ronda de cifras
+    // Numero de cifras aleatorias de la ronda de cifras
     private int cifrasAleatorias[] = new int[6];
     // Entero que representa la ronda en la que se encuentran, supondremos que siempre
     // el numero de rondas es >= 1
@@ -35,7 +35,7 @@ public class Main {
     // Nivel de dificultad CPU: 1 = Aleatorio (Facil), 2 = Inteligente (Dificil)
     private int dificultadCPU = 1;
 
-    //Strings con los nombres de los ficheros proporcionados
+    // Strings con los nombres de los ficheros proporcionados
     private String ficheroLetras = "letras_es.txt";
     private String diccionario = "dic_es.txt";
     private final String ficheroCifras = "cifras.txt";
@@ -140,7 +140,7 @@ public class Main {
         }
     }
 
-    //METODOS PRINCIPALES
+    // METODOS PRINCIPALES
     public void opcionJugar() throws Exception {
         boolean volverAlMenu = false;
         while (!volverAlMenu) {
@@ -162,12 +162,12 @@ public class Main {
                 lector.clear();
                 System.err.println("\nERROR. Introduce una opcion valida!");
             } else {
-                //Switch si le ha dado al 1 (Jugar)
+                // Switch si le ha dado al 1 (Jugar)
                 switch (opcion) {
                     case '1' -> {
                         inicializarPartida();
 
-                        //Jugar contra la CPU
+                        // Jugar contra la CPU
                         casoJugarContraCPU();
                         while (rondaActual <= registroPartida.getNumeroRondas()) {
 
@@ -177,15 +177,15 @@ public class Main {
                             puedeFormarseJugador();
                             existeEnDiccionarioJugador();
                             if (!haPasado) {
-                                //En el caso de que exista, premiar al jugador con puntos
+                                // En el caso de que exista, premiar al jugador con puntos
                                 puntuacionLetrasJugador1();
                             } else {
                                 jugador1PasaTurno();
                             }
                             mostrarPuntuacionesJugador1Jugador2();
 
-                            //Reinicio haPasado en el caso de que sea true, para que
-                            //en la siguiente ronda, el usuario no pase directamente
+                            // Reinicio haPasado en el caso de que sea true, para que
+                            // en la siguiente ronda, el usuario no pase directamente
                             haPasado = false;
 
                             // TURNO LETRAS CPU
@@ -218,7 +218,7 @@ public class Main {
                     case '2' -> {
                         inicializarPartida();
 
-                        //Jugar contra otro jugador
+                        // Jugar contra otro jugador
                         casoJugador1ContraJugador2();
                         while (rondaActual <= registroPartida.getNumeroRondas()) {
 
@@ -235,8 +235,8 @@ public class Main {
                             }
                             mostrarPuntuacionesJugador1Jugador2();
 
-                            //Reinicio haPasado en el caso de que sea true, para que
-                            //en la siguiente ronda, el usuario no pase directamente
+                            // Reinicio haPasado en el caso de que sea true, para que
+                            // en la siguiente ronda, el usuario no pase directamente
                             haPasado = false;
 
                             // TURNO LETRAS JUGADOR 2
@@ -245,7 +245,7 @@ public class Main {
                             puedeFormarseJugador();
                             if (!haPasado) {
                                 existeEnDiccionarioJugador();
-                                //En el caso de que exista, premiar al jugador con puntos
+                                // En el caso de que exista, premiar al jugador con puntos
                                 puntuacionLetrasJugador2();
                             } else {
                                 jugador2PasaTurno();
@@ -253,8 +253,8 @@ public class Main {
                             mostrarPuntuacionesJugador1Jugador2();
                             rondaActual++;
 
-                            //Reinicio haPasado en el caso de que sea true, para que
-                            //en la siguiente ronda, el usuario no pase directamente
+                            // Reinicio haPasado en el caso de que sea true, para que
+                            // en la siguiente ronda, el usuario no pase directamente
                             haPasado = false;
 
                             // TURNO CIFRAS JUGADOR 1
@@ -1261,7 +1261,7 @@ public class Main {
 
             if (!movimientoDecidido) {
                 int indiceOperacionRandom = random.nextInt(0, arrayOperaciones.length);
-                //Bucle for para la operacion aleatoria
+                // Bucle for para la operacion aleatoria
                 for (int i = 0; i < arrayOperaciones.length && quedanNumeros; i++) {
                     if (i == indiceOperacionRandom) {
                         operacion = arrayOperaciones[i];
@@ -1269,8 +1269,8 @@ public class Main {
                 }
             }
 
-            //Creo un indice que sera aleatoriamente una de las posiciones
-            //del array de CifrasAleatorias
+            // Creo un indice que sera aleatoriamente una de las posiciones
+            // del array de CifrasAleatorias
             if (!movimientoDecidido) {
                 indiceOperando1 = random.nextInt(0, cifrasAleatorias.length);
 
@@ -1324,7 +1324,7 @@ public class Main {
 
             switch (operacion) {
                 case '+' -> {
-                    esperarCPU();
+                    esperarCifrasCPU();
                     resultado = operando1 + operando2;
                     System.out.println("Operacion: " + numOperacion + ": " + operando1 + " + " + operando2 + " = " + resultado + "\n");
                     numOperacion++;
@@ -1349,7 +1349,7 @@ public class Main {
                         anteriorOperacionValida = false;
 
                     } else {
-                        esperarCPU();
+                        esperarCifrasCPU();
                         resultado = operando1 - operando2;
                         System.out.println("- se ha comprobado que puede llevarse a cabo la resta "
                                 + operando1 + " - " + operando2 + ".");
@@ -1361,7 +1361,7 @@ public class Main {
                 }
 
                 case '*' -> {
-                    esperarCPU();
+                    esperarCifrasCPU();
                     resultado = operando1 * operando2;
                     System.out.println("Operacion: " + numOperacion + ": " + operando1 + " * " + operando2 + " = " + resultado + "\n");
                     numOperacion++;
@@ -1374,7 +1374,7 @@ public class Main {
                         cifrasAleatorias = arrayRecuperarCifrasAleatorias;
                         anteriorOperacionValida = false;
                     } else {
-                        esperarCPU();
+                        esperarCifrasCPU();
                         resultado = operando1 / operando2;
                         System.out.println("- se ha comprobado que puede llevarse a cabo la division entera "
                                 + operando1 + " / " + operando2 + ".");
@@ -1507,7 +1507,7 @@ public class Main {
     del diccionario pueden ser una potencial palabra con las letras 
     disponibles del metodo mostrarLetrasDisponibles()
      */
-    public void puedeFormarseCPU() throws IOException {
+    public void puedeFormarseCPU() throws IOException, InterruptedException {
         Random random = new Random();
         char palabraCPU[] = null;
         int contador = 0;
@@ -1599,7 +1599,7 @@ public class Main {
 
         // Mostrar la palabra elegida por la CPU
         if (palabraCPU != null) {
-            System.out.println("\nCPU elige: " + new String(palabraCPU));
+            esperarLetrasCPU(palabraCPU);
             entradaPorTeclado = palabraCPU;
             registroPartida.setPuntuacionJugador2(entradaPorTeclado.length);
             lector.clear();
@@ -1966,15 +1966,15 @@ public class Main {
         return nuevoArray;
     }
 
-    private void esperarCPU() throws InterruptedException {
-        /*
+    /*
     Despues de informarnos y consultarlo con el profesor de la asignatura, hemos decidido que despues
     de cada operacion se ejecute este metodo para que asi haya un lapso entre cada operacion
     que hace la CPU porque sino hubiera este lapso se ejecutarian todas las operaciones en menos
     de un segundo y al usuario no le da tiempo siquiera a leerlas a menos que suba hacia arriba
     y las mire, nuestro proposito con esto es hacerlo mucho mas user-friendly, en el resto de
     operaciones tambien se lleva a cabo este metodo por la misma razon
-         */
+    */
+    private void esperarCifrasCPU() throws InterruptedException {
         System.out.print("La CPU esta calculando");
         Thread.sleep(750);
         System.out.print(".");
@@ -1984,6 +1984,19 @@ public class Main {
         System.out.println(".");
     }
 
+    /*
+    Hemos querido añadir la misma logica pero para las letras, para que asi de la sensacion
+    de que la CPU va "escribiendo" letra a letra la palabra que ha elegido en la ronda
+    de cifras, hace la experiencia del jugador mucho mas natural
+    */
+    private void esperarLetrasCPU(char[] palabraCPU) throws InterruptedException {
+        System.out.print("\nLa CPU elige: ");
+        for (int i = 0; i < palabraCPU.length; i++) {
+            System.out.print(palabraCPU[i]);
+            Thread.sleep(750);
+        }
+        System.out.println();
+    }
     public static void main(String[] args) throws Exception {
         Main m = new Main();
         m.pantallaPrincipal();

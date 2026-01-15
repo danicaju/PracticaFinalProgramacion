@@ -22,9 +22,9 @@ public class Main {
     // Entero que representa la ronda en la que se encuentran, supondremos que siempre
     // el numero de rondas es >= 1
     private int rondaActual = 1;
-    // Entero que acumula la puntuación de las rondas del jugador 1
+    // Entero que acumula la puntuacion de las rondas del jugador 1
     private int acumuladorPuntosJugador1 = 0;
-    // Entero que acumula la puntuación de las rondas del jugador 2
+    // Entero que acumula la puntuacion de las rondas del jugador 2
     private int acumuladorPuntosJugador2 = 0;
     // Booleano que determinara si el usuario ha pasado su turno
     private boolean haPasado = false;
@@ -537,7 +537,7 @@ public class Main {
             }
         }
         /*
-        Llegados a este punto, sabemos que el array no está vacío y no empieza por espacio.
+        Llegados a este punto, sabemos que el array no esta vacio y no empieza por espacio.
         Utilizaremos este metodo para limpiar espacios internos innecesarios que haya podido
         introducir el usuario
          */
@@ -742,7 +742,7 @@ public class Main {
             }
         }
 
-        // El último número del fichero se agrega después del bucle,
+        // El ultimo numero del fichero se agrega despues del bucle,
         // ya que no termina con un espacio.
         if (num != 0) {
             arrayAux[j] = num;
@@ -754,21 +754,20 @@ public class Main {
 
         for (int k = 0; k < cifrasAleatorias.length; k++) {
 
-            // Vamos a elegir un índice aleatorio dentro del rango disponible
+            // Vamos a elegir un indice aleatorio dentro del rango disponible
             int indiceAleatorio = random.nextInt(cantidadDisponibles);
 
             // Guardamos el numero elegido
             cifrasAleatorias[k] = arrayAux[indiceAleatorio];
 
-            // Movemos el ÚLTIMO número disponible a la posición que acabamos de usar
-            // (la del índice aleatorio). Así, la posición que ya usamos se "rellena"
-            // con otro número válido y no se pierde hueco.
+            // Movemos el ULTIMO numero disponible a la posicion que acabamos de usar
+            // (la del indice aleatorio). Asi, la posicion que ya usamos se "rellena"
+            // con otro numero valido y no se pierde hueco.
             arrayAux[indiceAleatorio] = arrayAux[cantidadDisponibles - 1];
 
-            // Ahora el 'random' nunca elegirá la última posición (que ya hemos movido)
+            // Ahora el 'random' nunca elegira la ultima posicion (que ya hemos movido)
             cantidadDisponibles--;
         }
-
         ficheroDeCifras.cerrarFichero();
     }
 
@@ -1158,7 +1157,6 @@ public class Main {
         }
 
         while (cifrasAleatorias.length > 1) {
-
             /*
             Usamos el booleano anteriorOperacionNoValida porque solo me interesa que ponga este mensaje
             cuando la anterior operacion ha sido valida (no ha dado numero negativo
@@ -1186,12 +1184,12 @@ public class Main {
                 
                 // Hacemos dos pasadas:
                 // intento = 0 -> Busca exactitud total (margen 0)
-                // intento = 1 -> Busca aproximación (margen 10)
+                // intento = 1 -> Busca aproximacion (margen 10)
                 for (int intento = 0; intento < 2 && !movimientoDecidido; intento++) {
                     
                     int margenError = 0;
                     if (intento == 1) {
-                        margenError = 30; // Aquí definimos la tolerancia de error
+                        margenError = 30; // Aqui definimos la tolerancia de error
                     }
 
                     for (int i = 0; i < cifrasAleatorias.length && !movimientoDecidido; i++) {
@@ -1227,7 +1225,7 @@ public class Main {
                                     }
                                 } 
                                 // --- MULTIPLICACION ---
-                                // Nota: Ponemos !movimientoDecidido para que no entre si ya encontró una anterior
+                                // Nota: Ponemos !movimientoDecidido para que no entre si ya encontro una anterior
                                 if (!movimientoDecidido) {
                                     int mult = operandoNivDif1 * operandoNivDif2;
                                     int difMult = mult - objetivo;
@@ -1475,7 +1473,7 @@ public class Main {
 
                 /* 2. Recorremos las letras de la palabra que el jugador ha introducido (entradaPorTeclado)
                 Por cada letra, buscamos si existe en el array de letras disponibles (copiaLetras)
-                Si la encontramos, la “marcamos” sustituyéndola por '*' para que no pueda volver a reutilizarse.
+                Si la encontramos, la “marcamos” sustituyendola por '*' para que no pueda volver a reutilizarse.
                 Si alguna letra no se encuentra, significa que la palabra NO puede formarse con las letras dadas.
                  */
                 puedeFormarse = true;
@@ -1609,7 +1607,6 @@ public class Main {
     }
 
     public void existeEnDiccionarioJugador() throws Exception {
-
         boolean palabraValida = false;
 
         while (!palabraValida) {
@@ -1642,17 +1639,17 @@ public class Main {
                 System.out.println(" - existe en el diccionario");
                 palabraValida = true;
             } else if (!haPasado) {
-                /*
-                Encontramos un bug en el codigo y es que si el usuario escogia una palabra
-                que no existiera en el diccionario pero si se pudiera formar con las letras
-                disponibles y luego intentara pasar turno escribiendo '.', entonces, el 
-                programa crashearia con un bucle infinito ya que palabraValida nunca
-                seria true, porque cuando la palabra no existe en el diccionario
-                llamamos a puedeFormarseJugador() desde aqui, entonces hemos
-                creado el else if (haPasado) que si vuelve y el usuario 
-                haPasado, entonces palabraValida sera true para poder
-                salir del metodo existeEnDiccionarioJugador()
-                 */
+            /*
+            Encontramos un bug en el codigo y es que si el usuario escogia una palabra
+            que no existiera en el diccionario pero si se pudiera formar con las letras
+            disponibles y luego intentara pasar turno escribiendo '.', entonces, el 
+            programa crashearia con un bucle infinito ya que palabraValida nunca
+            seria true, porque cuando la palabra no existe en el diccionario
+            llamamos a puedeFormarseJugador() desde aqui, entonces hemos
+            creado el else if (haPasado) que si vuelve y el usuario 
+            haPasado, entonces palabraValida sera true para poder
+            salir del metodo existeEnDiccionarioJugador()
+             */
                 System.err.println("La palabra NO existe en el diccionario.");
                 System.out.println("Intentalo de nuevo!");
                 puedeFormarseJugador();
@@ -1758,8 +1755,7 @@ public class Main {
                 Campo en indice 4: Nivel CPU
                 Campo en indice 5: Numero rondas
                 Campo en indice 6: Puntuacion del jugador 1
-                Campo en indice 7: Puntuacion del jugador 2
-                
+                Campo en indice 7: Puntuacion del jugador 2   
                  */
                 if (puntuacionJugador1 > puntuacionJugador2) {
                     System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
@@ -1997,6 +1993,7 @@ public class Main {
         }
         System.out.println();
     }
+    
     public static void main(String[] args) throws Exception {
         Main m = new Main();
         m.pantallaPrincipal();

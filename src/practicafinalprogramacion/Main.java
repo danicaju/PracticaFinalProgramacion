@@ -32,7 +32,7 @@ public class Main {
     private int puntuajeCifras = 0;
     // Cantidad de cifras que selecciona el usuario
     private int cantidadCifras = 6;
-    // Nivel de dificultad CPU: 1 = Aleatorio (Facil), 2 = Inteligente (Dificil)
+    // Nivel de dificultad CPU: 0 = No CPU (vs humano), 1 = Aleatorio (Facil), 2 = Inteligente (Dificil)
     private int dificultadCPU = 1;
 
     // Strings con los nombres de los ficheros proporcionados
@@ -43,7 +43,7 @@ public class Main {
 
     public void inicializarPartida() {
         registroPartida = new Registro();
-        // Por defecto le pasamos la configuracion global, luego se puede cambiar a 0 si es vs Humano
+        // Por defecto le pasamos la configuracion global, luego se puede cambiar a 0 si es "vs humano"
         registroPartida.setNivelDificultad(dificultadCPU);
 
         rondaActual = 1;
@@ -106,7 +106,7 @@ public class Main {
                              s. Salir
                           ************************************
                           
-                          Opcion(1|2|s): """);
+                          Opcion(1|2|3|s): """);
 
             Character opcion = lector.llegirCaracter();
 
@@ -155,7 +155,7 @@ public class Main {
                                    s. Volver al menu principal
                                  ************************************
                                  
-                                 Opcion (1|2|3|s): """);
+                                 Opcion (1|2|s): """);
 
             Character opcion = lector.llegirCaracter();
             if (opcion == null) {
@@ -174,13 +174,21 @@ public class Main {
                             // TURNO LETRAS JUGADOR 1
                             casoTurnoLetrasJugador1ContraJugador2();
                             mostrarLetrasDisponibles();
-                            puedeFormarseJugador();
-                            existeEnDiccionarioJugador();
+
+                            boolean palabraCorrecta = false;
+                            // Bucle para repetir si la palabra no existe en el diccionario
+                            while (!palabraCorrecta && !haPasado) {
+                                puedeFormarseJugador(); // Pide palabra y valida letras
+                                if (!haPasado) {
+                                    palabraCorrecta = existeEnDiccionarioJugador(); // Valida diccionario
+                                }
+                            }
+
                             if (!haPasado) {
-                                // En el caso de que exista, premiar al jugador con puntos
-                                puntuacionLetrasJugador1();
+                                puntuacionLetrasJugador1(); // <--- OJO AQUI: JUGADOR 1
                             } else {
-                                jugador1PasaTurno();
+                                jugador1PasaTurno(); // <--- OJO AQUI: JUGADOR 1
+                                haPasado = false; // Reiniciamos para la siguiente ronda
                             }
                             mostrarPuntuacionesJugador1Jugador2();
 
@@ -242,13 +250,20 @@ public class Main {
                             // TURNO LETRAS JUGADOR 2
                             casoTurnoJugador2ContraJugador1();
                             mostrarLetrasDisponibles();
-                            puedeFormarseJugador();
+
+                            boolean palabraCorrecta2 = false; // Usamos nombre distinto por si acaso
+                            while (!palabraCorrecta2 && !haPasado) {
+                                puedeFormarseJugador();
+                                if (!haPasado) {
+                                    palabraCorrecta2 = existeEnDiccionarioJugador();
+                                }
+                            }
+
                             if (!haPasado) {
-                                existeEnDiccionarioJugador();
-                                // En el caso de que exista, premiar al jugador con puntos
-                                puntuacionLetrasJugador2();
+                                puntuacionLetrasJugador2(); // <--- OJO AQUI: JUGADOR 2
                             } else {
-                                jugador2PasaTurno();
+                                jugador2PasaTurno(); // <--- OJO AQUI: JUGADOR 2
+                                haPasado = false;
                             }
                             mostrarPuntuacionesJugador1Jugador2();
                             rondaActual++;
@@ -305,7 +320,7 @@ public class Main {
                              s. Volver al menu principal
                           ************************************
                           
-                          Opcion (1|2|3|s): """);
+                          Opcion (1|2|s): """);
 
             Character opcion = lector.llegirCaracter();
             if (opcion == null) {
@@ -519,11 +534,11 @@ public class Main {
         }
     }
 
-    private void pedirNombreValido() {
+    private void pedirNombreValido(int numJugador) {
         boolean nombreValido = false;
 
         while (!nombreValido) {
-            System.out.print("Introduce el nombre del jugador: ");
+            System.out.print("Introduce el nombre del jugador " + numJugador + ": ");
             entradaPorTeclado = lector.llegirLinia();
 
             if (entradaPorTeclado.length == 0) {
@@ -615,7 +630,7 @@ public class Main {
                                     JUGAR CONTRA EL ORDENADOR
                                     ************************************""");
 
-        pedirNombreValido();
+        pedirNombreValido(1);
 
         String aux = new String(entradaPorTeclado);
         registroPartida.setNombreJugador1(aux);
@@ -636,12 +651,12 @@ public class Main {
                                     JUGAR CONTRA OTRO JUGADOR
                                     ************************************""");
 
-        pedirNombreValido();
+        pedirNombreValido(1);
 
         String aux = new String(entradaPorTeclado);
         registroPartida.setNombreJugador1(aux);
 
-        pedirNombreValido();
+        pedirNombreValido(2);
 
         String aux2 = new String(entradaPorTeclado);
         registroPartida.setNombreJugador2(aux2);
@@ -746,10 +761,12 @@ public class Main {
         // ya que no termina con un espacio.
         if (num != 0) {
             arrayAux[j] = num;
+            j++; // Aumentamos j para contar este ultimo numero tambien
         }
 
-        int cantidadDisponibles = arrayAux.length; // 24
-        
+        // Ahora usamos 'j' porque tiene la cantidad exacta de numeros leidos
+        int cantidadDisponibles = j;
+
         cifrasAleatorias = new int[cantidadCifras];
 
         for (int k = 0; k < cifrasAleatorias.length; k++) {
@@ -772,6 +789,8 @@ public class Main {
     }
 
     public void operacionesCifrasJugador() {
+        // Limpiamos lo que el usuario haya podido escribir antes de tiempo
+        limpiarBuffer();
         Random objRandom = new Random();
         int objetivo = objRandom.nextInt(100, 999);
         int numOperacion = 1;
@@ -1151,12 +1170,13 @@ public class Main {
         int objetivo = random.nextInt(100, 999);
         boolean quedanNumeros = true;
         boolean anteriorOperacionValida = true;
+        boolean objetivoEncontrado = false;
         int historialNumeros[] = new int[cifrasAleatorias.length];
         for (int i = 0; i < cifrasAleatorias.length; i++) {
             historialNumeros[i] = cifrasAleatorias[i];
         }
 
-        while (cifrasAleatorias.length > 1) {
+        while (cifrasAleatorias.length > 1 && !objetivoEncontrado) {
             /*
             Usamos el booleano anteriorOperacionNoValida porque solo me interesa que ponga este mensaje
             cuando la anterior operacion ha sido valida (no ha dado numero negativo
@@ -1181,41 +1201,44 @@ public class Main {
 
             // LOGICA NIVEL DIFICIL
             if (registroPartida.getNivelDificultad() == 2) {
-                
+
                 // Hacemos dos pasadas:
                 // intento = 0 -> Busca exactitud total (margen 0)
-                // intento = 1 -> Busca aproximacion (margen 10)
+                // intento = 1 -> Busca aproximacion (margen personalizado)
                 for (int intento = 0; intento < 2 && !movimientoDecidido; intento++) {
-                    
+
                     int margenError = 0;
                     if (intento == 1) {
-                        margenError = 30; // Aqui definimos la tolerancia de error
+                        margenError = 50; // Aqui definimos la tolerancia de error
                     }
 
                     for (int i = 0; i < cifrasAleatorias.length && !movimientoDecidido; i++) {
                         for (int j = 0; j < cifrasAleatorias.length && !movimientoDecidido; j++) {
-                            
+
                             // Solo procesamos si los indices son distintos
                             if (i != j) {
                                 int operandoNivDif1 = cifrasAleatorias[i];
                                 int operandoNivDif2 = cifrasAleatorias[j];
-                                
+
                                 // --- SUMA ---
                                 int suma = operandoNivDif1 + operandoNivDif2;
                                 int difSuma = suma - objetivo;
-                                if (difSuma < 0) difSuma = difSuma * -1;
+                                if (difSuma < 0) {
+                                    difSuma = difSuma * -1;
+                                }
 
                                 if (difSuma <= margenError) {
                                     operacion = '+';
                                     indiceOperando1 = i;
                                     indiceTempOperando2 = j;
                                     movimientoDecidido = true;
-                                } 
-                                // --- RESTA ---
+                                } // --- RESTA ---
                                 else if ((operandoNivDif1 - operandoNivDif2) > 0) { // Solo restas positivas
                                     int resta = operandoNivDif1 - operandoNivDif2;
                                     int difResta = resta - objetivo;
-                                    if (difResta < 0) difResta = difResta * -1;
+                                    if (difResta < 0) {
+                                        difResta = difResta * -1;
+                                    }
 
                                     if (difResta <= margenError) {
                                         operacion = '-';
@@ -1223,13 +1246,15 @@ public class Main {
                                         indiceTempOperando2 = j;
                                         movimientoDecidido = true;
                                     }
-                                } 
+                                }
                                 // --- MULTIPLICACION ---
                                 // Nota: Ponemos !movimientoDecidido para que no entre si ya encontro una anterior
                                 if (!movimientoDecidido) {
                                     int mult = operandoNivDif1 * operandoNivDif2;
                                     int difMult = mult - objetivo;
-                                    if (difMult < 0) difMult = difMult * -1;
+                                    if (difMult < 0) {
+                                        difMult = difMult * -1;
+                                    }
 
                                     if (difMult <= margenError) {
                                         operacion = '*';
@@ -1242,7 +1267,9 @@ public class Main {
                                 if (!movimientoDecidido && operandoNivDif2 != 0 && operandoNivDif1 % operandoNivDif2 == 0) {
                                     int div = operandoNivDif1 / operandoNivDif2;
                                     int difDiv = div - objetivo;
-                                    if (difDiv < 0) difDiv = difDiv * -1;
+                                    if (difDiv < 0) {
+                                        difDiv = difDiv * -1;
+                                    }
 
                                     if (difDiv <= margenError) {
                                         operacion = '/';
@@ -1301,7 +1328,7 @@ public class Main {
                         indiceOperando2 = indiceTempOperando2 - 1;
                     } else {
                         indiceOperando2 = indiceTempOperando2;
-                    }                   
+                    }
                     operando2 = cifrasAleatorias[indiceOperando2];
                 } else {
                     indiceOperando2 = random.nextInt(0, cifrasAleatorias.length);
@@ -1328,6 +1355,10 @@ public class Main {
                     numOperacion++;
                     cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                     historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
+
+                    if (resultado == objetivo) {
+                        objetivoEncontrado = true;
+                    }
                 }
 
                 case '-' -> {
@@ -1355,6 +1386,10 @@ public class Main {
                         numOperacion++;
                         cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                         historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
+
+                        if (resultado == objetivo) {
+                            objetivoEncontrado = true;
+                        }
                     }
                 }
 
@@ -1365,6 +1400,11 @@ public class Main {
                     numOperacion++;
                     cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                     historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
+
+                    if (resultado == objetivo) {
+                        objetivoEncontrado = true;
+                    }
+
                 }
 
                 case '/' -> {
@@ -1380,6 +1420,11 @@ public class Main {
                         numOperacion++;
                         cifrasAleatorias = agregarNumeroAlArray(cifrasAleatorias, resultado);
                         historialNumeros = agregarNumeroAlArray(historialNumeros, resultado);
+
+                        if (resultado == objetivo) {
+                            objetivoEncontrado = true;
+                        }
+
                     }
                 }
 
@@ -1422,6 +1467,8 @@ public class Main {
     }
 
     public void puedeFormarseJugador() throws Exception {
+        // Limpiamos lo que el usuario haya podido escribir antes de tiempo
+        limpiarBuffer();
         boolean puedeFormarse = false;
         /*
         Mientras aun no se pueda formar y el usuario no haya 
@@ -1606,57 +1653,42 @@ public class Main {
         }
     }
 
-    public void existeEnDiccionarioJugador() throws Exception {
-        boolean palabraValida = false;
+    public boolean existeEnDiccionarioJugador() throws Exception {
+        boolean existeEnDic = false;
+        FicherosLectura ficheroDic = new FicherosLectura(diccionario);
+        String lineaDic;
 
-        while (!palabraValida) {
-            boolean existeEnDic = false;
-            FicherosLectura ficheroDic = new FicherosLectura(diccionario);
-            String lineaDic;
+        while ((lineaDic = ficheroDic.leerFichero()) != null && !existeEnDic) {
+            char lineaDicArray[] = lineaDic.toCharArray();
+            boolean iguales = false;
 
-            while ((lineaDic = ficheroDic.leerFichero()) != null && !existeEnDic) {
-                char lineaDicArray[] = lineaDic.toCharArray();
-                boolean iguales = false;
-
-                if (lineaDicArray.length == entradaPorTeclado.length) {
-                    iguales = true;
-                    for (int i = 0; i < lineaDicArray.length && iguales; i++) {
-                        if (lineaDicArray[i] != entradaPorTeclado[i]) {
-                            iguales = false;
-                        }
+            if (lineaDicArray.length == entradaPorTeclado.length) {
+                iguales = true;
+                for (int i = 0; i < lineaDicArray.length && iguales; i++) {
+                    if (lineaDicArray[i] != entradaPorTeclado[i]) {
+                        iguales = false;
                     }
                 }
-
-                if (iguales) {
-                    existeEnDic = true;
-                }
             }
 
-            ficheroDic.cerrarFichero();
-
-            if (existeEnDic) {
-                System.out.println(" - puede crearse con las letras disponibles");
-                System.out.println(" - existe en el diccionario");
-                palabraValida = true;
-            } else if (!haPasado) {
-            /*
-            Encontramos un bug en el codigo y es que si el usuario escogia una palabra
-            que no existiera en el diccionario pero si se pudiera formar con las letras
-            disponibles y luego intentara pasar turno escribiendo '.', entonces, el 
-            programa crashearia con un bucle infinito ya que palabraValida nunca
-            seria true, porque cuando la palabra no existe en el diccionario
-            llamamos a puedeFormarseJugador() desde aqui, entonces hemos
-            creado el else if (haPasado) que si vuelve y el usuario 
-            haPasado, entonces palabraValida sera true para poder
-            salir del metodo existeEnDiccionarioJugador()
-             */
-                System.err.println("La palabra NO existe en el diccionario.");
-                System.out.println("Intentalo de nuevo!");
-                puedeFormarseJugador();
-            } else if (haPasado) {
-                palabraValida = true;
+            if (iguales) {
+                existeEnDic = true;
             }
         }
+
+        ficheroDic.cerrarFichero();
+
+        if (existeEnDic) {
+            System.out.println(" - puede crearse con las letras disponibles");
+            System.out.println(" - existe en el diccionario");
+            return true; // EXITO
+        } else if (!haPasado) {
+            System.err.println("La palabra NO existe en el diccionario.");
+            System.out.println("Intentalo de nuevo!");
+            return false; // FALLO
+        }
+
+        return true; // Si ha pasado turno, devolvemos true para salir del bucle
     }
 
     /*
@@ -1752,7 +1784,7 @@ public class Main {
                 Campo en indice 1: Tipo de partida ("vs CPU" o "vs humano")
                 Campo en indice 2: Nombre del jugador 1
                 Campo en indice 3: Nombre del jugador 2
-                Campo en indice 4: Nivel CPU
+                Campo en indice 4: Nivel CPU ("vs humano": 0, "vs CPU": 1 o 2 (dependiendo de la dificultad)
                 Campo en indice 5: Numero rondas
                 Campo en indice 6: Puntuacion del jugador 1
                 Campo en indice 7: Puntuacion del jugador 2   
@@ -1763,10 +1795,16 @@ public class Main {
                             + "ganador: " + '"' + arrayCampos[2] + '"'
                             + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
                             + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
-                } else {
+                } else if (puntuacionJugador1 < puntuacionJugador2) {
                     System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
                             + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[5] + " rondas,\n"
                             + "ganador: " + '"' + arrayCampos[3] + '"'
+                            + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
+                            + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
+                } else {
+                    System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                            + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[5] + " rondas,\n"
+                            + "ganador: " + '"' + "Ninguno (Empate)" + '"'
                             + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
                             + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
                 }
@@ -1804,7 +1842,6 @@ public class Main {
                 nombreValido = true;
             }
         }
-        System.out.println("\n------------------ PARTIDAS JUGADAS POR ESTE JUGADOR ------------------\n");
         while (!esNulo) {
             leerFicheroRegistro = ficheroLectura.leerFichero();
             if (leerFicheroRegistro == null) {
@@ -1873,6 +1910,12 @@ public class Main {
                 }
 
                 if (esJugador1 || esJugador2) {
+                    // Aprovechamos este booleano para que este mensaje solo salga una vez
+                    // que es lo que nos interesa
+                    if (!existeElJugador) {
+                        System.out.println("\n------------------ PARTIDAS JUGADAS POR ESTE JUGADOR ------------------\n");
+
+                    }
                     existeElJugador = true;
                     int puntuacionJugador1 = 0;
                     int puntuacionJugador2 = 0;
@@ -1919,10 +1962,16 @@ public class Main {
                                 + "ganador: " + '"' + arrayCampos[2] + '"'
                                 + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
                                 + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
-                    } else {
+                    } else if (puntuacionJugador1 < puntuacionJugador2) {
                         System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
                                 + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[5] + " rondas,\n"
                                 + "ganador: " + '"' + arrayCampos[3] + '"'
+                                + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
+                                + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
+                    } else {
+                        System.out.println("Partida " + numeroPartidas + " (" + arrayCampos[0] + "). "
+                                + "Modo " + '"' + arrayCampos[1] + '"' + ", " + arrayCampos[5] + " rondas,\n"
+                                + "ganador: " + '"' + "Ninguno (Empate)" + '"'
                                 + ".\n - Jugador 1 " + '"' + arrayCampos[2] + '"' + ": " + arrayCampos[6] + " puntos.\n"
                                 + " - Jugador 2 " + '"' + arrayCampos[3] + '"' + ": " + arrayCampos[7] + " puntos.\n");
                     }
@@ -1969,7 +2018,7 @@ public class Main {
     de un segundo y al usuario no le da tiempo siquiera a leerlas a menos que suba hacia arriba
     y las mire, nuestro proposito con esto es hacerlo mucho mas user-friendly, en el resto de
     operaciones tambien se lleva a cabo este metodo por la misma razon
-    */
+     */
     private void esperarCifrasCPU() throws InterruptedException {
         System.out.print("La CPU esta calculando");
         Thread.sleep(750);
@@ -1984,7 +2033,7 @@ public class Main {
     Hemos querido añadir la misma logica pero para las letras, para que asi de la sensacion
     de que la CPU va "escribiendo" letra a letra la palabra que ha elegido en la ronda
     de cifras, hace la experiencia del jugador mucho mas natural
-    */
+     */
     private void esperarLetrasCPU(char[] palabraCPU) throws InterruptedException {
         System.out.print("\nLa CPU elige: ");
         for (int i = 0; i < palabraCPU.length; i++) {
@@ -1993,7 +2042,17 @@ public class Main {
         }
         System.out.println();
     }
-    
+
+    // Este metodo borra cualquier cosa que hayas escrito mientras la CPU estaba "pensando"
+    private void limpiarBuffer() {
+        try {
+            while (System.in.available() > 0) {
+                System.in.read();
+            }
+        } catch (IOException e) {
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         Main m = new Main();
         m.pantallaPrincipal();

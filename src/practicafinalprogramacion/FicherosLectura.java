@@ -24,7 +24,7 @@ public class FicherosLectura {
         if (linea == null) {
             return null;
         }
-        
+
         return linea;
     }
 

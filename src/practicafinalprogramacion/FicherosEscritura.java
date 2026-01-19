@@ -15,11 +15,11 @@ public class FicherosEscritura {
     public FicherosEscritura(String fichero) throws IOException {
         this.bw = new BufferedWriter(new FileWriter(fichero, true));
     }
-    
+
     public void escribirFichero(String parametroAEscribir) throws IOException {
         bw.write(parametroAEscribir);
     }
-    
+
     public void escribirSaltoLinea() throws IOException {
         bw.newLine();
     }

@@ -501,7 +501,7 @@ public class Main {
             lector.clear();
             Integer opcion = lector.llegirEnter();
             if (opcion == null) {
-                System.err.println("ERROR. Introduce un idioma disponible!");
+                System.err.println("\nERROR. Introduce un idioma disponible!");
             } else {
                 switch (opcion) {
                     case 1 -> {
@@ -526,7 +526,7 @@ public class Main {
                         idiomaValido = true;
                     }
                     default -> {
-                        System.err.println("ERROR. Introduce una opcion valida!");
+                        System.err.println("\nERROR. Introduce una opcion valida!");
                         lector.clear();
                     }
                 }
@@ -588,7 +588,6 @@ public class Main {
     }
 
     public void pedirNumeroRondasValido() {
-        System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
         /*
         Aqui, usamos un Integer porque nos dimos cuenta que al poner cualquier cosa que no 
         fuera un numero con un int opcion, el programa petaba devolviendo nulo, por ejemplo,
@@ -597,29 +596,25 @@ public class Main {
         error de nulo y pedir otro numero al usuario.
          */
         boolean numeroRondasValido = false;
-        int numeroRondas = 0;
+        Integer numeroRondas = null;
 
         while (!numeroRondasValido) {
             lector.clear();
-            Integer opcion = lector.llegirEnter();
-            if (opcion == null) {
+            System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
+            numeroRondas = lector.llegirEnter();
+            if (numeroRondas == null) {
                 System.err.println("ERROR. Entrada no valida!");
-                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
-            } else if (opcion > 20) {
+            } else if (numeroRondas > 20) {
                 System.err.println("ERROR. Maximo 20 rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
-            } else if (opcion % 2 != 0) {
-                System.err.println("ERROR. Introduce un numero par de rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
-            } else if (opcion < 2) {
+            } else if (numeroRondas < 2) {
                 System.err.println("ERROR. Minimo 2 rondas!");
-                System.out.print("Introduce cuantas rondas quieres jugar [2-20, numero par]): ");
-            } else if (opcion % 2 == 0) {
-                numeroRondas = opcion;
+            } else if (numeroRondas % 2 != 0) {
+                System.err.println("ERROR. Introduce un numero par de rondas!");
+            } else if (numeroRondas % 2 == 0) {
                 numeroRondasValido = true;
             }
         }
-        //Si ha llegado aqui, la opcion no es nula y tampoco es impar
+        //Si ha llegado aqui, la opcion no es nula, ni impar ni mayor a 20 ni menor a 2
         registroPartida.setNumeroRondas(numeroRondas);
     }
 
@@ -789,8 +784,6 @@ public class Main {
     }
 
     public void operacionesCifrasJugador() {
-        // Limpiamos lo que el usuario haya podido escribir antes de tiempo
-        limpiarBuffer();
         Random objRandom = new Random();
         int objetivo = objRandom.nextInt(100, 999);
         int numOperacion = 1;
@@ -1467,8 +1460,6 @@ public class Main {
     }
 
     public void puedeFormarseJugador() throws Exception {
-        // Limpiamos lo que el usuario haya podido escribir antes de tiempo
-        limpiarBuffer();
         boolean puedeFormarse = false;
         /*
         Mientras aun no se pueda formar y el usuario no haya 
@@ -1489,7 +1480,7 @@ public class Main {
             entonces, te vuelve a pedir que escribas la palabra.
              */
             while (entradaPorTeclado.length == 0) {
-                System.err.println("ERROR. No has escrito nada!");
+                System.err.println("ERROR. No has escrito nada!\n");
                 System.out.print("Introduce tu palabra (o escribe '.' para pasar): ");
                 entradaPorTeclado = lector.llegirLinia();
             }
@@ -1683,8 +1674,7 @@ public class Main {
             System.out.println(" - existe en el diccionario");
             return true; // EXITO
         } else if (!haPasado) {
-            System.err.println("La palabra NO existe en el diccionario.");
-            System.out.println("Intentalo de nuevo!");
+            System.err.println("La palabra NO existe en el diccionario. Intentalo de nuevo!");
             return false; // FALLO
         }
 
@@ -2041,16 +2031,6 @@ public class Main {
             Thread.sleep(750);
         }
         System.out.println();
-    }
-
-    // Este metodo borra cualquier cosa que hayas escrito mientras la CPU estaba "pensando"
-    private void limpiarBuffer() {
-        try {
-            while (System.in.available() > 0) {
-                System.in.read();
-            }
-        } catch (IOException e) {
-        }
     }
 
     public static void main(String[] args) throws Exception {

@@ -17,16 +17,16 @@ public class Registro {
     private int puntuacionJugador1;
     private int puntuacionJugador2;
     // Puede ser 0 (no hay CPU), 1 (Nivel facil) o 2 (Nivel dificil)
-    private int nivelDificultad; 
-    
+    private int nivelDificultad;
+
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
+
     public Registro() {
         this.fechaHora = LocalDateTime.now();
         this.numeroRondas = 1;
         this.puntuacionJugador1 = 0;
         this.puntuacionJugador2 = 0;
-        this.nivelDificultad = 0; 
+        this.nivelDificultad = 0;
     }
 
     public void setFechaHora(LocalDateTime fechaHora) {
@@ -56,7 +56,7 @@ public class Registro {
     public void setPuntuacionJugador2(int puntuacionJugador2) {
         this.puntuacionJugador2 = puntuacionJugador2;
     }
-    
+
     public void setNivelDificultad(int nivelDificultad) {
         this.nivelDificultad = nivelDificultad;
     }
@@ -88,7 +88,7 @@ public class Registro {
     public int getPuntuacionJugador2() {
         return puntuacionJugador2;
     }
-    
+
     public int getNivelDificultad() {
         return nivelDificultad;
     }

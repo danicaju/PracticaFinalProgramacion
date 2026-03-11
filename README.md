@@ -67,21 +67,3 @@ El proyecto respeta los límites de los conocimientos de "Programación 1", demo
    * Cantidad de cifras: 6 a 10.
    * Nivel CPU: Fácil o Difícil.
    * Idiomas de Diccionarios.
-
-### Instalación Rápida
-Asegúrate de tener instalada la máquina virtual de Java (JDK 17 o superior recomendado).
-
-```bash
-# 1. Clona el repositorio
-git clone [https://github.com/tu-usuario/cifras-y-letras.git](https://github.com/tu-usuario/cifras-y-letras.git)
-
-# 2. Navega al directorio
-cd cifras-y-letras
-
-# 3. Asegúrate de que los ficheros .txt (diccionarios, letras, partidas) están en la raíz
-
-# 4. Compila las clases
-javac practicafinalprogramacion/*.java
-
-# 5. Ejecuta el programa principal
-java practicafinalprogramacion.Main

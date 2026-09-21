@@ -9,7 +9,7 @@ import java.io.IOException;
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
-public class FicherosLectura {
+public class FicherosLectura implements AutoCloseable {
 
     private final BufferedReader br;
 
@@ -18,17 +18,13 @@ public class FicherosLectura {
     }
 
     public String leerFichero() throws IOException {
-
-        String linea = br.readLine();
-
-        if (linea == null) {
-            return null;
-        }
-
-        return linea;
+        return br.readLine(); // Si es null, devuelve null automáticamente
     }
 
-    public void cerrarFichero() throws IOException {
-        br.close();
+    @Override
+    public void close() throws IOException {
+        if (br != null) {
+            br.close();
+        }
     }
 }

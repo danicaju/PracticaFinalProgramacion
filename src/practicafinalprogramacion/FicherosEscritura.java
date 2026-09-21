@@ -8,7 +8,7 @@ import java.io.IOException;
 AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
-public class FicherosEscritura {
+public class FicherosEscritura implements AutoCloseable {
 
     private final BufferedWriter bw;
 
@@ -24,7 +24,10 @@ public class FicherosEscritura {
         bw.newLine();
     }
 
-    public void cerrarFichero() throws IOException {
-        bw.close();
+    @Override
+    public void close() throws IOException {
+        if (bw != null) {
+            bw.close();
+        }
     }
 }

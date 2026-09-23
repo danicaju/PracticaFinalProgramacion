@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /*
-AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
+AUTOR: Maria Teresa Sbert Gomila y Daniel Casado Juan
 GRUPO: 2
  */
 public class Registro {

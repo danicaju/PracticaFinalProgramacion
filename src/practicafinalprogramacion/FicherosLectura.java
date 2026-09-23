@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /*
-AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
+AUTOR: Daniel Casado Juan
 GRUPO: 2
  */
 public class FicherosLectura implements AutoCloseable {

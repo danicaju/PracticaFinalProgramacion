@@ -1,5 +1,9 @@
 package practicafinalprogramacion;
 
+/*
+AUTOR: Maria Teresa Sbert Gomila y Daniel Casado Juan
+GRUPO: 2
+ */
 public class Jugador {
 
     private String nombre;

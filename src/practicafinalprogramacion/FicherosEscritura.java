@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /*
-AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
+AUTOR: Daniel Casado Juan
 GRUPO: 2
  */
 public class FicherosEscritura implements AutoCloseable {

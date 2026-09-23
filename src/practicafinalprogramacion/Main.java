@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /*
-AUTORES: Maria Teresa Sbert Gomila y Daniel Casado Juan
+AUTOR: Daniel Casado Juan
 GRUPO: 2
  */
 public class Main {

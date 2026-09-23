@@ -4,7 +4,7 @@
 ![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-Implementación robusta y por consola del clásico concurso de televisión **"Cifras y Letras"**. Este proyecto fue desarrollado íntegramente en Java como Práctica Final para la asignatura de **Programación 1**.
+Implementación robusta y por consola del clásico concurso de televisión **"Cifras y Letras"**. Este proyecto fue desarrollado íntegramente en Java como Práctica Final para la asignatura de **Programación 1**. A día de hoy, está refactorizado pero las versiones anteriores son accesibles mediante el historial de Commits
 
 El programa no solo replica las reglas oficiales del juego, sino que está diseñado con una arquitectura modular, gestión eficiente de memoria y algoritmos de búsqueda probabilística para la Inteligencia Artificial (IA).
 
